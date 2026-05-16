@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import CometCard from './CometCard'
 import useIsMobile from '../hooks/useIsMobile'
@@ -17,6 +18,7 @@ const chatMessages = [
 
 export default function Hero({ onChatOpen }) {
   const isMobile = useIsMobile()
+  const [empecemosHovered, setEmpecemosHovered] = useState(false)
   return (
     <section
       id="hero"
@@ -104,33 +106,39 @@ export default function Hero({ onChatOpen }) {
               Ver soluciones ↓
             </button>
             <button
+              onMouseEnter={() => setEmpecemosHovered(true)}
+              onMouseLeave={() => setEmpecemosHovered(false)}
               onClick={onChatOpen}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
-                e.currentTarget.style.color = '#ffffff'
-                e.currentTarget.style.borderColor = 'transparent'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#1A1814'
-                e.currentTarget.style.borderColor = '#1A1814'
-              }}
               style={{
+                position: 'relative',
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: '0.9rem',
                 padding: '12px 28px',
                 borderRadius: 999,
-                border: '1.5px solid #1A1814',
-                background: 'transparent',
-                color: '#1A1814',
                 cursor: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
-                transition: 'all 0.3s ease',
+                border: '1.5px solid',
+                borderColor: empecemosHovered ? 'transparent' : '#1A1814',
+                background: 'transparent',
+                color: empecemosHovered ? '#ffffff' : '#1A1814',
+                transition: 'color 0.3s ease, border-color 0.3s ease',
+                overflow: 'hidden',
               }}
             >
-              Empecemos →
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 999,
+                  background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
+                  opacity: empecemosHovered ? 1 : 0,
+                  transition: 'opacity 0.3s ease',
+                  zIndex: 0,
+                }}
+              />
+              <span style={{ position: 'relative', zIndex: 1 }}>Empecemos →</span>
             </button>
           </motion.div>
         </div>
