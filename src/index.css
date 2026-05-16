@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --brain-gradient: linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607);
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'Syne Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  background: #FAF8F3;
+  color: #1A1814;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+#root { width: 100%; }
+
+.font-serif { font-family: var(--font-serif); }
+.font-mono  { font-family: var(--font-mono); }
+.font-sans  { font-family: var(--font-sans); }
+
+.gradient-text {
+  background: var(--brain-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-bg { background: var(--brain-gradient); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #1A1814; }
+::-webkit-scrollbar-thumb { background: var(--brain-gradient); border-radius: 2px; }
+
+/* Aurora blob float — used by IntroAnimation */
+@keyframes floatBlob {
+  0%,  100% { transform: translate(0, 0) scale(1); }
+  25%        { transform: translate(20px, -15px) scale(1.02); }
+  50%        { transform: translate(-15px, 20px) scale(0.98); }
+  75%        { transform: translate(10px, 10px) scale(1.01); }
+}
+
+/* Responsive two-column grids */
+@media (max-width: 768px) {
+  .two-col-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .nav-links {
+    display: none !important;
+  }
+  .product-card-inner {
+    grid-template-columns: 1fr !important;
+  }
+}
