@@ -82,13 +82,13 @@ export default function Hero({ onChatOpen }) {
           </motion.p>
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <motion.button
+            <button
               onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#2A2824' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#1A1814' }}
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 400,
+                fontWeight: 500,
                 fontSize: '0.9rem',
                 padding: '12px 28px',
                 borderRadius: 999,
@@ -96,21 +96,38 @@ export default function Hero({ onChatOpen }) {
                 background: '#1A1814',
                 color: '#FAF8F3',
                 cursor: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'background 0.25s ease',
               }}
             >
               Ver soluciones ↓
-            </motion.button>
+            </button>
             <button
               onClick={onChatOpen}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
+                e.currentTarget.style.color = '#ffffff'
+                e.currentTarget.style.borderColor = 'transparent'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = '#1A1814'
+                e.currentTarget.style.borderColor = '#1A1814'
+              }}
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
+                fontWeight: 500,
                 fontSize: '0.9rem',
-                color: '#4A4740',
-                background: 'none',
-                border: 'none',
+                padding: '12px 28px',
+                borderRadius: 999,
+                border: '1.5px solid #1A1814',
+                background: 'transparent',
+                color: '#1A1814',
                 cursor: 'none',
-                opacity: 0.8,
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'all 0.3s ease',
               }}
             >
               Empecemos →

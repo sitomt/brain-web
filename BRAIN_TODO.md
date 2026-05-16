@@ -59,6 +59,9 @@
   - [x] Nav simplificada: links Soluciones / Casos / Nosotros con scroll suave, botón "Empecemos →"
   - [x] Hero CTAs: "Ver soluciones ↓" (scroll a #products) + "Empecemos →" (abre chat)
   - [x] IDs de sección correctos en App.jsx: #hero, #problem, #products, #cases, #cta
+  - [x] Botón "Empecemos →" eliminado de la nav — solo quedan los tres links de texto
+  - [x] Hero: dos CTAs iguales en tamaño (padding 12px 28px, borderRadius 999)
+  - [x] Botón "Empecemos →" con hover de gradiente multicolor y borde que desaparece
   - [x] Splash reducido al 70% de duración original (~2.2s total)
 - [x] `Navigation.jsx` — adaptativa por sección: IntersectionObserver detecta #hero/#problem/#products/#cases/#cta
       y aplica tema de color (claro en hero, oscuro en el resto) con transition 0.6s ease

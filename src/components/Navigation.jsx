@@ -165,35 +165,6 @@ export default function Navigation({ visible, onChatOpen }) {
           </button>
         ))}
 
-        <motion.button
-          onClick={onChatOpen}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 400,
-            fontSize: '0.85rem',
-            padding: '8px 20px',
-            borderRadius: 999,
-            border: `1.5px solid ${theme.btnBorder}`,
-            background: 'transparent',
-            color: theme.btnText,
-            cursor: 'none',
-            transition: 'all 0.6s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
-            e.currentTarget.style.color = '#fff'
-            e.currentTarget.style.border = '1.5px solid transparent'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = theme.btnText
-            e.currentTarget.style.border = `1.5px solid ${theme.btnBorder}`
-          }}
-        >
-          Empecemos →
-        </motion.button>
       </div>
     </motion.nav>
   )
