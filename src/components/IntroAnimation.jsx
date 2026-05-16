@@ -52,15 +52,15 @@ function Particle({ size, color, x, y, rotate, duration, delay }) {
 
 // ─── BrainSplash ──────────────────────────────────────────────────────────────
 //
-// Timing:
+// Timing (×0.7 vs original):
 //   0ms    → Layer A (white) fades in
-//   500ms  → gradient ignites, Layer A fades out
-//   800ms  → particles explode
-//   1300ms → glow appears
-//   1500ms → one pulse
-//   2300ms → particles done
-//   2500ms → fade out
-//   3100ms → onDone()
+//   350ms  → gradient ignites, Layer A fades out
+//   560ms  → particles explode
+//   910ms  → glow appears
+//   1050ms → one pulse
+//   1610ms → particles done
+//   1750ms → fade out
+//   2170ms → onDone()
 
 function BrainSplash({ onDone }) {
   const [step, setStep] = useState(0)
@@ -70,13 +70,13 @@ function BrainSplash({ onDone }) {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep(2), 500),
-      setTimeout(() => setShowParticles(true), 800),
-      setTimeout(() => setStep(3), 1300),
-      setTimeout(() => setStep(4), 1500),
-      setTimeout(() => setShowParticles(false), 2300),
-      setTimeout(() => setFadeOut(true), 2500),
-      setTimeout(onDone, 3100),
+      setTimeout(() => setStep(2), 350),
+      setTimeout(() => setShowParticles(true), 560),
+      setTimeout(() => setStep(3), 910),
+      setTimeout(() => setStep(4), 1050),
+      setTimeout(() => setShowParticles(false), 1610),
+      setTimeout(() => setFadeOut(true), 1750),
+      setTimeout(onDone, 2170),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
@@ -88,7 +88,7 @@ function BrainSplash({ onDone }) {
     let rafId
     const tick = (ts) => {
       if (!start) start = ts
-      const p = Math.min((ts - start) / 800, 1)
+      const p = Math.min((ts - start) / 560, 1)
       if (gradRef.current) {
         gradRef.current.style.backgroundPosition = `${150 * (1 - p)}% 50%`
       }
@@ -103,7 +103,7 @@ function BrainSplash({ onDone }) {
   return (
     <motion.div
       animate={{ opacity: fadeOut ? 0 : 1 }}
-      transition={{ duration: 0.6, ease: 'easeInOut' }}
+      transition={{ duration: 0.42, ease: 'easeInOut' }}
       style={{
         position: 'absolute',
         inset: 0,
@@ -129,7 +129,7 @@ function BrainSplash({ onDone }) {
             filter: 'blur(80px)',
             background: GRAD,
             opacity: step >= 3 ? 0.5 : 0,
-            transition: 'opacity 0.4s ease',
+            transition: 'opacity 0.28s ease',
             pointerEvents: 'none',
             zIndex: -1,
           }}
@@ -140,8 +140,8 @@ function BrainSplash({ onDone }) {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: step >= 2 ? 0 : 1, scale: 1 }}
           transition={{
-            opacity: { duration: 0.5, ease: 'easeOut' },
-            scale: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+            opacity: { duration: 0.35, ease: 'easeOut' },
+            scale: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
           }}
           style={{
             fontFamily: "'Instrument Serif', serif",
@@ -163,8 +163,8 @@ function BrainSplash({ onDone }) {
             scale: step >= 4 ? [1, 1.02, 1] : 1,
           }}
           transition={{
-            opacity: { duration: 0.8, ease: 'easeInOut' },
-            scale: { duration: 0.8, ease: 'easeInOut' },
+            opacity: { duration: 0.56, ease: 'easeInOut' },
+            scale: { duration: 0.56, ease: 'easeInOut' },
           }}
           style={{ position: 'absolute', inset: 0 }}
         >
@@ -199,14 +199,14 @@ export default function IntroAnimation({ onComplete }) {
 
   const handleDone = () => {
     setDone(true)
-    setTimeout(() => onComplete?.(), 700)
+    setTimeout(() => onComplete?.(), 500)
   }
 
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          exit={{ opacity: 0, transition: { duration: 0.7 } }}
+          exit={{ opacity: 0, transition: { duration: 0.5 } }}
           style={{
             position: 'fixed',
             inset: 0,

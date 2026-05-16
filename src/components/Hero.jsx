@@ -83,7 +83,7 @@ export default function Hero({ onChatOpen }) {
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <motion.button
-              onClick={onChatOpen}
+              onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               style={{
@@ -98,21 +98,23 @@ export default function Hero({ onChatOpen }) {
                 cursor: 'none',
               }}
             >
-              Quiero saber más
+              Ver soluciones ↓
             </motion.button>
-            <a
-              href="#servicios"
+            <button
+              onClick={onChatOpen}
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: '0.9rem',
                 color: '#4A4740',
-                textDecoration: 'none',
+                background: 'none',
+                border: 'none',
+                cursor: 'none',
                 opacity: 0.8,
               }}
             >
-              Ver soluciones ↓
-            </a>
+              Empecemos →
+            </button>
           </motion.div>
         </div>
 

@@ -2,7 +2,14 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 
-const links = ['Servicios', 'Casos', 'Nosotros', 'Contacto']
+const LINKS = [
+  { label: 'Soluciones', target: 'products' },
+  { label: 'Casos',      target: 'cases' },
+  { label: 'Nosotros',   target: 'nosotros' },
+]
+
+const scrollTo = (id) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 const THEMES = {
   hero: {
@@ -101,7 +108,8 @@ export default function Navigation({ visible, onChatOpen }) {
       <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: 0 }}>
         <span style={{
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '1.25rem',
+          fontSize: '1.1rem',
+          letterSpacing: '0.05em',
           color: theme.logoColor,
           transition: 'color 0.6s ease',
         }}>
@@ -110,7 +118,8 @@ export default function Navigation({ visible, onChatOpen }) {
         <span
           style={{
             fontFamily: "'Syne Mono', monospace",
-            fontSize: '1.25rem',
+            fontSize: '1.1rem',
+            letterSpacing: '0.05em',
             background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -121,7 +130,8 @@ export default function Navigation({ visible, onChatOpen }) {
         </span>
         <span style={{
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '1.25rem',
+          fontSize: '1.1rem',
+          letterSpacing: '0.05em',
           color: theme.logoColor,
           transition: 'color 0.6s ease',
         }}>
@@ -131,10 +141,10 @@ export default function Navigation({ visible, onChatOpen }) {
 
       {/* Links + CTA */}
       <div style={{ display: 'flex', gap: isMobile ? '1rem' : '2rem', alignItems: 'center' }}>
-        {!isMobile && links.map((link) => (
-          <a
-            key={link}
-            href={`#${link.toLowerCase()}`}
+        {!isMobile && LINKS.map(({ label, target }) => (
+          <button
+            key={label}
+            onClick={() => scrollTo(target)}
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
@@ -142,15 +152,17 @@ export default function Navigation({ visible, onChatOpen }) {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               color: theme.linkColor,
-              textDecoration: 'none',
+              background: 'none',
+              border: 'none',
+              cursor: 'none',
               opacity: 0.7,
               transition: 'opacity 0.2s, color 0.6s ease',
             }}
-            onMouseEnter={(e) => (e.target.style.opacity = 1)}
-            onMouseLeave={(e) => (e.target.style.opacity = 0.7)}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.7)}
           >
-            {link}
-          </a>
+            {label}
+          </button>
         ))}
 
         <motion.button
@@ -180,7 +192,7 @@ export default function Navigation({ visible, onChatOpen }) {
             e.currentTarget.style.border = `1.5px solid ${theme.btnBorder}`
           }}
         >
-          Hablamos →
+          Empecemos →
         </motion.button>
       </div>
     </motion.nav>

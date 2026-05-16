@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-05-16 (2)
+Última actualización: 2026-05-16 (3)
 
 ---
 
@@ -56,6 +56,10 @@
   - [x] Eliminadas las 4 frases de scroll — la intro es solo BrAIn con su animación
   - [x] Timing automático: aparición blanca → gradiente → partículas → glow → pulso → fade out
   - [x] Fade in suave de la web tras el splash (motion.div, 0.8s, easeOut)
+  - [x] Nav simplificada: links Soluciones / Casos / Nosotros con scroll suave, botón "Empecemos →"
+  - [x] Hero CTAs: "Ver soluciones ↓" (scroll a #products) + "Empecemos →" (abre chat)
+  - [x] IDs de sección correctos en App.jsx: #hero, #problem, #products, #cases, #cta
+  - [x] Splash reducido al 70% de duración original (~2.2s total)
 - [x] `Navigation.jsx` — adaptativa por sección: IntersectionObserver detecta #hero/#problem/#products/#cases/#cta
       y aplica tema de color (claro en hero, oscuro en el resto) con transition 0.6s ease
 - [x] `Hero.jsx` — 2 col responsive, headline gradiente italic, mockup chat animado; tag "Agencia de IA" con gradiente multicolor (eliminado color verde antiguo)
@@ -93,6 +97,8 @@ _(sin tareas en progreso actualmente)_
 ### Web — Mejoras visuales
 - [ ] Considerar guardar en localStorage si el usuario ya vio el splash para no
       repetirlo en visitas sucesivas (mostrar solo en primera visita)
+- [ ] Sección Nosotros con id="nosotros" (contenido pendiente de decisión)
+- [ ] Página about completa
 - [ ] Revisar timing general del splash en dispositivos lentos (móvil)
 - [ ] Mobile: revisar secciones Problem y Cases en pantallas < 480px
 - [ ] Optimización aurora en móvil (reducir blobs o blur en dispositivos lentos)
