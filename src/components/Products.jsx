@@ -81,7 +81,6 @@ function LazyVideoColumn({ component, isMobile }) {
     const el = ref.current
     if (!el) return
 
-    // Compute scale so the Player COVERS (no letterbox) the container
     const updateScale = () => {
       const { width, height } = el.getBoundingClientRect()
       if (width > 0 && height > 0) {
@@ -115,15 +114,10 @@ function LazyVideoColumn({ component, isMobile }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        minHeight: isMobile ? 220 : undefined,
+        minHeight: isMobile ? 200 : 280,
       }}
     >
       {showPlayer ? (
-        /*
-         * Center a COMP_W×COMP_H div inside the container using negative margins,
-         * then scale from its center to cover the container.
-         * overflow:hidden on the parent clips the overflow.
-         */
         <div
           style={{
             position: 'absolute',
@@ -177,7 +171,6 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 20,
         overflow: 'hidden',
-        minHeight: 380,
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
         gap: 0,
@@ -186,7 +179,7 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
       {/* Text column */}
       <div
         style={{
-          padding: isMobile ? '1.75rem 1.5rem' : '2.5rem',
+          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -210,7 +203,7 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
         <h3
           style={{
             fontFamily: "'Instrument Serif', serif",
-            fontSize: '2rem',
+            fontSize: 'clamp(1.4rem, 5vw, 2rem)',
             color: '#fff',
             lineHeight: 1.1,
           }}
@@ -222,7 +215,7 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
           style={{
             fontFamily: "'Instrument Serif', serif",
             fontStyle: 'italic',
-            fontSize: '1.1rem',
+            fontSize: '1.05rem',
             background: GRADIENT,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -343,7 +336,6 @@ function Tier2Block({ onChatOpen }) {
       transition={{ duration: 0.6 }}
       style={{ marginTop: '3rem' }}
     >
-      {/* Section label */}
       <div
         style={{
           fontFamily: "'Syne Mono', monospace",
@@ -357,7 +349,6 @@ function Tier2Block({ onChatOpen }) {
         Más soluciones
       </div>
 
-      {/* Pills */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '1.5rem' }}>
         {MORE_PILLS.map(({ emoji, label }) => (
           <div
@@ -369,9 +360,9 @@ function Tier2Block({ onChatOpen }) {
               background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: 999,
-              padding: '8px 18px',
+              padding: '8px 16px',
               fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.75rem',
+              fontSize: '0.72rem',
               color: 'rgba(255,255,255,0.7)',
             }}
           >
@@ -381,7 +372,6 @@ function Tier2Block({ onChatOpen }) {
         ))}
       </div>
 
-      {/* CTA */}
       <div style={{ textAlign: 'center' }}>
         <p
           style={{
@@ -419,10 +409,11 @@ function Tier2Block({ onChatOpen }) {
 
 /* ---- Main section ---- */
 export default function Products({ onChatOpen }) {
+  const isMobile = useIsMobile()
   return (
     <section
       id="lo-que-hacemos"
-      style={{ background: '#0D0D10', padding: '6rem 2rem' }}
+      style={{ background: '#0D0D10', padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         {/* Header */}
@@ -460,7 +451,7 @@ export default function Products({ onChatOpen }) {
         </motion.div>
 
         {/* Tier 1 — 3 big cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <Tier1Card
             index={0}
             num="01"

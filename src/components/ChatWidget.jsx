@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import useIsMobile from '../hooks/useIsMobile'
 
 const responses = [
   {
@@ -44,19 +45,18 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
   const [typing, setTyping] = useState(false)
   const endRef = useRef(null)
   const inputRef = useRef(null)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing])
 
-  // Focus input when chat opens
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 350)
     }
   }, [isOpen])
 
-  // Listen for programmatic message dispatch (e.g. from CTA button)
   useEffect(() => {
     const handler = (e) => {
       const text = e.detail?.message
@@ -90,6 +90,9 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
     }, 1000 + Math.random() * 600)
   }
 
+  const btnRight = isMobile ? 16 : 28
+  const btnBottom = isMobile ? 20 : 28
+
   return (
     <>
       {/* Floating button */}
@@ -99,10 +102,10 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
         whileTap={{ scale: 0.94 }}
         style={{
           position: 'fixed',
-          bottom: 28,
-          right: 28,
-          width: 56,
-          height: 56,
+          bottom: btnBottom,
+          right: btnRight,
+          width: 52,
+          height: 52,
           borderRadius: '50%',
           background: '#1A1814',
           border: 'none',
@@ -114,7 +117,6 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
           boxShadow: '0 4px 24px rgba(0,0,0,0.35)',
         }}
       >
-        {/* Animated gradient ring */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
@@ -127,7 +129,7 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
           }}
         />
         <div style={{ position: 'absolute', inset: 2, borderRadius: '50%', background: '#1A1814' }} />
-        <span style={{ position: 'relative', fontSize: '1.2rem', zIndex: 1 }}>
+        <span style={{ position: 'relative', fontSize: '1.1rem', zIndex: 1 }}>
           {isOpen ? '✕' : '💬'}
         </span>
       </motion.button>
@@ -142,10 +144,11 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             style={{
               position: 'fixed',
-              bottom: 96,
-              right: 28,
-              width: 340,
-              maxHeight: 520,
+              bottom: isMobile ? 84 : 92,
+              right: btnRight,
+              left: isMobile ? btnRight : 'auto',
+              width: isMobile ? 'auto' : 340,
+              maxHeight: isMobile ? 'calc(100vh - 120px)' : 520,
               borderRadius: 20,
               background: '#fff',
               boxShadow: '0 20px 60px rgba(0,0,0,0.18)',

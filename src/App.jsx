@@ -9,10 +9,27 @@ import Products from './components/Products'
 import Cases from './components/Cases'
 import CtaFinal from './components/CtaFinal'
 import ChatWidget from './components/ChatWidget'
+import Footer from './components/Footer'
+import CookieBanner from './components/CookieBanner'
+import LegalModal from './components/LegalModal'
 
 export default function App() {
   const [introComplete, setIntroComplete] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+
+  const [legalOpen, setLegalOpen] = useState(false)
+  const [legalTab, setLegalTab] = useState('privacidad')
+  const [cookieBannerKey, setCookieBannerKey] = useState(0)
+
+  const openLegal = (tab) => {
+    setLegalTab(tab)
+    setLegalOpen(true)
+  }
+
+  const reopenCookies = () => {
+    localStorage.removeItem('brain_cookie_consent')
+    setCookieBannerKey(k => k + 1)
+  }
 
   return (
     <>
@@ -23,7 +40,7 @@ export default function App() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: introComplete ? 1 : 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'relative', zIndex: 1 }}
       >
         <Navigation
@@ -47,12 +64,26 @@ export default function App() {
             <CtaFinal onChatOpen={() => setChatOpen(true)} />
           </section>
         </main>
+
+        <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
       </motion.div>
 
       <ChatWidget
         isOpen={chatOpen}
         onOpen={() => setChatOpen(true)}
         onClose={() => setChatOpen(false)}
+      />
+
+      <CookieBanner
+        key={cookieBannerKey}
+        onOpenLegal={openLegal}
+      />
+
+      <LegalModal
+        open={legalOpen}
+        tab={legalTab}
+        onTabChange={setLegalTab}
+        onClose={() => setLegalOpen(false)}
       />
     </>
   )

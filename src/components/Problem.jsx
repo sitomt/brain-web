@@ -32,7 +32,7 @@ export default function Problem() {
   const isMobile = useIsMobile()
 
   return (
-    <AuroraBackground id="servicios" style={{ padding: '6rem 2rem' }}>
+    <AuroraBackground id="servicios" style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
         {/* ── Header ── */}
@@ -59,7 +59,7 @@ export default function Problem() {
           <h2
             style={{
               fontFamily: "'Instrument Serif', serif",
-              fontSize: 'clamp(2.8rem, 5vw, 4rem)',
+              fontSize: 'clamp(2.2rem, 5vw, 4rem)',
               lineHeight: 1.1,
               margin: 0,
             }}
@@ -87,7 +87,7 @@ export default function Problem() {
           style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-            gap: '1.25rem',
+            gap: '1rem',
           }}
         >
           {problems.map((p, i) => (
@@ -104,7 +104,7 @@ export default function Problem() {
                   backdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 20,
-                  padding: '2rem',
+                  padding: isMobile ? '1.5rem' : '2rem',
                   height: '100%',
                 }}
               >

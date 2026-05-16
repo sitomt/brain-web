@@ -26,7 +26,7 @@ export default function Hero({ onChatOpen }) {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        padding: '8rem 2rem 4rem',
+        padding: isMobile ? '5.5rem 1.25rem 3rem' : '8rem 2rem 4rem',
       }}
     >
       <div
@@ -36,7 +36,7 @@ export default function Hero({ onChatOpen }) {
           width: '100%',
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: isMobile ? '2.5rem' : '4rem',
+          gap: isMobile ? '2rem' : '4rem',
           alignItems: 'center',
         }}
       >
@@ -62,7 +62,7 @@ export default function Hero({ onChatOpen }) {
             </span>
           </motion.div>
 
-          <motion.h1 {...fadeUp(0.2)} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(2.5rem,5vw,5rem)', lineHeight: 1.05, color: '#1A1814' }}>
+          <motion.h1 {...fadeUp(0.2)} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(2.4rem, 8vw, 5rem)', lineHeight: 1.05, color: '#1A1814' }}>
             Inteligencia que trabaja
             <br />
             <em
@@ -78,7 +78,7 @@ export default function Hero({ onChatOpen }) {
             </em>
           </motion.h1>
 
-          <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', maxWidth: 420 }}>
+          <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
               Menos llamadas que nadie contesta.
             </span>
@@ -90,7 +90,7 @@ export default function Hero({ onChatOpen }) {
             </span>
           </motion.div>
 
-          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
               onMouseEnter={(e) => { e.currentTarget.style.background = '#2A2824' }}
@@ -99,7 +99,7 @@ export default function Hero({ onChatOpen }) {
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: '0.9rem',
-                padding: '12px 28px',
+                padding: isMobile ? '11px 22px' : '12px 28px',
                 borderRadius: 999,
                 border: 'none',
                 background: '#1A1814',
@@ -121,7 +121,7 @@ export default function Hero({ onChatOpen }) {
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: '0.9rem',
-                padding: '12px 28px',
+                padding: isMobile ? '11px 22px' : '12px 28px',
                 borderRadius: 999,
                 cursor: 'none',
                 display: 'inline-flex',

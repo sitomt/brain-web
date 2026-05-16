@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import AuroraBackground from './AuroraBackground'
+import useIsMobile from '../hooks/useIsMobile'
 
 export default function CtaFinal({ onChatOpen }) {
   const [hovered, setHovered] = useState(false)
+  const isMobile = useIsMobile()
 
   const handleReserva = () => {
     onChatOpen()
@@ -17,14 +19,14 @@ export default function CtaFinal({ onChatOpen }) {
   }
 
   return (
-    <AuroraBackground intense style={{ padding: '8rem 2rem' }}>
+    <AuroraBackground intense style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem' }}>
       <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}>
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(3rem,6vw,5rem)', color: '#fff', lineHeight: 1 }}
+          style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.8rem,6vw,5rem)', color: '#fff', lineHeight: 1 }}
         >
           ¿Empezamos?
         </motion.h2>
@@ -45,6 +47,7 @@ export default function CtaFinal({ onChatOpen }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2 }}
+          style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
         >
           <button
             onClick={handleReserva}
@@ -54,8 +57,8 @@ export default function CtaFinal({ onChatOpen }) {
               position: 'relative',
               fontFamily: "'DM Sans',sans-serif",
               fontWeight: 500,
-              fontSize: '1rem',
-              padding: '1rem 2.5rem',
+              fontSize: isMobile ? '0.9rem' : '1rem',
+              padding: isMobile ? '0.9rem 1.75rem' : '1rem 2.5rem',
               borderRadius: 999,
               border: '1.5px solid',
               borderColor: hovered ? 'transparent' : '#ffffff',
@@ -66,6 +69,7 @@ export default function CtaFinal({ onChatOpen }) {
               alignItems: 'center',
               overflow: 'hidden',
               transition: 'border-color 0.3s ease',
+              textAlign: 'center',
             }}
           >
             <div

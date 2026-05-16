@@ -52,15 +52,15 @@ function Particle({ size, color, x, y, rotate, duration, delay }) {
 
 // ─── BrainSplash ──────────────────────────────────────────────────────────────
 //
-// Timing (×0.7 vs original):
+// Timing:
 //   0ms    → Layer A (white) fades in
 //   350ms  → gradient ignites, Layer A fades out
 //   560ms  → particles explode
 //   910ms  → glow appears
 //   1050ms → one pulse
 //   1610ms → particles done
-//   1750ms → fade out
-//   2170ms → onDone()
+//   1900ms → fade out begins (longer, smoother)
+//   2500ms → onDone()
 
 function BrainSplash({ onDone }) {
   const [step, setStep] = useState(0)
@@ -75,13 +75,12 @@ function BrainSplash({ onDone }) {
       setTimeout(() => setStep(3), 910),
       setTimeout(() => setStep(4), 1050),
       setTimeout(() => setShowParticles(false), 1610),
-      setTimeout(() => setFadeOut(true), 1750),
-      setTimeout(onDone, 2170),
+      setTimeout(() => setFadeOut(true), 1900),
+      setTimeout(onDone, 2500),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
 
-  // Animate gradient background-position via rAF to avoid Framer Motion interpolation
   useEffect(() => {
     if (step < 2 || !gradRef.current) return
     let start = null
@@ -103,7 +102,7 @@ function BrainSplash({ onDone }) {
   return (
     <motion.div
       animate={{ opacity: fadeOut ? 0 : 1 }}
-      transition={{ duration: 0.42, ease: 'easeInOut' }}
+      transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
       style={{
         position: 'absolute',
         inset: 0,
@@ -129,7 +128,7 @@ function BrainSplash({ onDone }) {
             filter: 'blur(80px)',
             background: GRAD,
             opacity: step >= 3 ? 0.5 : 0,
-            transition: 'opacity 0.28s ease',
+            transition: 'opacity 0.4s ease',
             pointerEvents: 'none',
             zIndex: -1,
           }}
@@ -141,7 +140,7 @@ function BrainSplash({ onDone }) {
           animate={{ opacity: step >= 2 ? 0 : 1, scale: 1 }}
           transition={{
             opacity: { duration: 0.35, ease: 'easeOut' },
-            scale: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+            scale: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
           }}
           style={{
             fontFamily: "'Instrument Serif', serif",
@@ -199,14 +198,14 @@ export default function IntroAnimation({ onComplete }) {
 
   const handleDone = () => {
     setDone(true)
-    setTimeout(() => onComplete?.(), 500)
+    setTimeout(() => onComplete?.(), 600)
   }
 
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          exit={{ opacity: 0, transition: { duration: 0.5 } }}
+          exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -215,7 +214,7 @@ export default function IntroAnimation({ onComplete }) {
             overflow: 'hidden',
           }}
         >
-          {/* Aurora blobs — CSS animation for performance */}
+          {/* Aurora blobs */}
           <div
             aria-hidden
             role="presentation"

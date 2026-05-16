@@ -4,8 +4,7 @@ import useIsMobile from '../hooks/useIsMobile'
 
 const LINKS = [
   { label: 'Soluciones', target: 'products' },
-  { label: 'Casos',      target: 'cases' },
-  { label: 'Nosotros',   target: 'nosotros' },
+  { label: 'Casos',      target: 'casos' },
 ]
 
 const scrollTo = (id) =>
@@ -71,7 +70,6 @@ export default function Navigation({ visible, onChatOpen }) {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id)
         },
-        // Trigger when the section crosses the vertical center of the viewport
         { rootMargin: '-50% 0px -50% 0px', threshold: 0 }
       )
       observer.observe(el)
@@ -94,8 +92,8 @@ export default function Navigation({ visible, onChatOpen }) {
         left: 0,
         right: 0,
         zIndex: 100,
-        padding: '0 2rem',
-        height: 64,
+        padding: isMobile ? '0 1rem' : '0 2rem',
+        height: 60,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -109,7 +107,7 @@ export default function Navigation({ visible, onChatOpen }) {
       <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: 0 }}>
         <span style={{
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '1.1rem',
+          fontSize: '1.05rem',
           letterSpacing: '0.05em',
           color: theme.logoColor,
           transition: 'color 0.6s ease',
@@ -119,7 +117,7 @@ export default function Navigation({ visible, onChatOpen }) {
         <span
           style={{
             fontFamily: "'Syne Mono', monospace",
-            fontSize: '1.1rem',
+            fontSize: '1.05rem',
             letterSpacing: '0.05em',
             background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
             WebkitBackgroundClip: 'text',
@@ -131,7 +129,7 @@ export default function Navigation({ visible, onChatOpen }) {
         </span>
         <span style={{
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '1.1rem',
+          fontSize: '1.05rem',
           letterSpacing: '0.05em',
           color: theme.logoColor,
           transition: 'color 0.6s ease',
@@ -141,7 +139,7 @@ export default function Navigation({ visible, onChatOpen }) {
       </a>
 
       {/* Links + CTA */}
-      <div style={{ display: 'flex', gap: isMobile ? '1rem' : '2rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '2rem', alignItems: 'center' }}>
         {!isMobile && LINKS.map(({ label, target }) => (
           <button
             key={label}
@@ -166,7 +164,6 @@ export default function Navigation({ visible, onChatOpen }) {
           </button>
         ))}
 
-        {/* CTA — mismo comportamiento y estilo que Hero.jsx */}
         <button
           onMouseEnter={() => setBtnHovered(true)}
           onMouseLeave={() => setBtnHovered(false)}
@@ -175,8 +172,8 @@ export default function Navigation({ visible, onChatOpen }) {
             position: 'relative',
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 500,
-            fontSize: '0.9rem',
-            padding: '12px 28px',
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
+            padding: isMobile ? '9px 16px' : '12px 28px',
             borderRadius: 999,
             cursor: 'none',
             display: 'inline-flex',
@@ -187,6 +184,7 @@ export default function Navigation({ visible, onChatOpen }) {
             color: btnHovered ? '#ffffff' : theme.btnText,
             overflow: 'hidden',
             transition: 'color 0.3s ease, border-color 0.3s ease',
+            whiteSpace: 'nowrap',
           }}
         >
           <div
