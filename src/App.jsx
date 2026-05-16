@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import CustomCursor from './components/CustomCursor'
 import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
@@ -19,7 +20,12 @@ export default function App() {
 
       <IntroAnimation onComplete={() => setIntroComplete(true)} />
 
-      <div style={{ opacity: introComplete ? 1 : 0, transition: 'opacity 0.8s ease' }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: introComplete ? 1 : 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+        style={{ position: 'relative', zIndex: 1 }}
+      >
         <Navigation
           visible={introComplete}
           onChatOpen={() => setChatOpen(true)}
@@ -41,7 +47,7 @@ export default function App() {
             <CtaFinal onChatOpen={() => setChatOpen(true)} />
           </section>
         </main>
-      </div>
+      </motion.div>
 
       <ChatWidget
         isOpen={chatOpen}

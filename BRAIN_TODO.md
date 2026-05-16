@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-05-16
+Última actualización: 2026-05-16 (2)
 
 ---
 
@@ -52,6 +52,10 @@
   - [x] BrAIn: flash blanco sutil al montar (opacity 0→0.04→0, 0.3s)
   - [x] BrAIn: glow detrás del texto al llegar a step 2 (blur 60px, opacity 0.6)
   - [x] BrAIn: partículas con rotación aleatoria ±180°, dispersión x ±600px
+  - [x] Intro simplificada a splash screen automático (~3.5s sin input del usuario)
+  - [x] Eliminadas las 4 frases de scroll — la intro es solo BrAIn con su animación
+  - [x] Timing automático: aparición blanca → gradiente → partículas → glow → pulso → fade out
+  - [x] Fade in suave de la web tras el splash (motion.div, 0.8s, easeOut)
 - [x] `Navigation.jsx` — adaptativa por sección: IntersectionObserver detecta #hero/#problem/#products/#cases/#cta
       y aplica tema de color (claro en hero, oscuro en el resto) con transition 0.6s ease
 - [x] `Hero.jsx` — 2 col responsive, headline gradiente italic, mockup chat animado; tag "Agencia de IA" con gradiente multicolor (eliminado color verde antiguo)
@@ -87,8 +91,9 @@ _(sin tareas en progreso actualmente)_
 ## 📋 PENDIENTE
 
 ### Web — Mejoras visuales
-- [ ] Revisar timing de transición intro → web principal al hacer wheel en BrAIn
-      (el throttle de 900ms puede sentirse largo en algunos dispositivos)
+- [ ] Considerar guardar en localStorage si el usuario ya vio el splash para no
+      repetirlo en visitas sucesivas (mostrar solo en primera visita)
+- [ ] Revisar timing general del splash en dispositivos lentos (móvil)
 - [ ] Mobile: revisar secciones Problem y Cases en pantallas < 480px
 - [ ] Optimización aurora en móvil (reducir blobs o blur en dispositivos lentos)
 - [ ] Añadir `favicon.svg` propio con el logo de BrAIn
