@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import AuroraBackground from './AuroraBackground'
 
 export default function CtaFinal({ onChatOpen }) {
+  const [hovered, setHovered] = useState(false)
+
   const handleReserva = () => {
     onChatOpen()
-    // Open chat then dispatch the agenda message after animation settles
     setTimeout(() => {
       window.dispatchEvent(
         new CustomEvent('chat:send', {
@@ -38,37 +40,50 @@ export default function CtaFinal({ onChatOpen }) {
           Con resultados en menos de 30 días.
         </motion.p>
 
-        <motion.button
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleReserva}
-          style={{
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 500,
-            fontSize: '1rem',
-            padding: '1rem 2.5rem',
-            borderRadius: 4,
-            border: '1.5px solid #ffffff',
-            background: 'transparent',
-            color: '#fff',
-            cursor: 'none',
-            transition: 'background 0.3s, border-color 0.3s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
-            e.currentTarget.style.borderColor = 'transparent'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = '#ffffff'
-          }}
         >
-          Reserva tu reunión gratuita
-        </motion.button>
+          <button
+            onClick={handleReserva}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+              position: 'relative',
+              fontFamily: "'DM Sans',sans-serif",
+              fontWeight: 500,
+              fontSize: '1rem',
+              padding: '1rem 2.5rem',
+              borderRadius: 999,
+              border: '1.5px solid',
+              borderColor: hovered ? 'transparent' : '#ffffff',
+              background: 'transparent',
+              color: '#fff',
+              cursor: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              transition: 'border-color 0.3s ease',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: 999,
+                background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)',
+                opacity: hovered ? 1 : 0,
+                transition: 'opacity 0.3s ease',
+                zIndex: 0,
+              }}
+            />
+            <span style={{ position: 'relative', zIndex: 1 }}>
+              Agenda tu diagnóstico gratuito →
+            </span>
+          </button>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}

@@ -56,6 +56,7 @@ const THEMES = {
 
 export default function Navigation({ visible, onChatOpen }) {
   const [activeSection, setActiveSection] = useState('hero')
+  const [btnHovered, setBtnHovered] = useState(false)
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -135,7 +136,7 @@ export default function Navigation({ visible, onChatOpen }) {
           color: theme.logoColor,
           transition: 'color 0.6s ease',
         }}>
-          n
+          n.
         </span>
       </a>
 
@@ -164,6 +165,43 @@ export default function Navigation({ visible, onChatOpen }) {
             {label}
           </button>
         ))}
+
+        {/* CTA — mismo comportamiento y estilo que Hero.jsx */}
+        <button
+          onMouseEnter={() => setBtnHovered(true)}
+          onMouseLeave={() => setBtnHovered(false)}
+          onClick={onChatOpen}
+          style={{
+            position: 'relative',
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 500,
+            fontSize: '0.9rem',
+            padding: '12px 28px',
+            borderRadius: 999,
+            cursor: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            border: '1.5px solid',
+            borderColor: btnHovered ? 'transparent' : theme.btnBorder,
+            background: 'transparent',
+            color: btnHovered ? '#ffffff' : theme.btnText,
+            overflow: 'hidden',
+            transition: 'color 0.3s ease, border-color 0.3s ease',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 999,
+              background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
+              opacity: btnHovered ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              zIndex: 0,
+            }}
+          />
+          <span style={{ position: 'relative', zIndex: 1 }}>Empecemos →</span>
+        </button>
 
       </div>
     </motion.nav>

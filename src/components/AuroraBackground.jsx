@@ -9,7 +9,7 @@ const blobs = [
 ]
 
 export default function AuroraBackground({ children, className = '', intense = false, id, style = {} }) {
-  const opacity = intense ? 0.6 : 0.35
+  const opacity = intense ? 0.35 : 0.12
 
   return (
     <div id={id} className={`relative overflow-hidden ${className}`} style={{ background: '#0A0A0A', ...style }}>
@@ -22,7 +22,7 @@ export default function AuroraBackground({ children, className = '', intense = f
             height: blob.size,
             borderRadius: '50%',
             background: blob.color,
-            filter: `blur(${intense ? 90 : 110}px)`,
+            filter: 'blur(120px)',
             opacity,
             left: blob.x,
             top: blob.y,

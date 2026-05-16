@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-05-16 (3)
+Última actualización: 2026-05-17
 
 ---
 
@@ -59,19 +59,43 @@
   - [x] Nav simplificada: links Soluciones / Casos / Nosotros con scroll suave, botón "Empecemos →"
   - [x] Hero CTAs: "Ver soluciones ↓" (scroll a #products) + "Empecemos →" (abre chat)
   - [x] IDs de sección correctos en App.jsx: #hero, #problem, #products, #cases, #cta
-  - [x] Botón "Empecemos →" eliminado de la nav — solo quedan los tres links de texto
+  - [x] Botón "Empecemos →" restaurado en la nav — a la derecha de los tres links
   - [x] Hero: dos CTAs iguales en tamaño (padding 12px 28px, borderRadius 999)
   - [x] Botón "Empecemos →" con hover de gradiente multicolor y borde que desaparece
   - [x] Hover del gradiente corregido: border-radius respetado con capa absoluta + opacity
   - [x] Splash reducido al 70% de duración original (~2.2s total)
 - [x] `Navigation.jsx` — adaptativa por sección: IntersectionObserver detecta #hero/#problem/#products/#cases/#cta
       y aplica tema de color (claro en hero, oscuro en el resto) con transition 0.6s ease
+  - [x] Botón "Empecemos →" en nav: mismo estilo exacto que Hero.jsx (capa gradiente interior, hover opacity 0→1, borde desaparece en hover)
+  - [x] Color adaptativo: hero → borde/texto #1A1814; secciones oscuras → borde rgba(255,255,255,0.8), texto blanco
+  - [x] Al pulsar: llama a onChatOpen (misma prop que ya recibía Navigation)
 - [x] `Hero.jsx` — 2 col responsive, headline gradiente italic, mockup chat animado; tag "Agencia de IA" con gradiente multicolor (eliminado color verde antiguo)
+  - [x] Subtexto actualizado: 3 líneas independientes con fadeUp, tercera línea con gradiente multicolor ("Más negocio con los mismos recursos.")
 - [x] `Problem.jsx` — AuroraBackground MODO A, grid 2×2 CometCards con números
-- [x] `Products.jsx` — fondo #1A1814, 3 cards grandes, visuals animados por producto
-  - [x] Card 01: ChatVisual con typewriter (mensajes que aparecen solos)
-  - [x] Card 02: DataVisual con filas de datos + query rotante
-  - [x] Card 03: IconsVisual con grid de emojis que aparecen escalonados
+  - [x] Headline rediseñado: dos líneas — "Tu negocio funciona." (blanco) + "Imagina que funcionara solo." (italic gradiente)
+  - [x] Tag "— El problema" en Syne Mono blanco 35%, mismo estilo que Products.jsx
+  - [x] Copy de 4 cards completamente reescrito (escenarios concretos: 23:47, teléfono, dependencia, datos)
+  - [x] Estética alineada con Products: rgba(255,255,255,0.04) bg, blur(12px), border 0.08, borderRadius 20
+  - [x] Número pequeño Syne Mono con gradiente multicolor (eliminados los números grandes en púrpura)
+  - [x] Grid 2×1 desktop / 1×1 móvil con gap 1.25rem
+  - [x] whileInView con stagger 0.1s por card, amount 0.2
+  - [x] Remate: frase italic blanco 55% + CTA "Para eso estamos nosotros. →" con gradiente, scroll a #products
+- [x] `Products.jsx` — rediseño completo Tier 1 + Tier 2 con Remotion Player
+  - [x] Header con tag Syne Mono "— Lo que hacemos" y headline Instrument Serif
+  - [x] Card 01: Contact Center IA 24/7 — layout 55/45, logos de conectores (WhatsApp/IG/Telegram/Web/Voz), ChatbotDemo
+  - [x] Card 02: Habla con tus Datos — tags de sector, DataQueryDemo
+  - [x] Card 03: Agentes IA — tags de sector, AgentDemo
+  - [x] Tier 2: pills de "Más soluciones" + CTA "Exploremos juntos →" conectado al ChatWidget
+  - [x] `@remotion/player` y `remotion` instalados
+  - [x] `src/remotion/ChatbotDemo.jsx` — extendido a 10s (300 frames): 2 intercambios completos, hook 23:47 (pérdida nocturna), respuesta con knowledge base sin gluten + oferta proactiva WhatsApp
+  - [x] `src/remotion/DataQueryDemo.jsx` — extendido a 10s: preguntas de decisión de negocio (facturación semana + márgenes), barras Premium/Estándar con animación, insight ROI "+3.200€/mes" al final
+  - [x] `src/remotion/AgentDemo.jsx` — extendido a 10s: escenario concreto (María G., Clínica Dental), 5 nodos renombrados (EMAIL→AGENTE→CRM→PROPUESTA→SEGUIMIENTO), header de contexto, badge "14 segundos · Sin intervención humana"
+  - [x] `Products.jsx` — `durationInFrames` actualizado de 180 a 300 en todos los Players
+  - [x] `onChatOpen` prop pasado desde App.jsx a Products.jsx
+  - [x] Cards: layout grid 1fr/1fr, gap 0, overflow hidden, minHeight 380px — vídeo flush sin padding
+  - [x] Columna vídeo: position relative, LazyVideoColumn con IntersectionObserver (threshold 30%)
+  - [x] Player renderiza solo cuando card entra en viewport; skeleton pulsante antes de activarse
+  - [x] Player: autoPlay, loop, controls=false, clickToPlay=false, initiallyMuted
 - [x] `Cases.jsx` — AuroraBackground MODO A, Baktun13 + Clesol, frase cita final
 - [x] `CtaFinal.jsx` — botón corregido: borderRadius 4px, fontWeight 500, borde blanco sólido,
       al pulsar abre chat y dispara automáticamente "Hola. Quiero agendar una reunión."
@@ -87,6 +111,11 @@
 - [x] Estado `introComplete` controla fade-in del contenido principal
 - [x] Estado `chatOpen` compartido entre CTA, Hero y ChatWidget
 
+### Correcciones visuales
+- [x] Bug rectángulos en Problem corregido — `AuroraBackground`: `opacity` reducida (0.35→0.12 normal, 0.6→0.35 intense), `blur` unificado a 120px; todos los blobs conservan `borderRadius:'50%'`
+- [x] Auditoría visual completa — Hero, Products, Cases, CtaFinal, AuroraBackground, CometCard: sin debug divs, sin borders/backgrounds erróneos
+- [x] CometCard `handleMouseLeave` corregido: cancela `animationRef` y limpia canvas de forma limpia al salir del hover
+
 ---
 
 ## 🔄 EN PROGRESO
@@ -99,6 +128,9 @@ _(sin tareas en progreso actualmente)_
 ## 📋 PENDIENTE
 
 ### Web — Mejoras visuales
+- [ ] Revisar rendimiento de Remotion Player en móvil (ya tiene lazy-load; valorar fallback estático si sigue lento)
+- [ ] Añadir más conectores a Card 1 cuando se integren nuevos canales
+- [ ] Vídeos adicionales Remotion para las soluciones del Tier 2
 - [ ] Considerar guardar en localStorage si el usuario ya vio el splash para no
       repetirlo en visitas sucesivas (mostrar solo en primera visita)
 - [ ] Sección Nosotros con id="nosotros" (contenido pendiente de decisión)

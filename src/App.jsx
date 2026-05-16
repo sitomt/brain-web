@@ -38,7 +38,7 @@ export default function App() {
             <Problem />
           </section>
           <section id="products">
-            <Products />
+            <Products onChatOpen={() => setChatOpen(true)} />
           </section>
           <section id="cases">
             <Cases />
