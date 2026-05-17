@@ -17,6 +17,15 @@ dist-ssr
 .agents/
 skills-lock.json
 
+# Raw logo/image files en raíz (assets de trabajo, no de producción)
+02 BAKTUN13 Logotipo Negativo.png
+brain-logo.png
+clesol-logo.png
+src/assets/baktun13-logo.jpg
+
+# Claude worktrees
+.claude/worktrees/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
