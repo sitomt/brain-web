@@ -176,7 +176,6 @@ export default function Navigation({ visible, onChatOpen }) {
             {label}
           </button>
         ))}
-
         {!isMobile && (
           <button
             onClick={() => navigate('/nosotros')}

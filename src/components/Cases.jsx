@@ -12,6 +12,8 @@ const cases = [
     logo: baktunLogo,
     logoWhite: false,
     alt: 'Baktun 13 — centro deportivo que automatizó su gestión operativa con IA de BrAIn',
+    stat: '100% operativo',
+    statDetail: 'desde el día 1',
     result: 'Gestión operativa 100% digital. Fichaje, incidencias, limpieza y comunicación del equipo en una sola app construida con IA.',
   },
   {
@@ -20,6 +22,8 @@ const cases = [
     logo: clesolLogo,
     logoWhite: true,
     alt: 'Clesol — empresa de paneles solares que automatizó su CRM y clasificación de leads con BrAIn',
+    stat: '2 semanas',
+    statDetail: 'de implementación',
     result: 'Clasificación de leads y CRM automatizados. El equipo se enfoca en instalar, no en gestionar.',
   },
 ]
@@ -61,9 +65,19 @@ export default function Cases() {
                   />
                 </div>
 
-                {/* Tipo */}
-                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.1em' }}>
-                  {c.type}
+                {/* Tipo + Stat */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'space-between', width: '100%', gap: '1rem', flexWrap: 'wrap' }}>
+                  <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.1em' }}>
+                    {c.type}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', lineHeight: 1.1 }}>
+                    <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: '1.2rem', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                      {c.stat}
+                    </span>
+                    <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.06em' }}>
+                      {c.statDetail}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Resultado */}

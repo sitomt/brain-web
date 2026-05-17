@@ -331,7 +331,7 @@ const MORE_PILLS = [
   { emoji: '🌐', label: 'Webs y landing pages' },
 ]
 
-function Tier2Block() {
+function Tier2Block({ onChatOpen }) {
   const isMobile = useIsMobile()
   return (
     <motion.div
@@ -354,7 +354,7 @@ function Tier2Block() {
         Más soluciones
       </div>
 
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '1.5rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '2rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {MORE_PILLS.map(({ emoji, label }) => (
           <div
             key={label}
@@ -373,6 +373,64 @@ function Tier2Block() {
           >
             <span>{emoji}</span>
             <span>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* ¿No ves tu sector? */}
+      <div style={{
+        display: 'flex',
+        alignItems: isMobile ? 'center' : 'center',
+        justifyContent: isMobile ? 'center' : 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        padding: '1.25rem 1.75rem',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 16,
+        flexDirection: isMobile ? 'column' : 'row',
+      }}>
+        <div>
+          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', margin: 0, marginBottom: '0.2rem' }}>
+            ¿No ves tu sector?
+          </p>
+          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+            No importa. Si hay un proceso repetitivo en tu negocio, podemos automatizarlo.
+          </p>
+        </div>
+        <button
+          onClick={onChatOpen}
+          style={{
+            flexShrink: 0,
+            padding: '9px 22px',
+            borderRadius: 999,
+            border: '1px solid rgba(255,255,255,0.2)',
+            background: 'transparent',
+            color: 'rgba(255,255,255,0.75)',
+            fontFamily: "'DM Sans',sans-serif",
+            fontWeight: 400,
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            transition: 'border-color 0.2s, color 0.2s',
+            whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.color = '#fff' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = 'rgba(255,255,255,0.75)' }}
+        >
+          Hablamos →
+        </button>
+      </div>
+
+      {/* Trust badges */}
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: '1.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+        {[
+          { icon: '🔒', label: 'RGPD compliant' },
+          { icon: '📄', label: 'NDA disponible' },
+          { icon: '🛡️', label: 'Datos confidenciales' },
+        ].map(({ icon, label }) => (
+          <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: '0.75rem' }}>{icon}</span>
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>{label}</span>
           </div>
         ))}
       </div>
@@ -464,7 +522,7 @@ export default function Products({ onChatOpen }) {
         </div>
 
         {/* Tier 2 */}
-        <Tier2Block />
+        <Tier2Block onChatOpen={onChatOpen} />
       </div>
     </section>
   )

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import CtaFinal from '../components/CtaFinal'
 import useIsMobile from '../hooks/useIsMobile'
@@ -52,10 +53,10 @@ function Divider() {
   )
 }
 
-/* Syne Mono label */
+/* Syne Mono label — h2 semántico con estilo de label */
 function Label({ children }) {
   return (
-    <p
+    <h2
       style={{
         fontFamily: "'Syne Mono', monospace",
         fontSize: '0.62rem',
@@ -63,14 +64,15 @@ function Label({ children }) {
         letterSpacing: '0.14em',
         textTransform: 'uppercase',
         margin: '0 0 1.25rem',
+        fontWeight: 400,
       }}
     >
       {children}
-    </p>
+    </h2>
   )
 }
 
-function PhotoPlaceholder() {
+function SitoPhoto() {
   return (
     <div
       style={{
@@ -80,44 +82,105 @@ function PhotoPlaceholder() {
         borderRadius: 16,
         overflow: 'hidden',
         border: '1px solid rgba(255,255,255,0.1)',
-        background: 'linear-gradient(180deg, rgba(67,97,238,0.15) 0%, rgba(247,37,133,0.1) 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '1rem',
+        position: 'relative',
       }}
     >
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2 }}>
-        <circle cx="12" cy="7" r="4" stroke="white" strokeWidth="1.5" />
-        <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-      <span
+      <img
+        src="/sito.jpeg"
+        alt="Ginés Munuera, fundador de BrAIn — agencia de IA en Murcia"
         style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.62rem',
-          color: 'rgba(255,255,255,0.3)',
-          letterSpacing: '0.08em',
-          textAlign: 'center',
-          padding: '0 1rem',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center top',
+          display: 'block',
+        }}
+      />
+      {/* Gradient overlay at bottom for text legibility */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '35%',
+          background: 'linear-gradient(to top, rgba(10,10,12,0.85) 0%, transparent 100%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '1.25rem',
+          left: '1.25rem',
         }}
       >
-        Foto de Sito — próximamente
-      </span>
+        <p style={{ fontFamily: "'Instrument Serif',serif", fontSize: '1.1rem', color: '#fff', margin: '0 0 0.15rem', lineHeight: 1.1 }}>
+          Ginés Munuera
+        </p>
+        <p style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', margin: 0 }}>
+          Fundador · BrAIn
+        </p>
+      </div>
     </div>
   )
 }
 
-/* To replace placeholder with real photo:
-   <img src="/sito.jpg" alt="Sito, fundador de BrAIn"
-     style={{ width:'100%', height:'100%', objectFit:'cover',
-       borderRadius:16, border:'1px solid rgba(255,255,255,0.1)' }} />
-*/
+const NOSOTROS_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'AboutPage',
+      '@id': 'https://TU-DOMINIO.es/nosotros',
+      url: 'https://TU-DOMINIO.es/nosotros',
+      name: 'Nosotros · BrAIn — Agencia de IA en Murcia',
+      description: 'Somos empresarios que automatizamos nuestros propios negocios antes de ayudar a otros. Conoce al equipo detrás de BrAIn, agencia de IA en Murcia.',
+      isPartOf: { '@id': 'https://TU-DOMINIO.es/#organization' },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://TU-DOMINIO.es/' },
+          { '@type': 'ListItem', position: 2, name: 'Nosotros', item: 'https://TU-DOMINIO.es/nosotros' },
+        ],
+      },
+    },
+    {
+      '@type': 'Person',
+      '@id': 'https://TU-DOMINIO.es/#ginesmunuera',
+      name: 'Ginés Munuera',
+      jobTitle: 'Fundador',
+      worksFor: { '@id': 'https://TU-DOMINIO.es/#organization' },
+      address: { '@type': 'PostalAddress', addressLocality: 'Murcia', addressCountry: 'ES' },
+      knowsAbout: ['Inteligencia Artificial', 'Automatización empresarial', 'Chatbots', 'Agentes IA'],
+    },
+  ],
+}
 
 export default function Nosotros({ onChatOpen }) {
   const isMobile = useIsMobile()
   const px = isMobile ? '1.25rem' : '2rem'
   const sectionPy = isMobile ? '4rem' : '5.5rem'
+
+  useEffect(() => {
+    const prevTitle = document.title
+    const descEl = document.querySelector('meta[name="description"]')
+    const prevDesc = descEl?.getAttribute('content') ?? ''
+
+    document.title = 'Nosotros · BrAIn | Agencia de IA en Murcia — Quiénes somos'
+    descEl?.setAttribute('content', 'Somos empresarios que automatizamos nuestros propios negocios antes de ayudar a otros. Conoce al equipo de BrAIn, agencia de IA en Murcia. Primera reunión gratuita.')
+
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.id = 'nosotros-schema'
+    script.textContent = JSON.stringify(NOSOTROS_SCHEMA)
+    document.head.appendChild(script)
+
+    return () => {
+      document.title = prevTitle
+      descEl?.setAttribute('content', prevDesc)
+      document.getElementById('nosotros-schema')?.remove()
+    }
+  }, [])
 
   return (
     <div style={{ background: '#0A0A0C', minHeight: '100vh' }}>
@@ -146,7 +209,7 @@ export default function Nosotros({ onChatOpen }) {
           </motion.div>
 
           <motion.div {...fade(0.12)} style={{ display: 'flex', justifyContent: isMobile ? 'center' : 'flex-end' }}>
-            <PhotoPlaceholder />
+            <SitoPhoto />
           </motion.div>
         </div>
       </section>
@@ -398,7 +461,7 @@ export default function Nosotros({ onChatOpen }) {
       {/* ── Footer simple ── */}
       <footer style={{ background: '#0A0A0C', padding: '2rem', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
-          br<span style={G_TEXT}>[AI]</span>n · Murcia, España · 2025
+          br<span style={G_TEXT}>[AI]</span>n · Murcia, España · {new Date().getFullYear()}
         </span>
       </footer>
 

@@ -13,7 +13,7 @@ export default function CookieBanner({ onOpenLegal }) {
 
   useEffect(() => {
     if (!localStorage.getItem(STORAGE_KEY)) {
-      const t = setTimeout(() => setVisible(true), 4200)
+      const t = setTimeout(() => setVisible(true), 10000)
       return () => clearTimeout(t)
     }
   }, [])

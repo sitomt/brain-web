@@ -108,6 +108,16 @@ export default function CtaFinal({ onChatOpen }) {
           </button>
         </motion.div>
 
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.35 }}
+          style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.06em', margin: '-0.5rem 0 0' }}
+        >
+          Normalmente responde en menos de 2 horas
+        </motion.p>
+
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

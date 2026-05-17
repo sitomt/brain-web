@@ -22,22 +22,34 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
         textAlign: isMobile ? 'center' : 'left',
       }}>
 
-        {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>br</span>
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>[AI]</span>
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>n.</span>
-          </span>
-          <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.75rem' }}>·</span>
-          <span style={{
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 300,
-            fontSize: '0.75rem',
-            color: 'rgba(255,255,255,0.25)',
-          }}>
-            © {new Date().getFullYear()} Todos los derechos reservados
-          </span>
+        {/* Brand + contacto */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+            <span style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+              <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>br</span>
+              <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>[AI]</span>
+              <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>n.</span>
+            </span>
+            <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.75rem' }}>·</span>
+            <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)' }}>
+              © {new Date().getFullYear()} Todos los derechos reservados
+            </span>
+          </div>
+          <a
+            href="mailto:ginesmunuera@gmail.com"
+            style={{
+              fontFamily: "'DM Sans',sans-serif",
+              fontWeight: 300,
+              fontSize: '0.75rem',
+              color: 'rgba(255,255,255,0.3)',
+              textDecoration: 'none',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.7)'}
+            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.3)'}
+          >
+            ginesmunuera@gmail.com
+          </a>
         </div>
 
         {/* Legal links */}

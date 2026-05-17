@@ -93,7 +93,7 @@ export default function Hero({ onChatOpen }) {
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <button
-              onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}
               onMouseEnter={(e) => { e.currentTarget.style.background = '#2A2824' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = '#1A1814' }}
               style={{
