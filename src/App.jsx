@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import CustomCursor from './components/CustomCursor'
 import IntroAnimation from './components/IntroAnimation'
@@ -12,20 +13,19 @@ import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
+import Nosotros from './pages/Nosotros'
 
-export default function App() {
+function AppContent() {
   const [introComplete, setIntroComplete] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
-
   const [legalOpen, setLegalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState('privacidad')
   const [cookieBannerKey, setCookieBannerKey] = useState(0)
 
-  const openLegal = (tab) => {
-    setLegalTab(tab)
-    setLegalOpen(true)
-  }
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
+  const openLegal = (tab) => { setLegalTab(tab); setLegalOpen(true) }
   const reopenCookies = () => {
     localStorage.removeItem('brain_cookie_consent')
     setCookieBannerKey(k => k + 1)
@@ -35,38 +35,54 @@ export default function App() {
     <>
       <CustomCursor />
 
-      <IntroAnimation onComplete={() => setIntroComplete(true)} />
+      {/* Intro splash only on home, only once */}
+      {isHome && !introComplete && (
+        <IntroAnimation onComplete={() => setIntroComplete(true)} />
+      )}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: introComplete ? 1 : 0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'relative', zIndex: 1 }}
-      >
-        <Navigation
-          visible={introComplete}
-          onChatOpen={() => setChatOpen(true)}
+      {/* Navigation lives at app level — visible on all routes */}
+      <Navigation
+        visible={isHome ? introComplete : true}
+        onChatOpen={() => setChatOpen(true)}
+      />
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: introComplete ? 1 : 0 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <main>
+                <section id="hero">
+                  <Hero onChatOpen={() => setChatOpen(true)} />
+                </section>
+                <section id="problem">
+                  <Problem />
+                </section>
+                <section id="products">
+                  <Products onChatOpen={() => setChatOpen(true)} />
+                </section>
+                <section id="cases">
+                  <Cases />
+                </section>
+                <section id="cta">
+                  <CtaFinal onChatOpen={() => setChatOpen(true)} />
+                </section>
+              </main>
+              <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
+            </motion.div>
+          }
         />
-        <main>
-          <section id="hero">
-            <Hero onChatOpen={() => setChatOpen(true)} />
-          </section>
-          <section id="problem">
-            <Problem />
-          </section>
-          <section id="products">
-            <Products onChatOpen={() => setChatOpen(true)} />
-          </section>
-          <section id="cases">
-            <Cases />
-          </section>
-          <section id="cta">
-            <CtaFinal onChatOpen={() => setChatOpen(true)} />
-          </section>
-        </main>
 
-        <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
-      </motion.div>
+        <Route
+          path="/nosotros"
+          element={<Nosotros onChatOpen={() => setChatOpen(true)} />}
+        />
+      </Routes>
 
       <ChatWidget
         isOpen={chatOpen}
@@ -74,10 +90,7 @@ export default function App() {
         onClose={() => setChatOpen(false)}
       />
 
-      <CookieBanner
-        key={cookieBannerKey}
-        onOpenLegal={openLegal}
-      />
+      <CookieBanner key={cookieBannerKey} onOpenLegal={openLegal} />
 
       <LegalModal
         open={legalOpen}
@@ -86,5 +99,13 @@ export default function App() {
         onClose={() => setLegalOpen(false)}
       />
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   )
 }

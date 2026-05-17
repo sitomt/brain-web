@@ -30,9 +30,9 @@ export default function Cases() {
   return (
     <AuroraBackground id="casos" style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ marginBottom: '3rem' }}>
-          <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1.25rem' }}>
-            <span style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.3)', display: 'inline-block' }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ marginBottom: '3rem', textAlign: isMobile ? 'center' : 'left' }}>
+          <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'flex-start', gap: 8, marginBottom: '1.25rem' }}>
+            <span style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.3)', display: isMobile ? 'none' : 'inline-block' }} />
             Clientes
           </span>
           <h2 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2rem,4vw,3rem)', color: '#fff', lineHeight: 1.1 }}>
@@ -43,10 +43,10 @@ export default function Cases() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2,1fr)', gap: '1.25rem', marginBottom: '3rem' }}>
           {cases.map((c, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }}>
-              <CometCard style={{ padding: isMobile ? '1.75rem 1.5rem' : '2.5rem', height: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <CometCard style={{ padding: isMobile ? '1.75rem 1.5rem' : '2.5rem', height: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
 
                 {/* Logo */}
-                <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', width: '100%', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                   <img
                     src={c.logo}
                     alt={c.alt}

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
 
-const LINKS = [
+const SCROLL_LINKS = [
   { label: 'Soluciones', target: 'products' },
-  { label: 'Casos',      target: 'casos' },
+  { label: 'Casos',      target: 'cases' },
 ]
-
-const scrollTo = (id) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 const THEMES = {
   hero: {
@@ -57,6 +55,17 @@ export default function Navigation({ visible, onChatOpen }) {
   const [activeSection, setActiveSection] = useState('hero')
   const [btnHovered, setBtnHovered] = useState(false)
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
+  const handleScrollLink = (target) => {
+    if (isHome) {
+      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.location.href = `/#${target}`
+    }
+  }
 
   useEffect(() => {
     const sectionIds = ['hero', 'problem', 'products', 'cases', 'cta']
@@ -79,7 +88,7 @@ export default function Navigation({ visible, onChatOpen }) {
     return () => observers.forEach((o) => o.disconnect())
   }, [])
 
-  const theme = THEMES[activeSection] ?? THEMES.hero
+  const theme = isHome ? (THEMES[activeSection] ?? THEMES.hero) : THEMES.problem
 
   return (
     <motion.nav
@@ -104,7 +113,11 @@ export default function Navigation({ visible, onChatOpen }) {
       }}
     >
       {/* Logo */}
-      <a href="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: 0 }}>
+      <a
+        href="/"
+        onClick={(e) => { e.preventDefault(); window.location.pathname === '/' ? window.scrollTo({ top: 0, behavior: 'smooth' }) : window.location.href = '/' }}
+        style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: 0 }}
+      >
         <span style={{
           fontFamily: "'Syne Mono', monospace",
           fontSize: '1.05rem',
@@ -140,10 +153,10 @@ export default function Navigation({ visible, onChatOpen }) {
 
       {/* Links + CTA */}
       <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '2rem', alignItems: 'center' }}>
-        {!isMobile && LINKS.map(({ label, target }) => (
+        {!isMobile && SCROLL_LINKS.map(({ label, target }) => (
           <button
             key={label}
-            onClick={() => scrollTo(target)}
+            onClick={() => handleScrollLink(target)}
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
@@ -163,6 +176,29 @@ export default function Navigation({ visible, onChatOpen }) {
             {label}
           </button>
         ))}
+
+        {!isMobile && (
+          <button
+            onClick={() => navigate('/nosotros')}
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 300,
+              fontSize: '0.8rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: location.pathname === '/nosotros' ? '#fff' : theme.linkColor,
+              background: 'none',
+              border: 'none',
+              cursor: 'none',
+              opacity: location.pathname === '/nosotros' ? 1 : 0.7,
+              transition: 'opacity 0.2s, color 0.6s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = location.pathname === '/nosotros' ? 1 : 0.7)}
+          >
+            Nosotros
+          </button>
+        )}
 
         <button
           onMouseEnter={() => setBtnHovered(true)}

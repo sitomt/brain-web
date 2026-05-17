@@ -125,15 +125,14 @@ export default function LegalModal({ open, tab, onTabChange, onClose }) {
 
           {/* Panel */}
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 40, scale: 0.97 }}
+            initial={{ opacity: 0, x: '-50%', y: 'calc(-50% + 40px)', scale: 0.97 }}
+            animate={{ opacity: 1, x: '-50%', y: '-50%', scale: 1 }}
+            exit={{ opacity: 0, x: '-50%', y: 'calc(-50% + 40px)', scale: 0.97 }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: 'fixed',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%,-50%)',
               width: 'min(680px, calc(100vw - 32px))',
               maxHeight: 'min(78vh, 680px)',
               zIndex: 9600,

@@ -114,7 +114,7 @@ function LazyVideoColumn({ component, isMobile }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        minHeight: isMobile ? 200 : 280,
+        minHeight: isMobile ? 350 : 380,
       }}
     >
       {showPlayer ? (
@@ -133,7 +133,7 @@ function LazyVideoColumn({ component, isMobile }) {
         >
           <Player
             component={component}
-            durationInFrames={300}
+            durationInFrames={330}
             fps={30}
             compositionWidth={COMP_W}
             compositionHeight={COMP_H}
@@ -183,6 +183,8 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          alignItems: isMobile ? 'center' : 'flex-start',
+          textAlign: isMobile ? 'center' : 'left',
           gap: '1.25rem',
           order: isMobile ? 2 : 0,
         }}
@@ -248,8 +250,9 @@ function Tier1Card({ num, name, benefit, desc, left, component, index }) {
 
 /* ---- Connectors block (Card 1) ---- */
 function Connectors() {
+  const isMobile = useIsMobile()
   return (
-    <div>
+    <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
       <div
         style={{
           fontFamily: "'Syne Mono', monospace",
@@ -262,7 +265,7 @@ function Connectors() {
       >
         Conecta con
       </div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {CHANNELS.map(({ name, Icon }) => (
           <div
             key={name}
@@ -296,8 +299,9 @@ function Connectors() {
 
 /* ---- Tags pill ---- */
 function Tags({ items }) {
+  const isMobile = useIsMobile()
   return (
-    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
       {items.map((tag) => (
         <span
           key={tag}
@@ -327,14 +331,15 @@ const MORE_PILLS = [
   { emoji: '🌐', label: 'Webs y landing pages' },
 ]
 
-function Tier2Block({ onChatOpen }) {
+function Tier2Block() {
+  const isMobile = useIsMobile()
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      style={{ marginTop: '3rem' }}
+      style={{ marginTop: '3rem', textAlign: isMobile ? 'center' : 'left' }}
     >
       <div
         style={{
@@ -349,7 +354,7 @@ function Tier2Block({ onChatOpen }) {
         Más soluciones
       </div>
 
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '1.5rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {MORE_PILLS.map(({ emoji, label }) => (
           <div
             key={label}
@@ -372,37 +377,6 @@ function Tier2Block({ onChatOpen }) {
         ))}
       </div>
 
-      <div style={{ textAlign: 'center' }}>
-        <p
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: 'italic',
-            fontSize: '0.95rem',
-            color: 'rgba(255,255,255,0.4)',
-            marginBottom: '0.5rem',
-          }}
-        >
-          ¿No encuentras lo que buscas? Hay más.
-        </p>
-        <button
-          onClick={onChatOpen}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: 'italic',
-            fontSize: '0.95rem',
-            background: GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            padding: 0,
-          }}
-        >
-          Exploremos juntos →
-        </button>
-      </div>
     </motion.div>
   )
 }
@@ -422,7 +396,7 @@ export default function Products({ onChatOpen }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem' }}
+          style={{ marginBottom: '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
           <span
             style={{
@@ -490,7 +464,7 @@ export default function Products({ onChatOpen }) {
         </div>
 
         {/* Tier 2 */}
-        <Tier2Block onChatOpen={onChatOpen} />
+        <Tier2Block />
       </div>
     </section>
   )

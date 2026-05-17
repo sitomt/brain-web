@@ -41,7 +41,7 @@ export default function Hero({ onChatOpen }) {
         }}
       >
         {/* Left column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
           <motion.div {...fadeUp(0.1)}>
             <span
               style={{
@@ -54,10 +54,11 @@ export default function Hero({ onChatOpen }) {
                 letterSpacing: '0.1em',
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: isMobile ? 'center' : 'flex-start',
                 gap: 8,
               }}
             >
-              <span style={{ width: 32, height: 1, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ width: 32, height: 1, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', display: isMobile ? 'none' : 'inline-block', flexShrink: 0 }} />
               Agencia de IA · Murcia, España
             </span>
           </motion.div>
@@ -90,7 +91,7 @@ export default function Hero({ onChatOpen }) {
             </span>
           </motion.div>
 
-          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <button
               onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
               onMouseEnter={(e) => { e.currentTarget.style.background = '#2A2824' }}

@@ -12,7 +12,7 @@ export default function CtaFinal({ onChatOpen }) {
     setTimeout(() => {
       window.dispatchEvent(
         new CustomEvent('chat:send', {
-          detail: { message: 'Hola. Quiero agendar una reunión.' },
+          detail: { message: 'Hola. Quiero agendar un diagnóstico gratuito.' },
         })
       )
     }, 400)
@@ -21,32 +21,51 @@ export default function CtaFinal({ onChatOpen }) {
   return (
     <AuroraBackground intense style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem' }}>
       <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{
+            fontFamily: "'Syne Mono',monospace",
+            fontSize: '0.7rem',
+            color: 'rgba(255,255,255,0.4)',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+          }}
+        >
+          Primera reunión, gratis
+        </motion.div>
+
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.8rem,6vw,5rem)', color: '#fff', lineHeight: 1 }}
+          transition={{ duration: 0.7, delay: 0.05 }}
+          style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.6rem,6vw,4.8rem)', color: '#fff', lineHeight: 1.05, margin: 0 }}
         >
-          ¿Empezamos?
+          Tu negocio puede<br />
+          <em style={{ fontStyle: 'italic', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            trabajar solo.
+          </em>
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 520 }}
         >
-          Sin permanencia. Sin sorpresas.<br />
-          Con resultados en menos de 30 días.
+          En 30 minutos te decimos qué automatizamos en tu negocio,
+          cómo lo hacemos y cuánto cuesta. Sin rodeos. Sin compromiso.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          transition={{ duration: 0.7, delay: 0.25 }}
           style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
         >
           <button
@@ -89,16 +108,31 @@ export default function CtaFinal({ onChatOpen }) {
           </button>
         </motion.div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', cursor: 'none' }}
-          onClick={onChatOpen}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}
         >
-          o habla ahora mismo con nuestro asistente ↓
-        </motion.p>
+          {['Sin permanencia', 'Resultados en 30 días', 'Sin coste inicial'].map((item) => (
+            <span
+              key={item}
+              style={{
+                fontFamily: "'Syne Mono',monospace",
+                fontSize: '0.62rem',
+                color: 'rgba(255,255,255,0.35)',
+                letterSpacing: '0.06em',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <span style={{ width: 4, height: 4, borderRadius: 999, background: 'rgba(255,255,255,0.25)', display: 'inline-block', flexShrink: 0 }} />
+              {item}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </AuroraBackground>
   )

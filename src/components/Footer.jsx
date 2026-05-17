@@ -24,15 +24,10 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
 
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{
-            fontFamily: "'Instrument Serif',serif",
-            fontSize: '1.15rem',
-            background: GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>
-            BrAIn
+          <span style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>br</span>
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>[AI]</span>
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>n.</span>
           </span>
           <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.75rem' }}>·</span>
           <span style={{

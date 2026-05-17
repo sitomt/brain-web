@@ -1,33 +1,165 @@
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import { Player } from '@remotion/player'
 import AuroraBackground from './AuroraBackground'
-import CometCard from './CometCard'
 import useIsMobile from '../hooks/useIsMobile'
+import Problem1_Clock from '../remotion/Problem1_Clock'
+import Problem2_Calls from '../remotion/Problem2_Calls'
+import Problem3_Flow from '../remotion/Problem3_Flow'
+import Problem4_Data from '../remotion/Problem4_Data'
 
 const GRADIENT = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
+
+const COMP_W = 600
+const COMP_H = 340
 
 const problems = [
   {
     num: '01',
     title: 'Son las 23:47.',
     desc: 'Un cliente intenta reservar. Nadie responde.\nCierra la pestaña. Mañana lo hará en otro sitio.\nTú no lo sabrás nunca.',
+    component: Problem1_Clock,
   },
   {
     num: '02',
     title: 'Siempre hay alguien al teléfono.',
     desc: 'Respondiendo lo mismo. Una y otra vez.\nHorarios, precios, disponibilidad.\nTiempo de tu equipo que no vuelve.',
+    component: Problem2_Calls,
   },
   {
     num: '03',
     title: 'Todo depende de alguien.',
     desc: 'Si falla esa persona, falla el proceso.\nTu negocio es tan sólido como el eslabón\nmás débil de tu equipo.',
+    component: Problem3_Flow,
   },
   {
     num: '04',
     title: 'Los datos están ahí.',
     desc: 'Sabes que tienes respuestas en tus números.\nPero nadie tiene tiempo de buscarlas.\nAsí que nadie decide con información real.',
+    component: Problem4_Data,
   },
 ]
 
+/* ---- Lazy video that fills the card with cover scaling ---- */
+function LazyProblemVideo({ component }) {
+  const [isVisible, setIsVisible] = useState(false)
+  const [coverScale, setCoverScale] = useState(null)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+
+    const updateScale = () => {
+      const { width, height } = el.getBoundingClientRect()
+      if (width > 0 && height > 0) {
+        setCoverScale(Math.max(width / COMP_W, height / COMP_H))
+      }
+    }
+
+    const ro = new ResizeObserver(updateScale)
+    ro.observe(el)
+    updateScale()
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.2 }
+    )
+    io.observe(el)
+
+    return () => {
+      ro.disconnect()
+      io.disconnect()
+    }
+  }, [])
+
+  const showPlayer = isVisible && coverScale !== null
+
+  return (
+    <div ref={wrapRef} style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      {showPlayer ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginTop: -(COMP_H / 2),
+            marginLeft: -(COMP_W / 2),
+            width: COMP_W,
+            height: COMP_H,
+            transform: `scale(${coverScale})`,
+            transformOrigin: 'center center',
+          }}
+        >
+          <Player
+            component={component}
+            durationInFrames={270}
+            fps={30}
+            compositionWidth={COMP_W}
+            compositionHeight={COMP_H}
+            style={{ width: COMP_W, height: COMP_H, display: 'block' }}
+            autoPlay
+            loop
+            initiallyMuted
+            controls={false}
+            clickToPlay={false}
+            acknowledgeRemotionLicense
+          />
+        </div>
+      ) : (
+        <div style={{ position: 'absolute', inset: 0, background: '#0A0A0C' }} />
+      )}
+    </div>
+  )
+}
+
+/* ---- Card: video fills everything, only the number floats on top ---- */
+function ProblemCard({ p, index }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: 20,
+        minHeight: 320,
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      {/* Layer 1 — video fills entire card */}
+      <LazyProblemVideo component={p.component} />
+
+      {/* Layer 2 — number label only */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 16,
+          left: 20,
+          zIndex: 2,
+          fontFamily: "'Syne Mono', monospace",
+          fontSize: '0.7rem',
+          background: GRADIENT,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          letterSpacing: '0.06em',
+        }}
+      >
+        {p.num}
+      </div>
+    </motion.div>
+  )
+}
+
+/* ---- Section ---- */
 export default function Problem() {
   const isMobile = useIsMobile()
 
@@ -41,7 +173,7 @@ export default function Problem() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem' }}
+          style={{ marginBottom: '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
           <span
             style={{
@@ -91,62 +223,7 @@ export default function Problem() {
           }}
         >
           {problems.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <CometCard
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 20,
-                  padding: isMobile ? '1.5rem' : '2rem',
-                  height: '100%',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Syne Mono', monospace",
-                    fontSize: '0.75rem',
-                    background: GRADIENT,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  {p.num}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "'Instrument Serif', serif",
-                    fontSize: '1.3rem',
-                    color: '#fff',
-                    marginBottom: '0.75rem',
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {p.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 300,
-                    fontSize: '0.88rem',
-                    color: 'rgba(255,255,255,0.6)',
-                    lineHeight: 1.75,
-                    whiteSpace: 'pre-line',
-                    margin: 0,
-                  }}
-                >
-                  {p.desc}
-                </p>
-              </CometCard>
-            </motion.div>
+            <ProblemCard key={i} p={p} index={i} />
           ))}
         </div>
 
@@ -169,25 +246,6 @@ export default function Problem() {
           >
             No es falta de esfuerzo. Es falta de sistema.
           </p>
-          <button
-            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{
-              marginTop: '0.75rem',
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.75rem',
-              background: GRADIENT,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              display: 'inline-block',
-              letterSpacing: '0.04em',
-            }}
-          >
-            Para eso estamos nosotros. →
-          </button>
         </motion.div>
 
       </div>

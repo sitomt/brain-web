@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-05-17
+Última actualización: 2026-05-17 (tarde)
 
 ---
 
@@ -80,6 +80,16 @@
   - [x] Grid 2×1 desktop / 1×1 móvil con gap 1.25rem
   - [x] whileInView con stagger 0.1s por card, amount 0.2
   - [x] Remate: frase italic blanco 55% + CTA "Para eso estamos nosotros. →" con gradiente, scroll a #products
+  - [x] 4 vídeos Remotion como fondo de cada card (Problem1_Clock, Problem2_Calls, Problem3_Flow, Problem4_Data)
+  - [x] Texto de cards eliminado — título y descripción desaparecen del JSX (el vídeo los comunica)
+  - [x] Vídeo ocupa 100% de cada card (position absolute, inset 0, cover scaling)
+  - [x] Solo el número (01/02/03/04) permanece sobre el vídeo (position absolute, top 16, left 20, zIndex 2)
+  - [x] Lazy loading con IntersectionObserver (threshold 20%) + ResizeObserver para cover scaling
+  - [x] Player: 210 frames, 30fps, 600×340, autoPlay loop, sin controles, sin overlay
+  - [x] `src/remotion/Problem1_Clock.jsx` — reloj 23:47→48→49, colón parpadeante, burbuja WhatsApp, "Sin respuesta."
+  - [x] `src/remotion/Problem2_Calls.jsx` — contador 44→52, 3 burbujas en loop, "68% preguntan siempre lo mismo."
+  - [x] `src/remotion/Problem3_Flow.jsx` — diagrama SVG de nodos, nodo central desaparece, "Sin esa persona, nada funciona."
+  - [x] `src/remotion/Problem4_Data.jsx` — tabla de datos, cursor SVG errante, pregunta italic, "..." en rojo
 - [x] `Products.jsx` — rediseño completo Tier 1 + Tier 2 con Remotion Player
   - [x] Header con tag Syne Mono "— Lo que hacemos" y headline Instrument Serif
   - [x] Card 01: Contact Center IA 24/7 — layout 55/45, logos de conectores (WhatsApp/IG/Telegram/Web/Voz), ChatbotDemo
@@ -96,6 +106,12 @@
   - [x] Columna vídeo: position relative, LazyVideoColumn con IntersectionObserver (threshold 30%)
   - [x] Player renderiza solo cuando card entra en viewport; skeleton pulsante antes de activarse
   - [x] Player: autoPlay, loop, controls=false, clickToPlay=false, initiallyMuted
+  - [x] AgentDemo: contenido reencuadrado y visible dentro de los límites del Player
+        (`minHeight` subido de 280→380 desktop / 200→280 mobile para reducir cover-crop vertical)
+  - [x] AgentDemo: layout de 3 zonas con alturas fijas (Zone1 72px / Zone2 flex:1 / Zone3 44px)
+        — Eliminadas superposiciones de elementos entre zonas
+        — Badge badge fijado en Zone3 con marginTop:8, igual margen arriba/abajo
+        — Márgenes y espaciado corregidos; posicionamiento absoluto en % del área Z2 (592×308)
 - [x] `Cases.jsx` — AuroraBackground MODO A, Baktun13 + Clesol, frase cita final
 - [x] `CtaFinal.jsx` — botón corregido: borderRadius 4px, fontWeight 500, borde blanco sólido,
       al pulsar abre chat y dispara automáticamente "Hola. Quiero agendar una reunión."
@@ -110,6 +126,22 @@
 - [x] Orden correcto: CustomCursor → IntroAnimation → Nav → main → ChatWidget
 - [x] Estado `introComplete` controla fade-in del contenido principal
 - [x] Estado `chatOpen` compartido entre CTA, Hero y ChatWidget
+- [x] React Router configurado con rutas `/` (landing) y `/nosotros`
+- [x] Navigation y ChatWidget accesibles desde ambas rutas (nivel app)
+
+### CTAs y conversión
+- [x] CTAs unificados: solo "Empecemos →" (nav) y "Agenda tu diagnóstico gratuito" (CtaFinal)
+- [x] CTA intermedio eliminado de Problem.jsx ("Para eso estamos nosotros. →")
+- [x] CTA intermedio eliminado de Products.jsx ("Exploremos juntos →")
+- [x] CtaFinal: botón renombrado y mensaje actualizado a "Hola. Quiero agendar un diagnóstico gratuito."
+
+### Página Nosotros
+- [x] `src/pages/Nosotros.jsx` creada con contenido completo
+- [x] Hero dos columnas: headline + foto placeholder (3:4, listo para imagen real)
+- [x] 4 bloques de contenido: Por qué existe BrAIn / Quién hay detrás / Cómo trabajamos / Cómo empezamos
+- [x] CTA Final reutilizado con mismo botón y mensaje
+- [x] Footer simple: br[AI]n · Murcia, España · 2025
+- [x] Navigation: link "Nosotros" → /nosotros (tema oscuro forzado fuera de home)
 
 ### Correcciones visuales
 - [x] Bug rectángulos en Problem corregido — `AuroraBackground`: `opacity` reducida (0.35→0.12 normal, 0.6→0.35 intense), `blur` unificado a 120px; todos los blobs conservan `borderRadius:'50%'`
@@ -128,6 +160,8 @@ _(sin tareas en progreso actualmente)_
 ## 📋 PENDIENTE
 
 ### Web — Mejoras visuales
+- [ ] Foto real de Sito para /nosotros (sustituir placeholder en `src/pages/Nosotros.jsx`)
+- [ ] Revisar meta tags y SEO de /nosotros (title, og:image, description)
 - [ ] Revisar rendimiento de Remotion Player en móvil (ya tiene lazy-load; valorar fallback estático si sigue lento)
 - [ ] Añadir más conectores a Card 1 cuando se integren nuevos canales
 - [ ] Vídeos adicionales Remotion para las soluciones del Tier 2
