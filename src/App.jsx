@@ -8,7 +8,10 @@ import Hero from './components/Hero'
 import Problem from './components/Problem'
 import Products from './components/Products'
 import Cases from './components/Cases'
+import TrustBar from './components/TrustBar'
+import HowItWorks from './components/HowItWorks'
 import CtaFinal from './components/CtaFinal'
+import SectionBridge from './components/SectionBridge'
 import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
@@ -18,6 +21,7 @@ import Nosotros from './pages/Nosotros'
 function AppContent() {
   const [introComplete, setIntroComplete] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const [chatContext, setChatContext] = useState(null)
   const [legalOpen, setLegalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState('privacidad')
   const [cookieBannerKey, setCookieBannerKey] = useState(0)
@@ -25,6 +29,7 @@ function AppContent() {
   const location = useLocation()
   const isHome = location.pathname === '/'
 
+  const openChat = (context = null) => { setChatContext(context); setChatOpen(true) }
   const openLegal = (tab) => { setLegalTab(tab); setLegalOpen(true) }
   const reopenCookies = () => {
     localStorage.removeItem('brain_cookie_consent')
@@ -43,7 +48,7 @@ function AppContent() {
       {/* Navigation lives at app level — visible on all routes */}
       <Navigation
         visible={isHome ? introComplete : true}
-        onChatOpen={() => setChatOpen(true)}
+        onChatOpen={() => openChat('navbar')}
       />
 
       <Routes>
@@ -58,19 +63,23 @@ function AppContent() {
             >
               <main>
                 <section id="hero">
-                  <Hero onChatOpen={() => setChatOpen(true)} />
+                  <Hero onChatOpen={() => openChat('hero')} />
                 </section>
+                <TrustBar />
                 <section id="problem">
                   <Problem />
                 </section>
+                <HowItWorks />
+                <SectionBridge direction="darkToLight" darkColor="#0D0D10" lightColor="#FAF8F3" />
                 <section id="products">
-                  <Products onChatOpen={() => setChatOpen(true)} />
+                  <Products onChatOpen={openChat} />
                 </section>
+                <SectionBridge direction="lightToDark" lightColor="#FAF8F3" darkColor="#020203" />
                 <section id="cases">
                   <Cases />
                 </section>
                 <section id="cta">
-                  <CtaFinal onChatOpen={() => setChatOpen(true)} />
+                  <CtaFinal onChatOpen={() => openChat('cta_final')} />
                 </section>
               </main>
               <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
@@ -80,13 +89,14 @@ function AppContent() {
 
         <Route
           path="/nosotros"
-          element={<Nosotros onChatOpen={() => setChatOpen(true)} />}
+          element={<Nosotros onChatOpen={() => openChat('nosotros')} />}
         />
       </Routes>
 
       <ChatWidget
         isOpen={chatOpen}
-        onOpen={() => setChatOpen(true)}
+        context={chatContext}
+        onOpen={() => openChat(null)}
         onClose={() => setChatOpen(false)}
       />
 

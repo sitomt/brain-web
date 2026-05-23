@@ -44,9 +44,9 @@ export default function CtaFinal({ onChatOpen }) {
           transition={{ duration: 0.7, delay: 0.05 }}
           style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.6rem,6vw,4.8rem)', color: '#fff', lineHeight: 1.05, margin: 0 }}
         >
-          Tu negocio puede<br />
+          Treinta minutos.<br />
           <em style={{ fontStyle: 'italic', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-            trabajar solo.
+            Y el resto cambia.
           </em>
         </motion.h2>
 
@@ -57,8 +57,8 @@ export default function CtaFinal({ onChatOpen }) {
           transition={{ duration: 0.7, delay: 0.15 }}
           style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 520 }}
         >
-          En 30 minutos te decimos qué automatizamos en tu negocio,
-          cómo lo hacemos y cuánto cuesta. Sin rodeos. Sin compromiso.
+          Te decimos qué automatizamos en tu negocio, cómo lo hacemos
+          y cuánto cuesta. Sin rodeos. Sin compromiso.
         </motion.p>
 
         <motion.div
@@ -103,7 +103,7 @@ export default function CtaFinal({ onChatOpen }) {
               }}
             />
             <span style={{ position: 'relative', zIndex: 1 }}>
-              Agenda tu diagnóstico gratuito →
+              Hablemos.
             </span>
           </button>
         </motion.div>

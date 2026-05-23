@@ -28,8 +28,8 @@ const problems = [
   },
   {
     num: '03',
-    title: 'Todo depende de alguien.',
-    body: 'Si esa persona falla,\nfalla el proceso.\n\nTu negocio es tan sólido\ncomo su eslabón más débil.',
+    title: 'Lo sabes solo tú.',
+    body: 'Los contactos. Los proveedores.\nLas contraseñas. Las excepciones.\n\nSi te pasa algo,\nse para todo.',
     component: Problem3_Flow,
   },
   {
@@ -145,12 +145,12 @@ function ProblemRow({ p, isMobile }) {
       <span
         style={{
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.7rem',
+          fontSize: '1rem',
           background: GRADIENT,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
-          letterSpacing: '0.06em',
+          letterSpacing: '0.08em',
         }}
       >
         {p.num}
@@ -158,9 +158,9 @@ function ProblemRow({ p, isMobile }) {
       <h3
         style={{
           fontFamily: "'Instrument Serif', serif",
-          fontSize: '1.6rem',
+          fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
           color: '#fff',
-          lineHeight: 1.2,
+          lineHeight: 1.15,
           margin: 0,
         }}
       >
@@ -170,9 +170,9 @@ function ProblemRow({ p, isMobile }) {
         style={{
           fontFamily: "'DM Sans', sans-serif",
           fontWeight: 300,
-          fontSize: '0.9rem',
-          color: 'rgba(255,255,255,0.65)',
-          lineHeight: 1.8,
+          fontSize: '1.05rem',
+          color: 'rgba(255,255,255,0.78)',
+          lineHeight: 1.7,
           margin: 0,
           whiteSpace: 'pre-line',
         }}

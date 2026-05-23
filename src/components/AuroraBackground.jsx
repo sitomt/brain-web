@@ -8,11 +8,14 @@ const blobs = [
   { color: '#4361EE', size: 350, x: '5%',  y: '70%', duration: 30 },
 ]
 
-export default function AuroraBackground({ children, className = '', intense = false, id, style = {} }) {
-  const opacity = intense ? 0.35 : 0.12
+export default function AuroraBackground({ children, className = '', intense = false, variant = 'dark', id, style = {} }) {
+  const isLight = variant === 'light'
+  // Light variant uses Hero cream tone + lower-opacity blobs so colors don't get fluorescent on light
+  const baseBg = isLight ? '#FAF8F3' : '#0A0A0A'
+  const opacity = isLight ? (intense ? 0.22 : 0.1) : (intense ? 0.35 : 0.12)
 
   return (
-    <div id={id} className={`relative overflow-hidden ${className}`} style={{ background: '#0A0A0A', ...style }}>
+    <div id={id} className={`relative overflow-hidden ${className}`} style={{ background: baseBg, ...style }}>
       {blobs.map((blob, i) => (
         <motion.div
           key={i}
@@ -24,6 +27,7 @@ export default function AuroraBackground({ children, className = '', intense = f
             background: blob.color,
             filter: 'blur(120px)',
             opacity,
+            mixBlendMode: isLight ? 'multiply' : 'normal',
             left: blob.x,
             top: blob.y,
             transform: 'translate(-50%, -50%)',

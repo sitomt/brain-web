@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Player } from '@remotion/player'
+import { Lock, Target, Zap, Monitor, Globe, FileText, ShieldCheck } from 'lucide-react'
 import useIsMobile from '../hooks/useIsMobile'
 import ChatbotDemo from '../remotion/ChatbotDemo'
 import DataQueryDemo from '../remotion/DataQueryDemo'
@@ -13,58 +14,64 @@ const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 const PRODUCTS = [
   {
     num: '01',
+    contextId: 'contact_center',
+    humanName: 'Quien atiende.',
     name: 'Contact Center IA',
     benefit: 'Tu negocio atiende solo.\nA cualquier hora.',
-    desc: 'Chatbot o voz inteligente que atiende a tus clientes por cualquier canal. Reservas, consultas, pedidos. Sin que tú hagas nada. Sin que nadie se quede sin respuesta.',
+    desc: 'A las 23:47 alguien intenta reservar. Tu sistema le confirma la mesa en cuatro segundos. Tú no te enteras hasta el desayuno. Y mañana, ese cliente vendrá.',
     precio: 'Desde 1.200€ · Mantenimiento desde 97€/mes',
     component: ChatbotDemo,
     bullets: [
-      'Respuesta automática por WhatsApp y email',
-      'Gestión de reservas — restaurantes, peluquerías, clínicas',
-      'Atención por Instagram, Telegram y Web',
-      'Voz inteligente que atiende llamadas',
-      'Escalado a humano cuando es necesario',
-      'Conexión con tu CRM',
-      'Trazabilidad de todas las conversaciones',
-      'Disponible 24/7 sin intervención humana',
+      'Contesta reservas mientras estás en otra mesa',
+      'Cierra citas cuando todos duermen',
+      'Atiende cinco conversaciones a la vez sin perder el tono',
+      'Escala a una persona real cuando hace falta',
+      'Se conecta a tu CRM sin que toques nada',
+      'Atiende por WhatsApp, Instagram, Telegram y web',
+      'Recoge llamadas con voz que parece humana',
+      'Sin horarios. Sin festivos. Sin enfermedades.',
     ],
     closingLine: 'Desde lo más simple hasta lo más completo.\nEl precio depende de lo que necesites.',
   },
   {
     num: '02',
+    contextId: 'back_office',
+    humanName: 'Quien resuelve.',
     name: 'Back Office IA',
     benefit: 'Las tareas que frenan a tu equipo.\nResueltas solas.',
-    desc: 'Emails respondidos. Documentos generados. Informes listos cada lunes. Facturas procesadas. Todo lo que consume el tiempo de tu equipo sin generar un euro.',
+    desc: 'Las facturas se ordenan solas. Los emails se contestan sin que abras la bandeja. El informe del lunes ya está hecho el domingo por la noche. Y tu equipo, por fin, hace lo importante.',
     precio: 'Desde 2.000€ · Mantenimiento desde 200€/mes',
     component: AgentDemo,
     bullets: [
-      'Respuesta y redacción de emails',
-      'Generación de documentos desde plantillas',
-      'Informes automáticos — diarios, semanales o mensuales',
-      'Procesado y clasificación de facturas',
-      'Recordatorios y seguimientos automáticos',
-      'Alertas cuando algo no cuadra',
-      'Resúmenes de reuniones',
-      'Gestión de tareas repetitivas internas',
+      'Responde y redacta emails con tu tono',
+      'Procesa facturas sin que nadie las abra',
+      'Te entrega informes listos cada lunes',
+      'Te avisa cuando algo no cuadra',
+      'Resume tus reuniones mientras hablas',
+      'Manda recordatorios sin que se te olvide',
+      'Genera documentos desde tus plantillas',
+      'Se ocupa de lo repetitivo que ahoga al equipo',
     ],
     closingLine: 'Todo lo que tu equipo hace porque\nalguien tiene que hacerlo.',
   },
   {
     num: '03',
+    contextId: 'asistente',
+    humanName: 'Quien sabe.',
     name: 'Asistente IA',
     benefit: 'Pregúntale a tu negocio.\nResponde en segundos.',
-    desc: 'Tus datos conectados a un chat. Stock, reservas, albaranes, métricas. Tu equipo pregunta en español normal y obtiene la respuesta al instante.',
+    desc: 'Pregunta "¿cuánto vendí ayer?" y obtienes la respuesta. En español. En segundos. Tu stock, tus reservas, tus albaranes, tus costes — todo a una conversación de distancia.',
     precio: 'Desde 1.500€ · Mantenimiento desde 150€/mes',
     component: DataQueryDemo,
     bullets: [
-      'Chat conectado a tu stock',
-      'Chat conectado a tus reservas',
-      'Digitalización de albaranes por foto',
-      'Control de costes en tiempo real',
-      'Reportes automáticos bajo demanda',
-      'Alertas si algún gasto se dispara',
-      'Consultas en lenguaje natural',
-      'Conexión a cualquier base de datos del negocio',
+      'Pregunta en español, responde al instante',
+      'Sabe cuánto vendiste, cuánto te queda, cuánto te cuesta',
+      'Digitaliza albaranes con solo una foto',
+      'Te avisa cuando un gasto se dispara',
+      'Genera reportes bajo demanda',
+      'Conectado a cualquier base de datos del negocio',
+      'Detecta lo que se te escapa',
+      'No necesitas saber SQL, ni Excel, ni nada',
     ],
     closingLine: 'Pregunta lo que necesitas.\nTu negocio responde.',
   },
@@ -153,7 +160,7 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
         <motion.div
           animate={{ opacity: [0.04, 0.1, 0.04] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ position: 'absolute', inset: 0, background: '#fff' }}
+          style={{ position: 'absolute', inset: 0, background: '#1A1814' }}
         />
       )}
     </div>
@@ -174,9 +181,9 @@ function FlipButton({ onClick }) {
         gap: 8,
         padding: '10px 22px',
         borderRadius: 999,
-        border: `1px solid ${hovered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)'}`,
-        background: hovered ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)',
-        color: hovered ? '#ffffff' : 'rgba(255,255,255,0.85)',
+        border: `1px solid ${hovered ? 'rgba(26,24,20,0.45)' : 'rgba(26,24,20,0.2)'}`,
+        background: hovered ? 'rgba(26,24,20,0.09)' : 'rgba(26,24,20,0.05)',
+        color: hovered ? '#1A1814' : 'rgba(26,24,20,0.85)',
         fontFamily: "'DM Sans', sans-serif",
         fontWeight: 500,
         fontSize: '0.85rem',
@@ -193,7 +200,6 @@ function FlipButton({ onClick }) {
 
 /* ---- Back face ---- */
 function CardBack({ product, onFlip, onChatOpen, isMobile }) {
-  const [backBtnHovered, setBackBtnHovered] = useState(false)
   const [ctaBtnHovered, setCtaBtnHovered] = useState(false)
 
   return (
@@ -204,48 +210,61 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
         transform: 'rotateY(180deg)',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#FFFFFF',
+        border: '1px solid rgba(26,24,20,0.07)',
         borderRadius: 24,
-        padding: isMobile ? '1.75rem' : '2.5rem',
+        padding: isMobile ? '2rem' : '3rem',
         display: 'flex',
         flexDirection: 'column',
-        overflowY: 'auto',
       }}
     >
-      {/* 1. Number + Name */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexShrink: 0 }}>
+      {/* 1. Number + Name (human primary, technical whispered) */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexShrink: 0 }}>
         <span
           style={{
             fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.75rem',
+            fontSize: 'clamp(1.8rem, 4vw, 2.4rem)',
             background: GRADIENT,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.05em',
             flexShrink: 0,
+            lineHeight: 1,
           }}
         >
           {product.num}
         </span>
-        <span
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 'clamp(1.4rem, 3vw, 1.8rem)',
-            color: '#ffffff',
-            lineHeight: 1.05,
-          }}
-        >
-          {product.name}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+          <span
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.4rem, 3vw, 1.8rem)',
+              color: '#1A1814',
+              lineHeight: 1.05,
+            }}
+          >
+            {product.humanName}
+          </span>
+          <span
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.65rem',
+              color: 'rgba(26,24,20,0.55)',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {product.name}
+          </span>
+        </div>
       </div>
 
       {/* 2. Separator */}
       <div
         style={{
           height: 1,
-          background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%)',
+          background: 'linear-gradient(90deg, rgba(26,24,20,0.15) 0%, rgba(26,24,20,0.02) 100%)',
           marginTop: '1.25rem',
           marginBottom: '1.5rem',
           flexShrink: 0,
@@ -295,7 +314,7 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
         style={{
           fontFamily: "'Syne Mono', monospace",
           fontSize: '0.65rem',
-          color: 'rgba(255,255,255,0.35)',
+          color: 'rgba(26,24,20,0.55)',
           letterSpacing: '0.15em',
           margin: '0 0 1rem',
           flexShrink: 0,
@@ -330,7 +349,7 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: '0.85rem',
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(26,24,20,0.7)',
                 lineHeight: 1.6,
               }}
             >
@@ -347,7 +366,7 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
             fontFamily: "'Instrument Serif', serif",
             fontStyle: 'italic',
             fontSize: '0.88rem',
-            color: 'rgba(255,255,255,0.3)',
+            color: 'rgba(26,24,20,0.5)',
             marginTop: '1.25rem',
             marginBottom: 0,
             lineHeight: 1.6,
@@ -371,44 +390,27 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
           gap: '1rem',
         }}
       >
-        <button
-          onClick={(e) => { e.stopPropagation(); onFlip() }}
-          onMouseEnter={() => setBackBtnHovered(true)}
-          onMouseLeave={() => setBackBtnHovered(false)}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            cursor: 'none',
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.72rem',
-            color: backBtnHovered ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)',
-            letterSpacing: '0.06em',
-            transition: 'color 0.2s',
-            padding: 0,
-          }}
-        >
-          ← Volver
-        </button>
+        <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
 
         <button
-          onClick={(e) => { e.stopPropagation(); onChatOpen() }}
+          onClick={(e) => { e.stopPropagation(); onChatOpen(product.contextId) }}
           onMouseEnter={() => setCtaBtnHovered(true)}
           onMouseLeave={() => setCtaBtnHovered(false)}
           style={{
-            padding: '9px 20px',
+            padding: '10px 22px',
             borderRadius: 999,
-            border: `1px solid ${ctaBtnHovered ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)'}`,
+            border: `1px solid ${ctaBtnHovered ? 'rgba(26,24,20,0.5)' : 'rgba(26,24,20,0.2)'}`,
             background: 'transparent',
-            color: ctaBtnHovered ? '#ffffff' : 'rgba(255,255,255,0.75)',
+            color: ctaBtnHovered ? '#1A1814' : 'rgba(26,24,20,0.75)',
             fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 400,
-            fontSize: '0.82rem',
+            fontWeight: 500,
+            fontSize: '0.85rem',
             cursor: 'none',
             transition: 'border-color 0.2s, color 0.2s',
             whiteSpace: 'nowrap',
           }}
         >
-          Hablamos →
+          Hablemos →
         </button>
       </div>
     </div>
@@ -434,7 +436,7 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
           transformStyle: 'preserve-3d',
           transition: 'transform 0.7s cubic-bezier(0.4,0.2,0.2,1)',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          minHeight: isMobile ? 620 : 480,
+          minHeight: isMobile ? 760 : 580,
         }}
       >
         {/* ── FRONT FACE ── */}
@@ -444,8 +446,8 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
             inset: 0,
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
+            background: '#FFFFFF',
+            border: '1px solid rgba(26,24,20,0.07)',
             borderRadius: 24,
             overflow: 'hidden',
             display: 'grid',
@@ -458,25 +460,43 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
               padding: isMobile ? '2rem' : '3rem',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
               alignItems: isMobile ? 'center' : 'flex-start',
               textAlign: isMobile ? 'center' : 'left',
               gap: '1.25rem',
               order: isMobile ? 2 : 0,
             }}
           >
-            {/* Name */}
-            <h3
-              style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 'clamp(1.8rem, 4vw, 2.4rem)',
-                color: '#ffffff',
-                lineHeight: 1.05,
-                margin: 0,
-              }}
-            >
-              {product.name}
-            </h3>
+            {/* Name — human (primary) + technical badge */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <h3
+                style={{
+                  fontFamily: "'Instrument Serif', serif",
+                  fontSize: 'clamp(2.2rem, 5vw, 3rem)',
+                  color: '#1A1814',
+                  lineHeight: 1.0,
+                  margin: 0,
+                }}
+              >
+                {product.humanName}
+              </h3>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignSelf: isMobile ? 'center' : 'flex-start',
+                  fontFamily: "'Syne Mono', monospace",
+                  fontSize: '0.65rem',
+                  color: 'rgba(26,24,20,0.55)',
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  background: 'rgba(26,24,20,0.06)',
+                  border: '1px solid rgba(26,24,20,0.12)',
+                  borderRadius: 999,
+                  padding: '4px 12px',
+                }}
+              >
+                {product.name}
+              </span>
+            </div>
 
             {/* Tagline */}
             <p
@@ -502,7 +522,7 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: '0.9rem',
-                color: 'rgba(255,255,255,0.6)',
+                color: 'rgba(26,24,20,0.6)',
                 lineHeight: 1.8,
                 margin: 0,
               }}
@@ -510,8 +530,8 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
               {product.desc}
             </p>
 
-            {/* Flip button — only trigger for flip */}
-            <div style={{ alignSelf: isMobile ? 'center' : 'flex-start' }}>
+            {/* Flip button — pinned to bottom so it mirrors the back face position */}
+            <div style={{ alignSelf: isMobile ? 'center' : 'flex-start', marginTop: 'auto' }}>
               <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
             </div>
           </div>
@@ -540,11 +560,11 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
 
 /* ---- Tier 2 secondary block ---- */
 const MORE_PILLS = [
-  { emoji: '🔒', label: 'Soluciones en local' },
-  { emoji: '🎯', label: 'Clasificación de leads' },
-  { emoji: '⚙️', label: 'Automatizaciones' },
-  { emoji: '💻', label: 'Software a medida' },
-  { emoji: '🌐', label: 'Webs y landing pages' },
+  { Icon: Lock,    label: 'Soluciones en local' },
+  { Icon: Target,  label: 'Clasificación de leads' },
+  { Icon: Zap,     label: 'Automatizaciones' },
+  { Icon: Monitor, label: 'Software a medida' },
+  { Icon: Globe,   label: 'Webs y landing pages' },
 ]
 
 function Tier2Block({ onChatOpen }) {
@@ -561,7 +581,7 @@ function Tier2Block({ onChatOpen }) {
         style={{
           fontFamily: "'Syne Mono', monospace",
           fontSize: '0.7rem',
-          color: 'rgba(255,255,255,0.4)',
+          color: 'rgba(26,24,20,0.55)',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
           marginBottom: '1.1rem',
@@ -571,23 +591,24 @@ function Tier2Block({ onChatOpen }) {
       </div>
 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '2rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-        {MORE_PILLS.map(({ emoji, label }) => (
+        {MORE_PILLS.map(({ Icon, label }) => (
           <div
             key={label}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              gap: 7,
+              background: '#FFFFFF',
+              border: '1px solid rgba(26,24,20,0.08)',
               borderRadius: 999,
               padding: '8px 16px',
               fontFamily: "'Syne Mono', monospace",
               fontSize: '0.72rem',
-              color: 'rgba(255,255,255,0.7)',
+              color: 'rgba(26,24,20,0.85)',
+              boxShadow: '0 1px 2px rgba(26,24,20,0.04)',
             }}
           >
-            <span>{emoji}</span>
+            <Icon size={12} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.7 }} />
             <span>{label}</span>
           </div>
         ))}
@@ -600,28 +621,28 @@ function Tier2Block({ onChatOpen }) {
         flexWrap: 'wrap',
         gap: '1rem',
         padding: '1.25rem 1.75rem',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#FFFFFF',
+        border: '1px solid rgba(26,24,20,0.08)',
         borderRadius: 16,
         flexDirection: isMobile ? 'column' : 'row',
       }}>
         <div>
-          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', margin: 0, marginBottom: '0.2rem' }}>
+          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.9rem', color: 'rgba(26,24,20,0.8)', margin: 0, marginBottom: '0.2rem' }}>
             ¿No ves tu caso aquí?
           </p>
-          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(26,24,20,0.6)', margin: 0 }}>
             Si hay algo repetitivo en tu negocio que consume tiempo de tu equipo, casi seguro podemos automatizarlo.
           </p>
         </div>
         <button
-          onClick={onChatOpen}
+          onClick={() => onChatOpen('tier2_other')}
           style={{
             flexShrink: 0,
             padding: '9px 22px',
             borderRadius: 999,
-            border: '1px solid rgba(255,255,255,0.2)',
+            border: '1px solid rgba(26,24,20,0.2)',
             background: 'transparent',
-            color: 'rgba(255,255,255,0.75)',
+            color: 'rgba(26,24,20,0.75)',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 400,
             fontSize: '0.85rem',
@@ -629,22 +650,22 @@ function Tier2Block({ onChatOpen }) {
             transition: 'border-color 0.2s, color 0.2s',
             whiteSpace: 'nowrap',
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.color = '#fff' }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = 'rgba(255,255,255,0.75)' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(26,24,20,0.5)'; e.currentTarget.style.color = '#1A1814' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,24,20,0.2)'; e.currentTarget.style.color = 'rgba(26,24,20,0.75)' }}
         >
-          Hablamos →
+          Hablemos →
         </button>
       </div>
 
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: '1.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {[
-          { icon: '🔒', label: 'RGPD compliant' },
-          { icon: '📄', label: 'NDA disponible' },
-          { icon: '🛡️', label: 'Datos confidenciales' },
-        ].map(({ icon, label }) => (
+          { Icon: Lock,        label: 'RGPD compliant' },
+          { Icon: FileText,    label: 'NDA disponible' },
+          { Icon: ShieldCheck, label: 'Datos confidenciales' },
+        ].map(({ Icon, label }) => (
           <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ fontSize: '0.75rem' }}>{icon}</span>
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>{label}</span>
+            <Icon size={12} strokeWidth={1.5} style={{ flexShrink: 0, color: 'rgba(26,24,20,0.55)' }} />
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(26,24,20,0.55)', letterSpacing: '0.06em' }}>{label}</span>
           </div>
         ))}
       </div>
@@ -662,7 +683,7 @@ export default function Products({ onChatOpen }) {
   }
 
   return (
-    <AuroraBackground intense>
+    <AuroraBackground intense variant="light">
     <section
       id="lo-que-hacemos"
       style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}
@@ -681,7 +702,7 @@ export default function Products({ onChatOpen }) {
             style={{
               fontFamily: "'Syne Mono', monospace",
               fontSize: '0.72rem',
-              color: 'rgba(255,255,255,0.35)',
+              color: 'rgba(26,24,20,0.55)',
               letterSpacing: '0.1em',
               display: 'block',
               marginBottom: '1.25rem',
@@ -693,7 +714,7 @@ export default function Products({ onChatOpen }) {
             style={{
               fontFamily: "'Instrument Serif', serif",
               fontSize: 'clamp(2rem,4vw,3.5rem)',
-              color: '#fff',
+              color: '#1A1814',
               lineHeight: 1.1,
               margin: 0,
             }}

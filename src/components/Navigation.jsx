@@ -233,7 +233,7 @@ export default function Navigation({ visible, onChatOpen }) {
               zIndex: 0,
             }}
           />
-          <span style={{ position: 'relative', zIndex: 1 }}>Empecemos →</span>
+          <span style={{ position: 'relative', zIndex: 1 }}>Hablemos →</span>
         </button>
 
       </div>

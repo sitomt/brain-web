@@ -81,10 +81,10 @@ export default function Hero({ onChatOpen }) {
 
           <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
-              Tu negocio, trabajando. Tú, dirigiendo.
+              Mientras duermes, contesta. Mientras comes, vende.
             </span>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem', lineHeight: 1.7, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Más negocio con los mismos recursos.
+              Tu negocio deja de depender de ti.
             </span>
           </motion.div>
 
@@ -143,7 +143,7 @@ export default function Hero({ onChatOpen }) {
                   zIndex: 0,
                 }}
               />
-              <span style={{ position: 'relative', zIndex: 1 }}>Empecemos →</span>
+              <span style={{ position: 'relative', zIndex: 1 }}>Hablemos →</span>
             </button>
           </motion.div>
 
@@ -151,8 +151,8 @@ export default function Hero({ onChatOpen }) {
             <p
               style={{
                 fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.65rem',
-                color: 'rgba(26,24,20,0.35)',
+                fontSize: '0.72rem',
+                color: 'rgba(26,24,20,0.55)',
                 margin: 0,
                 letterSpacing: '0.06em',
                 textAlign: isMobile ? 'center' : 'left',

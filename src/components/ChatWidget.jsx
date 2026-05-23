@@ -83,6 +83,21 @@ const QUICK_REPLIES = [
   'Hablar con una persona',
 ]
 
+const DEFAULT_GREETING = '¡Hola! Soy el asistente de BrAIn. ¿En qué puedo ayudarte?'
+
+const CONTEXT_GREETINGS = {
+  navbar: DEFAULT_GREETING,
+  hero: '¡Hola! Vienes desde el principio — ¿qué parte de tu negocio te gustaría que funcionara sin ti?',
+  contact_center: 'Te interesa Contact Center IA: que tu negocio atienda solo, a cualquier hora. ¿Por qué canal te entran hoy más consultas — WhatsApp, teléfono o web?',
+  back_office: 'Te interesa Back Office IA: quitarle a tu equipo lo repetitivo. ¿Qué tarea os roba más tiempo cada semana — emails, facturas, informes?',
+  asistente: 'Te interesa el Asistente IA: preguntarle a tu negocio en español y obtener respuesta. ¿Qué dato te gustaría poder consultar al instante?',
+  tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
+  cta_final: '¡Vamos allá! Para preparar la reunión con Sito, ¿en qué sector trabajas?',
+  nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
+}
+
+const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
+
 function getReply(input) {
   const lower = input.toLowerCase()
   for (const r of responses) {
@@ -91,13 +106,15 @@ function getReply(input) {
   return '¡Apuntado! Sito revisará tu mensaje y te contactará en menos de 24h. ¿Me dices a qué sector pertenece tu negocio? Así puede preparar la reunión.'
 }
 
-export default function ChatWidget({ isOpen, onOpen, onClose }) {
+export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [messages, setMessages] = useState([
-    { from: 'bot', text: '¡Hola! Soy el asistente de BrAIn. ¿En qué puedo ayudarte?' },
+    { from: 'bot', text: DEFAULT_GREETING },
   ])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [showQuickReplies, setShowQuickReplies] = useState(false)
+  const wasOpenRef = useRef(false)
+  const lastContextRef = useRef(null)
   const endRef = useRef(null)
   const inputRef = useRef(null)
   const isMobile = useIsMobile()
@@ -108,9 +125,21 @@ export default function ChatWidget({ isOpen, onOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
+      // Reset on fresh open OR when re-invoked from a different section.
+      const freshOpen = !wasOpenRef.current
+      const contextChanged = context && context !== lastContextRef.current
+      if (freshOpen || contextChanged) {
+        setMessages([{ from: 'bot', text: greetingFor(context) }])
+        setShowQuickReplies(false)
+        setTyping(false)
+        lastContextRef.current = context
+      }
+      wasOpenRef.current = true
       setTimeout(() => inputRef.current?.focus(), 350)
+    } else {
+      wasOpenRef.current = false
     }
-  }, [isOpen])
+  }, [isOpen, context])
 
   useEffect(() => {
     const handler = (e) => {

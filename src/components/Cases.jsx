@@ -92,7 +92,7 @@ export default function Cases() {
   const isMobile = useIsMobile()
 
   return (
-    <AuroraBackground id="casos" intense style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}>
+    <AuroraBackground id="casos" intense style={{ background: '#020203', padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -163,18 +163,19 @@ export default function Cases() {
               >
                 <LogoArea c={c} isMobile={isMobile} />
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'space-between', width: '100%', gap: '1rem', flexWrap: 'wrap' }}>
-                  <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.1em' }}>
-                    {c.type}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', lineHeight: 1.1 }}>
-                    <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: '1.2rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                      {c.stat}
-                    </span>
-                    <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.06em' }}>
-                      {c.statDetail}
-                    </span>
-                  </div>
+                {/* Stat — elemento dominante */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.2rem' }}>
+                  <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', color: '#ffffff', lineHeight: 1.0 }}>
+                    {c.stat}
+                  </span>
+                  <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em' }}>
+                    {c.statDetail}
+                  </span>
+                </div>
+
+                {/* Type tag */}
+                <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.1em' }}>
+                  {c.type}
                 </div>
 
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.95rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, margin: 0, flexGrow: 1 }}>
