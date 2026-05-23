@@ -5,75 +5,77 @@ import useIsMobile from '../hooks/useIsMobile'
 import ChatbotDemo from '../remotion/ChatbotDemo'
 import DataQueryDemo from '../remotion/DataQueryDemo'
 import AgentDemo from '../remotion/AgentDemo'
+import AuroraBackground from './AuroraBackground'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
-/* ---- Channel logos for Card 1 ---- */
-function WhatsAppIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.553 4.122 1.522 5.859L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.214-3.726.972.999-3.634-.235-.374A9.818 9.818 0 1112 21.818z" />
-    </svg>
-  )
-}
-
-function InstagramIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24">
-      <defs>
-        <linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#F58529" />
-          <stop offset="50%" stopColor="#DD2A7B" />
-          <stop offset="100%" stopColor="#8134AF" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#ig)"
-        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
-      />
-    </svg>
-  )
-}
-
-function TelegramIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#2AABEE">
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.67l-2.945-.924c-.64-.203-.657-.64.136-.954l11.566-4.458c.537-.194 1.006.131.967.887z" />
-    </svg>
-  )
-}
-
-function WebIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,0.8)">
-      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-    </svg>
-  )
-}
-
-function VoiceIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,0.8)">
-      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z" />
-    </svg>
-  )
-}
-
-const CHANNELS = [
-  { name: 'WhatsApp', Icon: WhatsAppIcon },
-  { name: 'Instagram', Icon: InstagramIcon },
-  { name: 'Telegram', Icon: TelegramIcon },
-  { name: 'Web', Icon: WebIcon },
-  { name: 'Voz', Icon: VoiceIcon },
+/* ---- Product data ---- */
+const PRODUCTS = [
+  {
+    num: '01',
+    name: 'Contact Center IA',
+    benefit: 'Tu negocio atiende solo.\nA cualquier hora.',
+    desc: 'Chatbot o voz inteligente que atiende a tus clientes por cualquier canal. Reservas, consultas, pedidos. Sin que tú hagas nada. Sin que nadie se quede sin respuesta.',
+    precio: 'Desde 1.200€ · Mantenimiento desde 97€/mes',
+    component: ChatbotDemo,
+    bullets: [
+      'Respuesta automática por WhatsApp y email',
+      'Gestión de reservas — restaurantes, peluquerías, clínicas',
+      'Atención por Instagram, Telegram y Web',
+      'Voz inteligente que atiende llamadas',
+      'Escalado a humano cuando es necesario',
+      'Conexión con tu CRM',
+      'Trazabilidad de todas las conversaciones',
+      'Disponible 24/7 sin intervención humana',
+    ],
+    closingLine: 'Desde lo más simple hasta lo más completo.\nEl precio depende de lo que necesites.',
+  },
+  {
+    num: '02',
+    name: 'Back Office IA',
+    benefit: 'Las tareas que frenan a tu equipo.\nResueltas solas.',
+    desc: 'Emails respondidos. Documentos generados. Informes listos cada lunes. Facturas procesadas. Todo lo que consume el tiempo de tu equipo sin generar un euro.',
+    precio: 'Desde 2.000€ · Mantenimiento desde 200€/mes',
+    component: AgentDemo,
+    bullets: [
+      'Respuesta y redacción de emails',
+      'Generación de documentos desde plantillas',
+      'Informes automáticos — diarios, semanales o mensuales',
+      'Procesado y clasificación de facturas',
+      'Recordatorios y seguimientos automáticos',
+      'Alertas cuando algo no cuadra',
+      'Resúmenes de reuniones',
+      'Gestión de tareas repetitivas internas',
+    ],
+    closingLine: 'Todo lo que tu equipo hace porque\nalguien tiene que hacerlo.',
+  },
+  {
+    num: '03',
+    name: 'Asistente IA',
+    benefit: 'Pregúntale a tu negocio.\nResponde en segundos.',
+    desc: 'Tus datos conectados a un chat. Stock, reservas, albaranes, métricas. Tu equipo pregunta en español normal y obtiene la respuesta al instante.',
+    precio: 'Desde 1.500€ · Mantenimiento desde 150€/mes',
+    component: DataQueryDemo,
+    bullets: [
+      'Chat conectado a tu stock',
+      'Chat conectado a tus reservas',
+      'Digitalización de albaranes por foto',
+      'Control de costes en tiempo real',
+      'Reportes automáticos bajo demanda',
+      'Alertas si algún gasto se dispara',
+      'Consultas en lenguaje natural',
+      'Conexión a cualquier base de datos del negocio',
+    ],
+    closingLine: 'Pregunta lo que necesitas.\nTu negocio responde.',
+  },
 ]
 
 /* ---- Lazy video column — cover scaling via ResizeObserver ---- */
 const COMP_W = 640
 const COMP_H = 480
 
-function LazyVideoColumn({ component, isMobile }) {
-  const [isVisible, setIsVisible] = useState(false)
+function LazyVideoColumn({ component, isMobile, isActive }) {
+  const [hasEnteredView, setHasEnteredView] = useState(false)
   const [coverScale, setCoverScale] = useState(null)
   const ref = useRef(null)
 
@@ -95,7 +97,7 @@ function LazyVideoColumn({ component, isMobile }) {
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true)
+          setHasEnteredView(true)
           io.disconnect()
         }
       },
@@ -106,7 +108,7 @@ function LazyVideoColumn({ component, isMobile }) {
     return () => { ro.disconnect(); io.disconnect() }
   }, [])
 
-  const showPlayer = isVisible && coverScale !== null
+  const showPlayer = hasEnteredView && coverScale !== null && isActive
 
   return (
     <div
@@ -114,7 +116,8 @@ function LazyVideoColumn({ component, isMobile }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        minHeight: isMobile ? 350 : 380,
+        height: '100%',
+        minHeight: isMobile ? 280 : 480,
       }}
     >
       {showPlayer ? (
@@ -157,168 +160,381 @@ function LazyVideoColumn({ component, isMobile }) {
   )
 }
 
-/* ---- Tier 1 card ---- */
-function Tier1Card({ num, name, benefit, desc, left, component, index }) {
+/* ---- Front face flip button ---- */
+function FlipButton({ onClick }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '10px 22px',
+        borderRadius: 999,
+        border: `1px solid ${hovered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)'}`,
+        background: hovered ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)',
+        color: hovered ? '#ffffff' : 'rgba(255,255,255,0.85)',
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: 500,
+        fontSize: '0.85rem',
+        cursor: 'none',
+        transition: 'border-color 0.25s ease, background 0.25s ease, color 0.25s ease',
+        width: 'fit-content',
+        marginTop: 'auto',
+      }}
+    >
+      Ver precios →
+    </button>
+  )
+}
+
+/* ---- Back face ---- */
+function CardBack({ product, onFlip, onChatOpen, isMobile }) {
+  const [backBtnHovered, setBackBtnHovered] = useState(false)
+  const [ctaBtnHovered, setCtaBtnHovered] = useState(false)
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        transform: 'rotateY(180deg)',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 24,
+        padding: isMobile ? '1.75rem' : '2.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+      }}
+    >
+      {/* 1. Number + Name */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexShrink: 0 }}>
+        <span
+          style={{
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.75rem',
+            background: GRADIENT,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            letterSpacing: '0.1em',
+            flexShrink: 0,
+          }}
+        >
+          {product.num}
+        </span>
+        <span
+          style={{
+            fontFamily: "'Instrument Serif', serif",
+            fontSize: 'clamp(1.4rem, 3vw, 1.8rem)',
+            color: '#ffffff',
+            lineHeight: 1.05,
+          }}
+        >
+          {product.name}
+        </span>
+      </div>
+
+      {/* 2. Separator */}
+      <div
+        style={{
+          height: 1,
+          background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%)',
+          marginTop: '1.25rem',
+          marginBottom: '1.5rem',
+          flexShrink: 0,
+        }}
+      />
+
+      {/* 3. Price badge */}
+      <div
+        style={{
+          display: 'inline-block',
+          background: GRADIENT,
+          borderRadius: 999,
+          padding: 1,
+          alignSelf: isMobile ? 'center' : 'flex-start',
+          marginBottom: '1.5rem',
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            background: '#0D0D10',
+            borderRadius: 999,
+            padding: '10px 20px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.82rem',
+              background: GRADIENT,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '0.04em',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {product.precio}
+          </span>
+        </div>
+      </div>
+
+      {/* 4. Bullets title */}
+      <p
+        style={{
+          fontFamily: "'Syne Mono', monospace",
+          fontSize: '0.65rem',
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: '0.15em',
+          margin: '0 0 1rem',
+          flexShrink: 0,
+        }}
+      >
+        ¿QUÉ INCLUYE?
+      </p>
+
+      {/* 5. Bullets grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: '0.6rem 2rem',
+        }}
+      >
+        {product.bullets.map((b, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <span
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                background: GRADIENT,
+                marginTop: 7,
+                flexShrink: 0,
+                display: 'inline-block',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
+                fontSize: '0.85rem',
+                color: 'rgba(255,255,255,0.7)',
+                lineHeight: 1.6,
+              }}
+            >
+              {b}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* 6. Closing line */}
+      {product.closingLine && (
+        <p
+          style={{
+            fontFamily: "'Instrument Serif', serif",
+            fontStyle: 'italic',
+            fontSize: '0.88rem',
+            color: 'rgba(255,255,255,0.3)',
+            marginTop: '1.25rem',
+            marginBottom: 0,
+            lineHeight: 1.6,
+            whiteSpace: 'pre-line',
+            flexShrink: 0,
+          }}
+        >
+          {product.closingLine}
+        </p>
+      )}
+
+      {/* 7. Footer row — Volver + CTA */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 'auto',
+          paddingTop: '1.5rem',
+          flexShrink: 0,
+          gap: '1rem',
+        }}
+      >
+        <button
+          onClick={(e) => { e.stopPropagation(); onFlip() }}
+          onMouseEnter={() => setBackBtnHovered(true)}
+          onMouseLeave={() => setBackBtnHovered(false)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'none',
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.72rem',
+            color: backBtnHovered ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)',
+            letterSpacing: '0.06em',
+            transition: 'color 0.2s',
+            padding: 0,
+          }}
+        >
+          ← Volver
+        </button>
+
+        <button
+          onClick={(e) => { e.stopPropagation(); onChatOpen() }}
+          onMouseEnter={() => setCtaBtnHovered(true)}
+          onMouseLeave={() => setCtaBtnHovered(false)}
+          style={{
+            padding: '9px 20px',
+            borderRadius: 999,
+            border: `1px solid ${ctaBtnHovered ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)'}`,
+            background: 'transparent',
+            color: ctaBtnHovered ? '#ffffff' : 'rgba(255,255,255,0.75)',
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 400,
+            fontSize: '0.82rem',
+            cursor: 'none',
+            transition: 'border-color 0.2s, color 0.2s',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Hablamos →
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/* ---- Tier 1 card with 3D flip ---- */
+function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
   const isMobile = useIsMobile()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      style={{
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 20,
-        overflow: 'hidden',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: 0,
-      }}
+      style={{ perspective: '1200px' }}
     >
-      {/* Text column */}
+      {/* Rotating container */}
       <div
         style={{
-          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: isMobile ? 'center' : 'flex-start',
-          textAlign: isMobile ? 'center' : 'left',
-          gap: '1.25rem',
-          order: isMobile ? 2 : 0,
+          position: 'relative',
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.7s cubic-bezier(0.4,0.2,0.2,1)',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          minHeight: isMobile ? 620 : 480,
         }}
       >
+        {/* ── FRONT FACE ── */}
         <div
           style={{
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.8rem',
-            background: GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            position: 'absolute',
+            inset: 0,
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 24,
+            overflow: 'hidden',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           }}
         >
-          {num}
-        </div>
-
-        <h3
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 'clamp(1.4rem, 5vw, 2rem)',
-            color: '#fff',
-            lineHeight: 1.1,
-          }}
-        >
-          {name}
-        </h3>
-
-        <p
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: 'italic',
-            fontSize: '1.05rem',
-            background: GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-        >
-          {benefit}
-        </p>
-
-        <p
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 300,
-            fontSize: '0.88rem',
-            color: 'rgba(255,255,255,0.65)',
-            lineHeight: 1.75,
-          }}
-        >
-          {desc}
-        </p>
-
-        {left}
-      </div>
-
-      {/* Video column */}
-      <LazyVideoColumn component={component} isMobile={isMobile} />
-    </motion.div>
-  )
-}
-
-/* ---- Connectors block (Card 1) ---- */
-function Connectors() {
-  const isMobile = useIsMobile()
-  return (
-    <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-      <div
-        style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.65rem',
-          color: 'rgba(255,255,255,0.4)',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          marginBottom: '0.6rem',
-        }}
-      >
-        Conecta con
-      </div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-        {CHANNELS.map(({ name, Icon }) => (
+          {/* Text column */}
           <div
-            key={name}
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 12px',
-              borderRadius: 999,
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              padding: isMobile ? '2rem' : '3rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: isMobile ? 'center' : 'flex-start',
+              textAlign: isMobile ? 'center' : 'left',
+              gap: '1.25rem',
+              order: isMobile ? 2 : 0,
             }}
           >
-            <Icon />
-            <span
+            {/* Name */}
+            <h3
               style={{
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.6rem',
-                color: 'rgba(255,255,255,0.65)',
-                letterSpacing: '0.04em',
+                fontFamily: "'Instrument Serif', serif",
+                fontSize: 'clamp(1.8rem, 4vw, 2.4rem)',
+                color: '#ffffff',
+                lineHeight: 1.05,
+                margin: 0,
               }}
             >
-              {name}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+              {product.name}
+            </h3>
 
-/* ---- Tags pill ---- */
-function Tags({ items }) {
-  const isMobile = useIsMobile()
-  return (
-    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-      {items.map((tag) => (
-        <span
-          key={tag}
-          style={{
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.65rem',
-            padding: '4px 11px',
-            borderRadius: 999,
-            border: '1px solid rgba(255,255,255,0.15)',
-            color: 'rgba(255,255,255,0.45)',
-            letterSpacing: '0.06em',
-          }}
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
+            {/* Tagline */}
+            <p
+              style={{
+                fontFamily: "'Instrument Serif', serif",
+                fontStyle: 'italic',
+                fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                background: GRADIENT,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                lineHeight: 1.3,
+                margin: 0,
+                whiteSpace: 'pre-line',
+              }}
+            >
+              {product.benefit}
+            </p>
+
+            {/* Description */}
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
+                fontSize: '0.9rem',
+                color: 'rgba(255,255,255,0.6)',
+                lineHeight: 1.8,
+                margin: 0,
+              }}
+            >
+              {product.desc}
+            </p>
+
+            {/* Flip button — only trigger for flip */}
+            <div style={{ alignSelf: isMobile ? 'center' : 'flex-start' }}>
+              <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
+            </div>
+          </div>
+
+          {/* Video column */}
+          <div style={{ overflow: 'hidden', order: isMobile ? 1 : 0 }}>
+            <LazyVideoColumn
+              component={product.component}
+              isMobile={isMobile}
+              isActive={!isFlipped}
+            />
+          </div>
+        </div>
+
+        {/* ── BACK FACE ── */}
+        <CardBack
+          product={product}
+          onFlip={onFlip}
+          onChatOpen={onChatOpen}
+          isMobile={isMobile}
+        />
+      </div>
+    </motion.div>
   )
 }
 
@@ -377,10 +593,9 @@ function Tier2Block({ onChatOpen }) {
         ))}
       </div>
 
-      {/* ¿No ves tu sector? */}
       <div style={{
         display: 'flex',
-        alignItems: isMobile ? 'center' : 'center',
+        alignItems: 'center',
         justifyContent: isMobile ? 'center' : 'space-between',
         flexWrap: 'wrap',
         gap: '1rem',
@@ -392,10 +607,10 @@ function Tier2Block({ onChatOpen }) {
       }}>
         <div>
           <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', margin: 0, marginBottom: '0.2rem' }}>
-            ¿No ves tu sector?
+            ¿No ves tu caso aquí?
           </p>
           <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
-            No importa. Si hay un proceso repetitivo en tu negocio, podemos automatizarlo.
+            Si hay algo repetitivo en tu negocio que consume tiempo de tu equipo, casi seguro podemos automatizarlo.
           </p>
         </div>
         <button
@@ -410,7 +625,7 @@ function Tier2Block({ onChatOpen }) {
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 400,
             fontSize: '0.85rem',
-            cursor: 'pointer',
+            cursor: 'none',
             transition: 'border-color 0.2s, color 0.2s',
             whiteSpace: 'nowrap',
           }}
@@ -421,7 +636,6 @@ function Tier2Block({ onChatOpen }) {
         </button>
       </div>
 
-      {/* Trust badges */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: '1.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {[
           { icon: '🔒', label: 'RGPD compliant' },
@@ -434,7 +648,6 @@ function Tier2Block({ onChatOpen }) {
           </div>
         ))}
       </div>
-
     </motion.div>
   )
 }
@@ -442,12 +655,20 @@ function Tier2Block({ onChatOpen }) {
 /* ---- Main section ---- */
 export default function Products({ onChatOpen }) {
   const isMobile = useIsMobile()
+  const [flippedIndex, setFlippedIndex] = useState(null)
+
+  const handleFlip = (index) => {
+    setFlippedIndex(prev => prev === index ? null : index)
+  }
+
   return (
+    <AuroraBackground intense>
     <section
       id="lo-que-hacemos"
-      style={{ background: '#0D0D10', padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}
+      style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -474,56 +695,33 @@ export default function Products({ onChatOpen }) {
               fontSize: 'clamp(2rem,4vw,3.5rem)',
               color: '#fff',
               lineHeight: 1.1,
+              margin: 0,
             }}
           >
-            Tres maneras de hacer que
+            Tres sistemas. Un objetivo:
             <br />
-            tu negocio trabaje solo.
+            que tu negocio funcione solo.
           </h2>
         </motion.div>
 
-        {/* Tier 1 — 3 big cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <Tier1Card
-            index={0}
-            num="01"
-            name="Contact Center IA 24/7"
-            benefit="Tu negocio atiende solo, siempre."
-            desc={
-              'Chatbot y voz inteligente que atiende a tus clientes por cualquier canal.\nReservas, consultas, pedidos. A cualquier hora. Sin que tú hagas nada.'
-            }
-            left={<Connectors />}
-            component={ChatbotDemo}
-          />
-
-          <Tier1Card
-            index={1}
-            num="02"
-            name="Habla con tus Datos"
-            benefit="Pregunta. Obtén respuesta al instante."
-            desc={
-              'Conectamos tu stock, reservas o CRM a un chat. Preguntas en español normal, respuesta en segundos. Como tener un analista disponible 24/7.'
-            }
-            left={<Tags items={['Concesionarios', 'Clínicas', 'Hoteles', 'Almacenes']} />}
-            component={DataQueryDemo}
-          />
-
-          <Tier1Card
-            index={2}
-            num="03"
-            name="Agentes IA"
-            benefit="Un empleado digital que nunca descansa."
-            desc={
-              'Agentes autónomos que ejecutan procesos completos sin supervisión. Leen emails, crean tareas, actualizan sistemas, mandan confirmaciones. Solo.'
-            }
-            left={<Tags items={['Cualquier sector', 'Alto volumen', '24/7']} />}
-            component={AgentDemo}
-          />
+        {/* Tier 1 — 3 flip cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
+          {PRODUCTS.map((product, index) => (
+            <Tier1Card
+              key={product.num}
+              product={product}
+              index={index}
+              isFlipped={flippedIndex === index}
+              onFlip={() => handleFlip(index)}
+              onChatOpen={onChatOpen}
+            />
+          ))}
         </div>
 
         {/* Tier 2 */}
         <Tier2Block onChatOpen={onChatOpen} />
       </div>
     </section>
+    </AuroraBackground>
   )
 }

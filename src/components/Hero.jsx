@@ -81,10 +81,7 @@ export default function Hero({ onChatOpen }) {
 
           <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
-              Menos llamadas que nadie contesta.
-            </span>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
-              Menos tareas que ralentizan a tu equipo.
+              Tu negocio, trabajando. Tú, dirigiendo.
             </span>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem', lineHeight: 1.7, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Más negocio con los mismos recursos.
@@ -148,6 +145,21 @@ export default function Hero({ onChatOpen }) {
               />
               <span style={{ position: 'relative', zIndex: 1 }}>Empecemos →</span>
             </button>
+          </motion.div>
+
+          <motion.div {...fadeUp(0.5)}>
+            <p
+              style={{
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.65rem',
+                color: 'rgba(26,24,20,0.35)',
+                margin: 0,
+                letterSpacing: '0.06em',
+                textAlign: isMobile ? 'center' : 'left',
+              }}
+            >
+              Primera reunión gratuita · Sin tecnicismos · Resultado en menos de 30 días
+            </p>
           </motion.div>
         </div>
 

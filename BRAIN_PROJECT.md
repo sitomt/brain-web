@@ -65,6 +65,16 @@ Colores:
 4. "Nosotros nos encargamos." — 3rem, blanco 60%
 5. "BrAIn." — 6rem italic, gradiente multicolor
 
+## Catálogo de productos (v3.2)
+- **01 Contact Center IA** — Chatbot/voz 24/7, todos los canales. Desde 1.200€ + 97€/mes
+- **02 Back Office IA** — Emails, docs, informes, facturas, recordatorios. Desde 2.000€ + 200€/mes
+- **03 Asistente IA** — Chat sobre datos propios (stock, reservas, albaranes). Desde 1.500€ + 150€/mes
+
+## Casos reales (v3.2)
+- **Baktun 13** — Centro deportivo Murcia. 3 semanas de cero a operativo. App de gestión con IA.
+- **Clesol** — Empresa solar Murcia. 2 semanas. Clasificación automática de leads.
+- **Venta Alegría** — Restaurante Murcia. 100% digitalizado. Control de costes via foto de albarán.
+
 ## Estructura de componentes
 ```
 src/
@@ -72,9 +82,9 @@ src/
     IntroAnimation.jsx    — 5 frases con scroll + luz que ilumina texto
     Navigation.jsx        — navbar fija, blur al scroll, oculta links en móvil
     Hero.jsx              — 2 col: headline + chat mockup flotante
-    Problem.jsx           — grid 2×2 CometCards con AuroraBackground
-    Products.jsx          — 3 CometCards grandes con visuals animados
-    Cases.jsx             — Baktun13 + Clesol con AuroraBackground
+    Problem.jsx           — 4 problemas verticales: texto izq + vídeo der
+    Products.jsx          — 3 cards con expand/collapse, precios, datos en array
+    Cases.jsx             — 3 casos (Baktun13, Clesol, Venta Alegría) grid 3 col
     CtaFinal.jsx          — aurora intensa, CTA hover gradiente
     ChatWidget.jsx        — flotante esquina inferior derecha
     CometCard.jsx         — tilt 3D (rotateX/Y) + cometa borde animado
@@ -92,6 +102,12 @@ Respuestas automáticas por keywords:
 - tiempo / cuándo / semanas / rápido → 1-2 semanas operativo
 - restaurante / hotel / clínica / gimnasio → experiencia en sector
 - default → conectar con Sito
+
+## Decisiones tomadas (v3.2 — 2026-05-22)
+- **Hero.jsx**: subtítulo reducido a 2 líneas; trust line debajo de CTAs en Syne Mono
+- **Problem.jsx**: layout cambiado de grid 2×2 a lista vertical (texto izq + vídeo der), nuevo eyebrow "El coste invisible", H2 nuevo con 3 líneas, copy expandido con saltos de párrafo, remate con 3 líneas
+- **Products.jsx**: nuevo orden Contact Center → Back Office IA → Asistente IA; precios en gradiente; expand/collapse con AnimatePresence (solo 1 abierto a la vez); ExpandedContent como componente separado; todos los datos en array PRODUCTS al inicio del archivo; Tier2Block con nuevo copy
+- **Cases.jsx**: 3 casos (antes 2); grid 3 columnas desktop; Venta Alegría con placeholder "VA" circular en gradiente; nuevo H2 con 2 líneas y gradiente; remate nuevo
 
 ## Decisiones tomadas
 - Proyecto en subdirectorio `brain-web/` dentro del workspace

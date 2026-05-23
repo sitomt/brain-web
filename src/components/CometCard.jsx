@@ -200,9 +200,8 @@ export default function CometCard({ children, className = '', style = {} }) {
         transformStyle: 'preserve-3d',
         perspective: 1000,
         position: 'relative',
-        background: 'rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.12)',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.07)',
         borderRadius: R,
         ...style,
       }}

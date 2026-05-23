@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-05-17 (tarde)
+Última actualización: 2026-05-22 (noche)
 
 ---
 
@@ -113,6 +113,14 @@
         — Badge badge fijado en Zone3 con marginTop:8, igual margen arriba/abajo
         — Márgenes y espaciado corregidos; posicionamiento absoluto en % del área Z2 (592×308)
 - [x] `Cases.jsx` — AuroraBackground MODO A, Baktun13 + Clesol, frase cita final
+- [x] **v3.2 — Refactor visual completo (2026-05-22)**
+  - [x] `Hero.jsx` — subtítulo a 2 líneas ("Tu negocio, trabajando. Tú, dirigiendo." + gradiente); trust line Syne Mono debajo de CTAs
+  - [x] `Problem.jsx` — layout vertical (texto izq + vídeo der, no grid 2×2); eyebrow "El coste invisible"; H2 nuevo 3 líneas; copy expandido con párrafos; remate 3 líneas
+  - [x] `Products.jsx` — nuevo orden (Contact Center → Back Office IA → Asistente IA); precios en gradiente; expand/collapse AnimatePresence (1 abierto a la vez); ExpandedContent separado; datos en PRODUCTS array; Tier2Block copy actualizado; Back Office IA como producto nuevo con AgentDemo
+  - [x] `Products.jsx` — rediseño visual completo (2026-05-22 tarde): card rgba(255,255,255,0.03)/border 0.07/borderRadius 24px; padding 3rem desktop; tipografía jerarquizada (num 0.75rem/name clamp(1.8-2.4rem)/tagline clamp(1-1.2rem)/desc 0.9rem); PriceBadge con borde gradiente real (wrapper 1px); ExpandButton con chevron rotatorio 180°; ExpandedContent height:0→auto + separador gradiente + dots circulares gradiente; gap 1.5rem entre cards
+  - [x] `Products.jsx` — efecto flip 3D CSS (2026-05-22 noche): perspective 1200px en wrapper; transform rotateY 0→180deg con cubic-bezier(0.4,0.2,0.2,1) 0.7s; backfaceVisibility hidden en ambas caras; cara frontal con FlipButton (↻ + stopPropagation); cara trasera `CardBack` con bullets en grid 2 col desktop / 1 col mobile, separador gradiente, dots gradiente, botón "← Volver" (stopPropagation); LazyVideoColumn con prop `isActive` para pausar Player al flipear; `flippedIndex` en Products (solo 1 card flippeada a la vez); minHeight 420px desktop / 600px mobile
+  - [x] `Products.jsx` — cara frontal simplificada al mínimo: solo nombre + tagline + desc + botón "Ver precios →"; el número/tags/precio/connectors movidos a cara trasera; cara trasera con precio prominente (badge gradiente border) + bullets 2 col + closing line + footer row con "← Volver" y "Hablamos →" (llama a onChatOpen); onClick del flip SOLO en el botón (no en toda la card); minHeight 480px desktop / 620px mobile; onChatOpen propagado Products → Tier1Card → CardBack
+  - [x] `Cases.jsx` — 3 casos (Baktun13, Clesol, Venta Alegría); grid 3 col desktop; placeholder "VA" circular gradiente para Venta Alegría; H2 2 líneas con gradiente; remate narrativo nuevo
 - [x] `CtaFinal.jsx` — botón corregido: borderRadius 4px, fontWeight 500, borde blanco sólido,
       al pulsar abre chat y dispara automáticamente "Hola. Quiero agendar una reunión."
 - [x] `CometCard.jsx` — cometa movido a portal (createPortal → body), overlay position:fixed

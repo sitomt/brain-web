@@ -17,31 +17,30 @@ const problems = [
   {
     num: '01',
     title: 'Son las 23:47.',
-    desc: 'Un cliente intenta reservar. Nadie responde.\nCierra la pestaña. Mañana lo hará en otro sitio.\nTú no lo sabrás nunca.',
+    body: 'Un cliente quiere reservar.\nNadie responde.\nCierra la pestaña.\n\nMañana lo hará en otro sitio.\nTú no lo sabrás nunca.',
     component: Problem1_Clock,
   },
   {
     num: '02',
     title: 'Siempre hay alguien al teléfono.',
-    desc: 'Respondiendo lo mismo. Una y otra vez.\nHorarios, precios, disponibilidad.\nTiempo de tu equipo que no vuelve.',
+    body: 'Respondiendo lo mismo.\nHorarios. Precios. Disponibilidad.\n\nTiempo de tu equipo\nque no vuelve.',
     component: Problem2_Calls,
   },
   {
     num: '03',
     title: 'Todo depende de alguien.',
-    desc: 'Si falla esa persona, falla el proceso.\nTu negocio es tan sólido como el eslabón\nmás débil de tu equipo.',
+    body: 'Si esa persona falla,\nfalla el proceso.\n\nTu negocio es tan sólido\ncomo su eslabón más débil.',
     component: Problem3_Flow,
   },
   {
     num: '04',
     title: 'Los datos están ahí.',
-    desc: 'Sabes que tienes respuestas en tus números.\nPero nadie tiene tiempo de buscarlas.\nAsí que nadie decide con información real.',
+    body: 'Sabes que tienen respuestas.\nPero nadie tiene tiempo de buscarlas.\n\nAsí que nadie decide\ncon información real.',
     component: Problem4_Data,
   },
 ]
 
-/* ---- Lazy video that fills the card with cover scaling ---- */
-function LazyProblemVideo({ component }) {
+function LazyVideoColumn({ component }) {
   const [isVisible, setIsVisible] = useState(false)
   const [coverScale, setCoverScale] = useState(null)
   const wrapRef = useRef(null)
@@ -81,7 +80,17 @@ function LazyProblemVideo({ component }) {
   const showPlayer = isVisible && coverScale !== null
 
   return (
-    <div ref={wrapRef} style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+    <div
+      ref={wrapRef}
+      style={{
+        position: 'relative',
+        minHeight: 360,
+        overflow: 'hidden',
+        borderRadius: 20,
+        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#0A0A0C',
+      }}
+    >
       {showPlayer ? (
         <div
           style={{
@@ -118,32 +127,23 @@ function LazyProblemVideo({ component }) {
   )
 }
 
-/* ---- Card: video fills everything, only the number floats on top ---- */
-function ProblemCard({ p, index }) {
-  return (
+function ProblemRow({ p, isMobile }) {
+  const textBlock = (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.6 }}
       style={{
-        position: 'relative',
-        overflow: 'hidden',
-        borderRadius: 20,
-        minHeight: 320,
-        border: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+        justifyContent: 'center',
+        paddingRight: isMobile ? 0 : '2rem',
       }}
     >
-      {/* Layer 1 — video fills entire card */}
-      <LazyProblemVideo component={p.component} />
-
-      {/* Layer 2 — number label only */}
-      <div
+      <span
         style={{
-          position: 'absolute',
-          top: 16,
-          left: 20,
-          zIndex: 2,
           fontFamily: "'Syne Mono', monospace",
           fontSize: '0.7rem',
           background: GRADIENT,
@@ -154,12 +154,69 @@ function ProblemCard({ p, index }) {
         }}
       >
         {p.num}
-      </div>
+      </span>
+      <h3
+        style={{
+          fontFamily: "'Instrument Serif', serif",
+          fontSize: '1.6rem',
+          color: '#fff',
+          lineHeight: 1.2,
+          margin: 0,
+        }}
+      >
+        {p.title}
+      </h3>
+      <p
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontWeight: 300,
+          fontSize: '0.9rem',
+          color: 'rgba(255,255,255,0.65)',
+          lineHeight: 1.8,
+          margin: 0,
+          whiteSpace: 'pre-line',
+        }}
+      >
+        {p.body}
+      </p>
     </motion.div>
+  )
+
+  const videoBlock = (
+    <motion.div
+      initial={{ opacity: 0, x: isMobile ? 0 : 20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, delay: 0.1 }}
+    >
+      <LazyVideoColumn component={p.component} />
+    </motion.div>
+  )
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '1.5rem' : '3rem',
+        alignItems: 'center',
+      }}
+    >
+      {isMobile ? (
+        <>
+          {videoBlock}
+          {textBlock}
+        </>
+      ) : (
+        <>
+          {textBlock}
+          {videoBlock}
+        </>
+      )}
+    </div>
   )
 }
 
-/* ---- Section ---- */
 export default function Problem() {
   const isMobile = useIsMobile()
 
@@ -167,13 +224,13 @@ export default function Problem() {
     <AuroraBackground id="servicios" style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
-        {/* ── Header ── */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
+          style={{ marginBottom: isMobile ? '3rem' : '4.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
           <span
             style={{
@@ -185,7 +242,7 @@ export default function Problem() {
               marginBottom: '1.25rem',
             }}
           >
-            — El problema
+            — El coste invisible
           </span>
 
           <h2
@@ -196,9 +253,7 @@ export default function Problem() {
               margin: 0,
             }}
           >
-            <span style={{ color: '#fff', display: 'block' }}>
-              Tu negocio funciona.
-            </span>
+            <span style={{ color: '#fff', display: 'block' }}>Tu negocio funciona.</span>
             <em
               style={{
                 fontStyle: 'italic',
@@ -209,42 +264,59 @@ export default function Problem() {
                 backgroundClip: 'text',
               }}
             >
-              Imagina que funcionara solo.
+              Pero funciona gracias a ti.
             </em>
+            <span
+              style={{
+                color: '#fff',
+                display: 'block',
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
+                fontSize: 'clamp(1.4rem, 3vw, 2.2rem)',
+                marginTop: '0.35rem',
+              }}
+            >
+              Y eso tiene un precio.
+            </span>
           </h2>
         </motion.div>
 
-        {/* ── Cards ── */}
+        {/* Problems */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-            gap: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: isMobile ? '3.5rem' : '5rem',
           }}
         >
           {problems.map((p, i) => (
-            <ProblemCard key={i} p={p} index={i} />
+            <ProblemRow key={i} p={p} isMobile={isMobile} />
           ))}
         </div>
 
-        {/* ── Remate ── */}
+        {/* Remate */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6 }}
-          style={{ marginTop: '3rem', textAlign: 'center' }}
+          style={{ marginTop: '4rem', textAlign: 'center' }}
         >
           <p
             style={{
               fontFamily: "'Instrument Serif', serif",
               fontStyle: 'italic',
-              fontSize: '1.1rem',
+              fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
               color: 'rgba(255,255,255,0.55)',
               margin: 0,
+              lineHeight: 1.7,
             }}
           >
-            No es falta de esfuerzo. Es falta de sistema.
+            No es falta de esfuerzo.
+            <br />
+            Nunca lo fue.
+            <br />
+            Es falta de sistema.
           </p>
         </motion.div>
 

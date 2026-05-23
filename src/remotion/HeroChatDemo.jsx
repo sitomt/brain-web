@@ -232,7 +232,7 @@ function InputBar({ inputText, showCursor, frame, sendActive }) {
 
 // ── Scene 1 badges ────────────────────────────────────────────────────────
 
-function WhatsAppBadge({ lf, from }) {
+function WhatsAppBadge({ lf, from, text = 'Confirmación enviada por WhatsApp' }) {
   const op = fadeIn(lf, from, 15)
   const scale = ci(lf, [from, from + 14], [0.78, 1], Easing.bezier(0.34, 1.56, 0.64, 1))
   return (
@@ -263,7 +263,7 @@ function WhatsAppBadge({ lf, from }) {
           fontWeight: 500,
         }}
       >
-        Confirmación enviada por WhatsApp
+        {text}
       </span>
     </div>
   )
@@ -374,7 +374,7 @@ function MetricCard({ lf, from }) {
 
 // ── Scene 3 — CalendarBadge ───────────────────────────────────────────────
 
-function CalendarBadge({ lf, from }) {
+function CalendarBadge({ lf, from, title = 'Reunión confirmada', subtitle = 'Mañana · 10:00 h · Sito te llama' }) {
   const op = fadeIn(lf, from, 15)
   const scale = ci(lf, [from, from + 14], [0.78, 1], Easing.bezier(0.34, 1.56, 0.64, 1))
   return (
@@ -403,7 +403,7 @@ function CalendarBadge({ lf, from }) {
             fontWeight: 600,
           }}
         >
-          Reunión confirmada
+          {title}
         </div>
         <div
           style={{
@@ -413,7 +413,7 @@ function CalendarBadge({ lf, from }) {
             marginTop: 2,
           }}
         >
-          Mañana · 10:00 h · Sito te llama
+          {subtitle}
         </div>
       </div>
       <div
@@ -454,10 +454,10 @@ function CalendarBadge({ lf, from }) {
 function Scene1({ frame }) {
   const lf = frame
 
-  const U1 = '¿Podéis reservarme mesa para mañana?'
-  const B1 = '¡Hola! Claro, estamos aquí 24 h 😊\n¿Para cuántas personas y a qué hora?'
-  const U2 = 'Para 6, a las 9 de la noche'
-  const B2 = '✓ Mesa para 6 — sábado 21:00 h\nconfirmada. ¿Nombre para la reserva?'
+  const U1 = 'Buenas noches, se me ha ido la luz — tengo un bebé en casa 😰'
+  const B1 = 'Hola, te atiendo ahora mismo 🔦\n¿En qué barrio estás?'
+  const U2 = 'Murcia centro, es urgente'
+  const B2 = '✓ Técnico en camino — llega en 40 min\n¿Te confirmo por WhatsApp? 📲'
 
   const typing1 = lf >= 15 && lf < 52 ? typeAt(U1, lf, 15) : ''
   const sent1    = lf >= 52
@@ -475,7 +475,7 @@ function Scene1({ frame }) {
 
   return (
     <>
-      <Header clock="23:18" frame={frame} />
+      <Header clock="02:14" frame={frame} />
       <div
         style={{
           flex: 1,
@@ -492,7 +492,7 @@ function Scene1({ frame }) {
         {sent2 && <Bubble from="user" text={U2} opacity={fadeIn(lf, 148)} />}
         {showT2 && <TypingDots frame={frame} />}
         {showB2 && <Bubble from="bot" text={B2} opacity={fadeIn(lf, 180)} />}
-        {showB2 && <WhatsAppBadge lf={lf} from={210} />}
+        {showB2 && <WhatsAppBadge lf={lf} from={210} text="Trabajo cerrado · 02:14 h · +380 €" />}
       </div>
       <InputBar
         inputText={inputText}
@@ -520,10 +520,10 @@ function Scene1({ frame }) {
 function Scene2({ frame }) {
   const lf = frame - S2
 
-  const U1 = '¿Cuántas llamadas perdí el mes pasado?'
-  const B1 = 'Aquí el resumen de mayo 👇'
-  const U2 = '¿En qué franja horaria ocurren más?'
-  const B2 = 'El 71% llegaron fuera de tu horario de apertura —\nentre las 22:00 y las 10:00 h 🌙'
+  const U1 = 'Hola, vi el local en alquiler, ¿sigue disponible?'
+  const B1 = '¡Hola! Sí, está libre 😊\n¿Cuándo te gustaría visitarlo?'
+  const U2 = 'Esta semana — estoy mirando varias opciones'
+  const B2 = '✓ Visita reservada — jueves 17:00 h\nTe mando la ubicación por WhatsApp 📍'
 
   const typing1 = lf >= 15 && lf < 55 ? typeAt(U1, lf, 15) : ''
   const sent1    = lf >= 55
@@ -541,7 +541,7 @@ function Scene2({ frame }) {
 
   return (
     <>
-      <Header clock="10:15" subtitle="BrAIn · Datos" frame={frame} />
+      <Header clock="16:22" frame={frame} />
       <div
         style={{
           flex: 1,
@@ -555,10 +555,10 @@ function Scene2({ frame }) {
         {sent1 && <Bubble from="user" text={U1} opacity={fadeIn(lf, 55)} />}
         {showT1 && <TypingDots frame={frame} />}
         {showB1 && <Bubble from="bot" text={B1} opacity={fadeIn(lf, 87)} />}
-        {showB1 && <MetricCard lf={lf} from={98} />}
         {sent2 && <Bubble from="user" text={U2} opacity={fadeIn(lf, 185)} />}
         {showT2 && <TypingDots frame={frame} />}
         {showB2 && <Bubble from="bot" text={B2} opacity={fadeIn(lf, 215)} />}
+        {showB2 && <CalendarBadge lf={lf} from={240} title="Visita confirmada" subtitle="Jueves · 17:00 h · Contrato: 14.400 €/año" />}
       </div>
       <InputBar
         inputText={inputText}
@@ -586,10 +586,10 @@ function Scene2({ frame }) {
 function Scene3({ frame }) {
   const lf = frame - S3
 
-  const U1 = 'Hola, tengo una clínica dental y pierdo muchas llamadas'
-  const B1 = '¡Hola! Entiendo el problema 😊\n¿Cuántas llamadas perdidas calculas al día?'
-  const U2 = 'Unas 15 o 20 al día'
-  const B2 = 'Con nuestro sistema recuperarías entre\n280 y 400 nuevos contactos al mes 💡\n¿Hablamos mañana a las 10:00 h?'
+  const U1 = 'Hola, llamé la semana pasada por el presupuesto'
+  const B1 = '¡Hola Carmen! Lo tengo aquí 😊\n¿Seguís interesados?'
+  const U2 = 'Sí, perdona, se nos fue… queremos cerrar'
+  const B2 = '✓ Llamada confirmada mañana 10:00 h\nTe mando recordatorio ahora 😊'
 
   const typing1 = lf >= 15 && lf < 55 ? typeAt(U1, lf, 15) : ''
   const sent1    = lf >= 55
@@ -607,7 +607,7 @@ function Scene3({ frame }) {
 
   return (
     <>
-      <Header clock="14:07" frame={frame} />
+      <Header clock="11:32" frame={frame} />
       <div
         style={{
           flex: 1,
@@ -624,7 +624,7 @@ function Scene3({ frame }) {
         {sent2 && <Bubble from="user" text={U2} opacity={fadeIn(lf, 178)} />}
         {showT2 && <TypingDots frame={frame} />}
         {showB2 && <Bubble from="bot" text={B2} opacity={fadeIn(lf, 210)} />}
-        {showB2 && <CalendarBadge lf={lf} from={240} />}
+        {showB2 && <CalendarBadge lf={lf} from={240} title="Lead recuperado" subtitle="Llamada mañana · 10:00 h · 3.600 €" />}
       </div>
       <InputBar
         inputText={inputText}
