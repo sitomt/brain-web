@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Player } from '@remotion/player'
 import {
   LockKey,
@@ -9,6 +9,9 @@ import {
   Globe,
   FileText,
   ShieldCheck,
+  Plus,
+  Minus,
+  ArrowClockwise,
 } from '@phosphor-icons/react'
 import useIsMobile from '../hooks/useIsMobile'
 import ChatbotDemo from '../remotion/ChatbotDemo'
@@ -17,22 +20,25 @@ import AgentDemo from '../remotion/AgentDemo'
 import AuroraBackground from './AuroraBackground'
 import CtaButton from './CtaButton'
 import Eyebrow from './Eyebrow'
-import { ArrowRight, ArrowLeft } from './icons/ArrowIcon'
-import { EASE_PREMIUM } from '../lib/motion'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
+const EASE = [0.22, 1, 0.36, 1]
 
-/* ---- Product data ---- */
+/* ────────────────────────────── DATA ────────────────────────────── */
+
 const PRODUCTS = [
   {
     num: '01',
     contextId: 'contact_center',
-    humanName: 'Quien atiende.',
     name: 'Contact Center IA',
-    benefit: 'Tu negocio atiende solo.\nA cualquier hora.',
-    desc: 'A las 23:47 alguien intenta reservar. Tu sistema le confirma la mesa en cuatro segundos. Tú no te enteras hasta el desayuno. Y mañana, ese cliente vendrá.',
-    precio: 'Desde 1.200€ · Mantenimiento desde 97€/mes',
-    component: ChatbotDemo,
+    promise: 'Atiende por ti, 24/7',
+    // Outcomes deliberadamente sector-agnósticos: enumeran canales e
+    // integraciones para que cualquier negocio se auto-reconozca.
+    outcomes: [
+      'No se te escapa ni un mensaje: WhatsApp, web, email, Instagram, llamadas — todo respondido al instante.',
+      'Conectado por detrás a tu CRM, a tu sistema de reservas, a tu captación de leads — la conversación termina en acción.',
+      'Responde 24/7 en menos de 4 segundos. Escala a una persona cuando hace falta.',
+    ],
     bullets: [
       'Contesta reservas mientras estás en otra mesa',
       'Cierra citas cuando todos duermen',
@@ -43,17 +49,26 @@ const PRODUCTS = [
       'Recoge llamadas con voz que parece humana',
       'Sin horarios. Sin festivos. Sin enfermedades.',
     ],
-    closingLine: 'Desde lo más simple hasta lo más completo.\nEl precio depende de lo que necesites.',
+    price: { from: '1.200€', maintenance: '97€/mes' },
+    ctaLabel: 'Probar cómo atendería tu negocio',
+    // Multi-caso → rotación que comunica "para cualquier sector"
+    cases: [
+      { initials: 'B13', tag: 'Baktun 13',     sector: 'Gimnasio',    quote: '3 semanas. De cero a operativo.' },
+      { initials: 'VA',  tag: 'Venta Alegría', sector: 'Restaurante', quote: '100% digitalizado, hasta los albaranes por foto.' },
+      { initials: 'CL',  tag: 'Clesol',        sector: 'Servicios',   quote: 'Leads clasificados sin que nadie levante el dedo.' },
+    ],
+    component: ChatbotDemo,
   },
   {
     num: '02',
     contextId: 'back_office',
-    humanName: 'Quien resuelve.',
     name: 'Back Office IA',
-    benefit: 'Las tareas que frenan a tu equipo.\nResueltas solas.',
-    desc: 'Las facturas se ordenan solas. Los emails se contestan sin que abras la bandeja. El informe del lunes ya está hecho el domingo por la noche. Y tu equipo, por fin, hace lo importante.',
-    precio: 'Desde 2.000€ · Mantenimiento desde 200€/mes',
-    component: AgentDemo,
+    promise: 'Resuelve lo repetitivo, solo',
+    outcomes: [
+      'Libera horas a la semana de tu equipo en tareas repetitivas.',
+      'Emails, facturas, informes, recordatorios — hechos sin pedir.',
+      'Te avisa solo cuando algo no cuadra. Tú decides.',
+    ],
     bullets: [
       'Responde y redacta emails con tu tono',
       'Procesa facturas sin que nadie las abra',
@@ -64,17 +79,23 @@ const PRODUCTS = [
       'Genera documentos desde tus plantillas',
       'Se ocupa de lo repetitivo que ahoga al equipo',
     ],
-    closingLine: 'Todo lo que tu equipo hace porque\nalguien tiene que hacerlo.',
+    price: { from: '2.000€', maintenance: '200€/mes' },
+    ctaLabel: 'Ver qué automatizaríamos en tu caso',
+    cases: [
+      { initials: 'CL', tag: 'Clesol', sector: 'Servicios', quote: 'Clasificación automática de leads operativa en 2 semanas.' },
+    ],
+    component: AgentDemo,
   },
   {
     num: '03',
     contextId: 'asistente',
-    humanName: 'Quien sabe.',
     name: 'Asistente IA',
-    benefit: 'Pregúntale a tu negocio.\nResponde en segundos.',
-    desc: 'Pregunta "¿cuánto vendí ayer?" y obtienes la respuesta. En español. En segundos. Tu stock, tus reservas, tus albaranes, tus costes — todo a una conversación de distancia.',
-    precio: 'Desde 1.500€ · Mantenimiento desde 150€/mes',
-    component: DataQueryDemo,
+    promise: 'Pregúntale a tu negocio',
+    outcomes: [
+      'Pregunta en español a tus datos. Responde en segundos.',
+      'Stock, ventas, costes, reservas, albaranes — todo conectado.',
+      'Detecta lo que se te escapa antes de que sea un problema.',
+    ],
     bullets: [
       'Pregunta en español, responde al instante',
       'Sabe cuánto vendiste, cuánto te queda, cuánto te cuesta',
@@ -85,93 +106,64 @@ const PRODUCTS = [
       'Detecta lo que se te escapa',
       'No necesitas saber SQL, ni Excel, ni nada',
     ],
-    closingLine: 'Pregunta lo que necesitas.\nTu negocio responde.',
+    price: { from: '1.500€', maintenance: '150€/mes' },
+    ctaLabel: 'Hazle una pregunta a un negocio real',
+    cases: [
+      { initials: 'B13', tag: 'Baktun 13', sector: 'Gimnasio', quote: 'App de gestión con IA en 3 semanas.' },
+    ],
+    component: DataQueryDemo,
   },
 ]
 
-/* ---- Lazy video column — cover scaling via ResizeObserver ---- */
-const COMP_W = 640
-const COMP_H = 480
+/* ──────────────────── LAZY VIDEO (aspect-ratio fijo) ──────────────────── */
 
-function LazyVideoColumn({ component, isMobile, isActive }) {
-  const [hasEnteredView, setHasEnteredView] = useState(false)
-  const [coverScale, setCoverScale] = useState(null)
+function LazyVideoColumn({ component }) {
+  const [visible, setVisible] = useState(false)
   const ref = useRef(null)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
-
-    const updateScale = () => {
-      const { width, height } = el.getBoundingClientRect()
-      if (width > 0 && height > 0) {
-        // Cover scaling: video fills the entire column (both axes). Any side
-        // crop is minimal since demos compose centered content. Parent bg is
-        // #0D0D10 (matches demo bg) so there's no visible seam in any edge.
-        setCoverScale(Math.max(width / COMP_W, height / COMP_H))
-      }
-    }
-
-    const ro = new ResizeObserver(updateScale)
-    ro.observe(el)
-    updateScale()
-
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setHasEnteredView(true)
+          setVisible(true)
           io.disconnect()
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     )
     io.observe(el)
-
-    return () => { ro.disconnect(); io.disconnect() }
+    return () => io.disconnect()
   }, [])
-
-  const showPlayer = hasEnteredView && coverScale !== null && isActive
 
   return (
     <div
       ref={ref}
       style={{
         position: 'relative',
-        overflow: 'hidden',
-        height: '100%',
-        minHeight: isMobile ? 280 : 480,
         background: '#0D0D10',
+        borderRadius: 12,
+        overflow: 'hidden',
+        aspectRatio: '4 / 3',
+        width: '100%',
       }}
     >
-      {showPlayer ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            marginTop: -(COMP_H / 2),
-            marginLeft: -(COMP_W / 2),
-            width: COMP_W,
-            height: COMP_H,
-            transform: `scale(${coverScale})`,
-            transformOrigin: 'center center',
-          }}
-        >
-          <Player
-            component={component}
-            durationInFrames={330}
-            fps={30}
-            compositionWidth={COMP_W}
-            compositionHeight={COMP_H}
-            style={{ width: COMP_W, height: COMP_H, display: 'block' }}
-            autoPlay
-            loop
-            initiallyMuted
-            controls={false}
-            clickToPlay={false}
-            acknowledgeRemotionLicense
-          />
-        </div>
+      {visible ? (
+        <Player
+          component={component}
+          durationInFrames={330}
+          fps={30}
+          compositionWidth={640}
+          compositionHeight={480}
+          style={{ width: '100%', height: '100%', display: 'block' }}
+          autoPlay
+          loop
+          initiallyMuted
+          controls={false}
+          clickToPlay={false}
+          acknowledgeRemotionLicense
+        />
       ) : (
         <motion.div
           animate={{ opacity: [0.04, 0.1, 0.04] }}
@@ -183,665 +175,634 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
   )
 }
 
-/* ---- Front face flip button ---- */
-function FlipButton({ onClick, label = 'Ver precios', direction = 'right' }) {
-  const [hovered, setHovered] = useState(false)
-  const Arrow = direction === 'left' ? ArrowLeft : ArrowRight
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 10,
-        paddingLeft: direction === 'left' ? 14 : 18,
-        paddingRight: direction === 'left' ? 18 : 14,
-        height: 42,
-        borderRadius: 999,
-        border: `1px solid ${hovered ? 'rgba(26,24,20,0.45)' : 'rgba(26,24,20,0.18)'}`,
-        background: hovered ? 'rgba(26,24,20,0.07)' : 'rgba(26,24,20,0.03)',
-        color: hovered ? '#1A1814' : 'rgba(26,24,20,0.8)',
-        fontFamily: "'DM Sans', sans-serif",
-        fontWeight: 500,
-        fontSize: '0.85rem',
-        cursor: 'pointer',
-        transition: 'all 0.35s cubic-bezier(0.32,0.72,0,1)',
-        width: 'fit-content',
-        marginTop: 'auto',
-      }}
-    >
-      {direction === 'left' && (
-        <span
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: 999,
-            background: 'rgba(26,24,20,0.08)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
-            transform: hovered ? 'translateX(-2px)' : 'translateX(0)',
-          }}
-        >
-          <Arrow size={12} />
-        </span>
-      )}
-      {label}
-      {direction === 'right' && (
-        <span
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: 999,
-            background: 'rgba(26,24,20,0.08)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
-            transform: hovered ? 'translateX(2px)' : 'translateX(0)',
-          }}
-        >
-          <Arrow size={12} />
-        </span>
-      )}
-    </button>
-  )
-}
+/* ──────────────────── ROTATING CASES (social proof) ──────────────────── */
 
-/* ---- Back face ---- */
-function CardBack({ product, onFlip, onChatOpen, isMobile }) {
-  const [ctaBtnHovered, setCtaBtnHovered] = useState(false)
+function CasesStrip({ cases }) {
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    if (cases.length < 2) return
+    const t = setInterval(() => setIdx((i) => (i + 1) % cases.length), 4200)
+    return () => clearInterval(t)
+  }, [cases.length])
+
+  const c = cases[idx]
 
   return (
     <div
       style={{
-        position: 'absolute',
-        inset: 0,
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-        transform: 'rotateY(180deg)',
-        background: '#FFFFFF',
-        border: '1px solid rgba(26,24,20,0.07)',
-        borderRadius: 22,
-        padding: isMobile ? '2rem' : '3rem',
         display: 'flex',
-        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 14,
+        minHeight: 52,
+        padding: '12px 14px',
+        background: 'rgba(26,24,20,0.025)',
+        border: '1px solid rgba(26,24,20,0.06)',
+        borderRadius: 12,
       }}
     >
-      {/* Centered content block */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
-      {/* 1. Number + Name (human primary, technical whispered) */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexShrink: 0 }}>
-        <span
-          style={{
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: 'clamp(1.8rem, 4vw, 2.4rem)',
-            background: GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            letterSpacing: '0.05em',
-            flexShrink: 0,
-            lineHeight: 1,
-          }}
+      <div
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: '50%',
+          background: GRADIENT,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontFamily: "'Syne Mono', monospace",
+          fontSize: '0.62rem',
+          flexShrink: 0,
+          letterSpacing: '0.02em',
+        }}
+      >
+        {c.initials}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={idx}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.4 }}
+          style={{ flex: 1, minWidth: 0 }}
         >
-          {product.num}
-        </span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-          <span
+          <p
             style={{
               fontFamily: "'Instrument Serif', serif",
-              fontSize: 'clamp(1.4rem, 3vw, 1.8rem)',
+              fontStyle: 'italic',
+              fontSize: '0.92rem',
               color: '#1A1814',
-              lineHeight: 1.05,
+              margin: 0,
+              lineHeight: 1.3,
             }}
           >
-            {product.humanName}
-          </span>
-          <span
+            “{c.quote}”
+          </p>
+          <p
             style={{
               fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.65rem',
-              color: 'rgba(26,24,20,0.55)',
-              letterSpacing: '0.18em',
+              fontSize: '0.6rem',
+              color: 'rgba(26,24,20,0.5)',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
+              margin: '3px 0 0',
             }}
           >
-            {product.name}
-          </span>
-        </div>
-      </div>
-
-      {/* 2. Separator */}
-      <div
-        style={{
-          height: 1,
-          background: 'linear-gradient(90deg, rgba(26,24,20,0.15) 0%, rgba(26,24,20,0.02) 100%)',
-          marginTop: '1.25rem',
-          marginBottom: '1.5rem',
-          flexShrink: 0,
-        }}
-      />
-
-      {/* 3. Price badge — gradient pill with white text for readability */}
-      <div
-        style={{
-          display: 'inline-block',
-          background: GRADIENT,
-          borderRadius: 999,
-          padding: '10px 20px',
-          alignSelf: isMobile ? 'center' : 'flex-start',
-          marginBottom: '1.5rem',
-          flexShrink: 0,
-          boxShadow: '0 4px 18px rgba(114,9,183,0.25)',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.85rem',
-            color: '#FFFFFF',
-            letterSpacing: '0.04em',
-            whiteSpace: 'nowrap',
-            fontWeight: 500,
-          }}
-        >
-          {product.precio}
-        </span>
-      </div>
-
-      {/* 4. Bullets title */}
-      <p
-        style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.65rem',
-          color: 'rgba(26,24,20,0.55)',
-          letterSpacing: '0.15em',
-          margin: '0 0 1rem',
-          flexShrink: 0,
-        }}
-      >
-        ¿QUÉ INCLUYE?
-      </p>
-
-      {/* 5. Bullets grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: '0.6rem 2rem',
-        }}
-      >
-        {product.bullets.map((b, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            {c.tag} · {c.sector}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+      {cases.length > 1 && (
+        <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+          {cases.map((_, i) => (
             <span
+              key={i}
               style={{
                 width: 5,
                 height: 5,
                 borderRadius: '50%',
-                background: GRADIENT,
-                marginTop: 7,
-                flexShrink: 0,
-                display: 'inline-block',
+                background: i === idx ? '#1A1814' : 'rgba(26,24,20,0.18)',
+                transition: 'background 0.3s',
               }}
             />
-            <span
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: '0.85rem',
-                color: 'rgba(26,24,20,0.7)',
-                lineHeight: 1.6,
-              }}
-            >
-              {b}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
-      {/* 6. Closing line */}
-      {product.closingLine && (
-        <p
+/* ──────────────────── PRODUCT CARD ──────────────────── */
+
+function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
+  const [expanded, setExpanded] = useState(false)
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <motion.article
+      id={`producto-${product.num}`}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.7, ease: EASE }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: '#FFFFFF',
+        border: `1px solid ${
+          highlighted ? 'rgba(114,9,183,0.4)' : 'rgba(26,24,20,0.08)'
+        }`,
+        borderRadius: 18,
+        padding: isMobile ? '1.5rem' : '2.25rem',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '0.95fr 1.05fr',
+        gap: isMobile ? '1.5rem' : '2.5rem',
+        position: 'relative',
+        transform: hovered && !isMobile ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: hovered && !isMobile
+          ? '0 12px 32px -16px rgba(26,24,20,0.18)'
+          : '0 1px 0 rgba(26,24,20,0.02)',
+        transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s',
+        scrollMarginTop: '6rem',
+      }}
+    >
+      {highlighted && (
+        <div
           style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: 'italic',
-            fontSize: '0.88rem',
-            color: 'rgba(26,24,20,0.5)',
-            marginTop: '1.25rem',
-            marginBottom: 0,
-            lineHeight: 1.6,
-            whiteSpace: 'pre-line',
-            flexShrink: 0,
+            position: 'absolute',
+            top: -10,
+            left: isMobile ? '50%' : 24,
+            transform: isMobile ? 'translateX(-50%)' : 'none',
+            background: GRADIENT,
+            color: '#fff',
+            padding: '4px 12px',
+            borderRadius: 999,
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.62rem',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
           }}
         >
-          {product.closingLine}
-        </p>
+          Recomendado para ti
+        </div>
       )}
-      </div>
-      {/* end centered content */}
 
-      {/* 7. Footer row — Volver + CTA */}
+      {/* VIDEO */}
+      <div style={{ order: isMobile ? 1 : 0, alignSelf: 'flex-start' }}>
+        <LazyVideoColumn component={product.component} />
+      </div>
+
+      {/* CONTENT */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.15rem',
+          order: isMobile ? 2 : 0,
+          minWidth: 0,
+        }}
+      >
+        {/* Header: num + name + promise (Option C) */}
+        <header style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+          <span
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: 'clamp(2.2rem, 4.5vw, 2.8rem)',
+              background: GRADIENT,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              lineHeight: 0.9,
+              flexShrink: 0,
+              letterSpacing: '0.02em',
+            }}
+          >
+            {product.num}
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', paddingTop: 6, minWidth: 0 }}>
+            <h3
+              style={{
+                fontFamily: "'Instrument Serif', serif",
+                fontSize: 'clamp(1.5rem, 3vw, 1.95rem)',
+                color: '#1A1814',
+                margin: 0,
+                lineHeight: 1.1,
+              }}
+            >
+              {product.name}
+            </h3>
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 400,
+                fontSize: '0.88rem',
+                color: 'rgba(26,24,20,0.58)',
+                margin: 0,
+                letterSpacing: '-0.005em',
+              }}
+            >
+              {product.promise}
+            </p>
+          </div>
+        </header>
+
+        {/* Outcomes — máx 3, hairline indent */}
+        <ul
+          style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.7rem',
+          }}
+        >
+          {product.outcomes.map((o, i) => (
+            <li
+              key={i}
+              style={{
+                display: 'flex',
+                gap: 14,
+                alignItems: 'flex-start',
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 400,
+                fontSize: '0.92rem',
+                color: '#1A1814',
+                lineHeight: 1.5,
+              }}
+            >
+              <span
+                style={{
+                  marginTop: 11,
+                  width: 16,
+                  height: 1,
+                  background: 'rgba(26,24,20,0.45)',
+                  flexShrink: 0,
+                }}
+              />
+              <span>{o}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Acordeón "ver todo lo que incluye" */}
+        <div>
+          <button
+            type="button"
+            onClick={() => setExpanded((e) => !e)}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: 'rgba(26,24,20,0.65)',
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.7rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              padding: 0,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            {expanded ? <Minus size={12} /> : <Plus size={12} />}
+            {expanded ? 'Ocultar detalle' : 'Ver todo lo que incluye'}
+          </button>
+          <AnimatePresence initial={false}>
+            {expanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.4, ease: EASE }}
+                style={{ overflow: 'hidden' }}
+              >
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                    gap: '0.5rem 1.5rem',
+                    paddingTop: '0.9rem',
+                  }}
+                >
+                  {product.bullets.map((b, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                      <span
+                        style={{
+                          width: 4,
+                          height: 4,
+                          borderRadius: '50%',
+                          background: 'rgba(26,24,20,0.4)',
+                          marginTop: 8,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontWeight: 300,
+                          fontSize: '0.82rem',
+                          color: 'rgba(26,24,20,0.65)',
+                          lineHeight: 1.55,
+                        }}
+                      >
+                        {b}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Separator */}
+        <div
+          style={{
+            height: 1,
+            background:
+              'linear-gradient(90deg, rgba(26,24,20,0.12) 0%, rgba(26,24,20,0.02) 100%)',
+          }}
+        />
+
+        {/* PRICE — editorial typography, no pill, no gradient */}
+        <div>
+          <p
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.62rem',
+              color: 'rgba(26,24,20,0.5)',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              margin: '0 0 4px',
+            }}
+          >
+            Desde
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "'Instrument Serif', serif",
+                fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
+                color: '#1A1814',
+                lineHeight: 1,
+              }}
+            >
+              {product.price.from}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.78rem',
+                color: 'rgba(26,24,20,0.55)',
+              }}
+            >
+              + mantenimiento desde {product.price.maintenance}
+            </span>
+          </div>
+          {/* Risk reversal in-situ */}
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
+            {[
+              { Icon: ShieldCheck, label: 'RGPD compliant' },
+              { Icon: FileText,    label: 'NDA disponible' },
+              { Icon: LockKey,     label: 'Datos en tu infra' },
+            ].map(({ Icon, label }) => (
+              <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <Icon size={12} weight="regular" style={{ color: '#22C55E', flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontFamily: "'Syne Mono', monospace",
+                    fontSize: '0.65rem',
+                    color: 'rgba(26,24,20,0.55)',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {label}
+                </span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Social proof — rotating for 01, static for 02/03 */}
+        <CasesStrip cases={product.cases} />
+
+        {/* CTA */}
+        <div style={{ marginTop: 'auto', paddingTop: '0.25rem' }}>
+          <CtaButton
+            onClick={() => onChatOpen(product.contextId)}
+            variant="solid"
+            arrow="right"
+            size="md"
+          >
+            {product.ctaLabel}
+          </CtaButton>
+        </div>
+      </div>
+    </motion.article>
+  )
+}
+
+/* ──────────────────── MICRO-QUIZ (P0.3.B) ──────────────────── */
+
+const QUIZ = [
+  { q: '¿Atender mensajes, llamadas o emails te consume horas cada día?', product: 0 },
+  { q: '¿Tu equipo pierde tiempo en tareas repetitivas (emails, facturas, informes)?', product: 1 },
+  { q: '¿Te cuesta saber qué pasa en tu negocio sin pedir reportes?', product: 2 },
+]
+
+function ProductsQuiz({ onResult, isMobile }) {
+  const [step, setStep] = useState(0)
+  const [scores, setScores] = useState([0, 0, 0])
+
+  const answer = (yes) => {
+    const nextScores = [...scores]
+    if (yes) nextScores[QUIZ[step].product] += 1
+    setScores(nextScores)
+
+    if (step < QUIZ.length - 1) {
+      setTimeout(() => setStep(step + 1), 220)
+    } else {
+      const max = Math.max(...nextScores)
+      const winner = max === 0 ? -1 : nextScores.indexOf(max)
+      setTimeout(() => onResult(winner), 320)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        padding: isMobile ? '1.25rem 1.25rem' : '1.5rem 1.75rem',
+        background: '#FFFFFF',
+        border: '1px solid rgba(26,24,20,0.08)',
+        borderRadius: 14,
+        marginBottom: '2.5rem',
+      }}
+    >
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingTop: '1.5rem',
-          flexShrink: 0,
-          gap: '1rem',
+          marginBottom: '0.9rem',
+          gap: 12,
         }}
       >
-        <FlipButton label="Volver" direction="left" onClick={(e) => { e.stopPropagation(); onFlip() }} />
-
-        <CtaButton
-          onClick={(e) => { e.stopPropagation(); onChatOpen(product.contextId) }}
-          variant="solid"
-          arrow="right"
-          size="md"
-          style={{ height: 42, paddingLeft: 16 }}
-        >
-          Probar el asistente
-        </CtaButton>
-      </div>
-    </div>
-  )
-}
-
-/* ---- Tier 1 card with 3D flip ---- */
-function Tier1Card({ product, isFlipped, onFlip, onChatOpen }) {
-  const isMobile = useIsMobile()
-
-  // Double-bezel outer shell — physical "machined" feel
-  return (
-    <div
-      style={{
-        perspective: '1200px',
-        height: '100%',
-        background: 'rgba(26,24,20,0.025)',
-        border: '1px solid rgba(26,24,20,0.06)',
-        borderRadius: 28,
-        padding: 6,
-      }}
-    >
-      {/* Rotating container */}
-      <div
-        style={{
-          position: 'relative',
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.7s cubic-bezier(0.4,0.2,0.2,1)',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          minHeight: isMobile ? 760 : 580,
-          height: '100%',
-        }}
-      >
-        {/* ── FRONT FACE ── */}
-        <div
+        <span
           style={{
-            position: 'absolute',
-            inset: 0,
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            background: '#FFFFFF',
-            border: '1px solid rgba(26,24,20,0.07)',
-            borderRadius: 22,
-            overflow: 'hidden',
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.65rem',
+            color: 'rgba(26,24,20,0.55)',
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
           }}
         >
-          {/* Text column — same structure as back: flex:1 centered content + fixed footer */}
-          <div
+          ¿Cuál necesitas? · {step + 1}/{QUIZ.length}
+        </span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {QUIZ.map((_, i) => (
+            <span
+              key={i}
+              style={{
+                width: 20,
+                height: 2,
+                background: i <= step ? GRADIENT : 'rgba(26,24,20,0.1)',
+                borderRadius: 1,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.3, ease: EASE }}
+        >
+          <p
             style={{
-              padding: isMobile ? '2rem' : '3rem',
-              display: 'flex',
-              flexDirection: 'column',
-              order: isMobile ? 2 : 0,
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)',
+              color: '#1A1814',
+              margin: '0 0 1rem',
+              lineHeight: 1.3,
             }}
           >
-            {/* Centered content */}
-            <div style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: isMobile ? 'center' : 'flex-start',
-              textAlign: isMobile ? 'center' : 'left',
-              gap: '1.25rem',
-              minHeight: 0,
-            }}>
-              {/* Name — human (primary) + technical badge */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
-                <h3
-                  style={{
-                    fontFamily: "'Instrument Serif', serif",
-                    fontSize: 'clamp(2.2rem, 5vw, 3rem)',
-                    color: '#1A1814',
-                    lineHeight: 1.0,
-                    margin: 0,
-                  }}
-                >
-                  {product.humanName}
-                </h3>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    fontFamily: "'Syne Mono', monospace",
-                    fontSize: '0.65rem',
-                    color: 'rgba(26,24,20,0.55)',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    background: 'rgba(26,24,20,0.06)',
-                    border: '1px solid rgba(26,24,20,0.12)',
-                    borderRadius: 999,
-                    padding: '4px 12px',
-                  }}
-                >
-                  {product.name}
-                </span>
-              </div>
-
-              {/* Tagline */}
-              <p
-                style={{
-                  fontFamily: "'Instrument Serif', serif",
-                  fontStyle: 'italic',
-                  fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-                  background: GRADIENT,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  lineHeight: 1.3,
-                  margin: 0,
-                  whiteSpace: 'pre-line',
+            {QUIZ[step].q}
+          </p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {[
+              { label: 'Sí', val: true },
+              { label: 'No', val: false },
+            ].map(({ label, val }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => answer(val)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#1A1814'
+                  e.currentTarget.style.color = '#FAF8F3'
+                  e.currentTarget.style.borderColor = '#1A1814'
                 }}
-              >
-                {product.benefit}
-              </p>
-
-              {/* Description */}
-              <p
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#FAF8F3'
+                  e.currentTarget.style.color = '#1A1814'
+                  e.currentTarget.style.borderColor = 'rgba(26,24,20,0.15)'
+                }}
                 style={{
+                  flex: 1,
+                  height: 44,
+                  border: '1px solid rgba(26,24,20,0.15)',
+                  background: '#FAF8F3',
+                  borderRadius: 10,
                   fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: 300,
-                  fontSize: '0.9rem',
-                  color: 'rgba(26,24,20,0.6)',
-                  lineHeight: 1.8,
-                  margin: 0,
+                  fontWeight: 500,
+                  fontSize: '0.92rem',
+                  color: '#1A1814',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
                 }}
               >
-                {product.desc}
-              </p>
-            </div>
-
-            {/* Footer — FlipButton at bottom-left, mirrors back face position exactly */}
-            <div style={{ paddingTop: '1.5rem', flexShrink: 0, alignSelf: isMobile ? 'center' : 'flex-start' }}>
-              <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
-            </div>
+                {label}
+              </button>
+            ))}
           </div>
-
-          {/* Video column */}
-          <div style={{ overflow: 'hidden', order: isMobile ? 1 : 0 }}>
-            <LazyVideoColumn
-              component={product.component}
-              isMobile={isMobile}
-              isActive={!isFlipped}
-            />
-          </div>
-        </div>
-
-        {/* ── BACK FACE ── */}
-        <CardBack
-          product={product}
-          onFlip={onFlip}
-          onChatOpen={onChatOpen}
-          isMobile={isMobile}
-        />
-      </div>
-    </div>
-  )
-}
-
-/* ---- Vertical coverflow ----
-   Active card centered & flat. Off cards translate horizontally, rotate on Y,
-   shrink and dim — so they read as preview thumbnails of "next/previous".
-   The user always sees the 3 cards, but only one is in focus and detail. */
-function StackedCard({ progress, index, total, children }) {
-  const N = total
-
-  // queuePos: signed distance to the active card. 0 = active centered; positive
-  // = waiting to the right; negative = passed to the left.
-  const queuePos = (p) => index - p * (N - 1)
-
-  const x = useTransform(progress, (p) => {
-    const q = queuePos(p)
-    const sign = q < 0 ? -1 : 1
-    const cd = Math.min(2, Math.abs(q))
-    return sign * cd * 360
-  })
-  const scale = useTransform(progress, (p) => {
-    const cd = Math.min(2, Math.abs(queuePos(p)))
-    return Math.max(0.45, 0.92 - cd * 0.28)
-  })
-  const rotateY = useTransform(progress, (p) => {
-    const q = queuePos(p)
-    const sign = q < 0 ? -1 : 1
-    const cd = Math.min(2, Math.abs(q))
-    return -sign * cd * 32
-  })
-  // Cards stay fully opaque so they read as solid surfaces stacked in depth —
-  // no content bleed-through between front and back cards.
-  const opacity = useTransform(progress, (p) => {
-    const cd = Math.min(2, Math.abs(queuePos(p)))
-    // Only fade beyond queue distance > 1.5 (cards leaving viewport).
-    return cd > 1.5 ? Math.max(0, 1 - (cd - 1.5) * 2) : 1
-  })
-  const zIndex = useTransform(progress, (p) => Math.round(100 - Math.abs(queuePos(p)) * 30))
-  const pointerEvents = useTransform(progress, (p) => (Math.abs(queuePos(p)) < 0.15 ? 'auto' : 'none'))
-
-  return (
-    <motion.div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        x,
-        scale,
-        rotateY,
-        opacity,
-        zIndex,
-        pointerEvents,
-        transformStyle: 'preserve-3d',
-        transformOrigin: 'center center',
-        willChange: 'transform, opacity',
-      }}
-    >
-      {children}
+        </motion.div>
+      </AnimatePresence>
     </motion.div>
   )
 }
 
-function ScrollStack({ products, flippedIndex, handleFlip, onChatOpen, header }) {
-  const stackRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: stackRef,
-    offset: ['start start', 'end end'],
-  })
-
-  // Snap-scroll: when the section is pinned, hijack wheel events so one scroll
-  // = one card advance. Uses a custom RAF-driven scroll animation with
-  // ease-in-out-quart for a smooth, premium, cinematic feel (native
-  // behavior:'smooth' is browser-dependent and often abrupt).
-  useEffect(() => {
-    const N = products.length
-    let rafId = null
-    let isAnimating = false
-    let lastWheelAt = 0
-    const ANIM_MS = 1100
-
-    // ease-in-out-quart — slow start, smooth acceleration, slow finish.
-    const ease = (t) => t < 0.5
-      ? 8 * t * t * t * t
-      : 1 - Math.pow(-2 * t + 2, 4) / 2
-
-    const animateTo = (targetY, onDone) => {
-      cancelAnimationFrame(rafId)
-      const startY = window.scrollY
-      const dist = targetY - startY
-      const t0 = performance.now()
-      isAnimating = true
-      const step = (now) => {
-        const t = Math.min(1, (now - t0) / ANIM_MS)
-        window.scrollTo(0, startY + dist * ease(t))
-        if (t < 1) {
-          rafId = requestAnimationFrame(step)
-        } else {
-          isAnimating = false
-          onDone && onDone()
-        }
-      }
-      rafId = requestAnimationFrame(step)
-    }
-
-    const onWheel = (e) => {
-      const el = stackRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      const stickyRange = el.offsetHeight - window.innerHeight
-      if (rect.top > 1 || rect.bottom < window.innerHeight - 1) return
-
-      const now = performance.now()
-      // While an animation runs OR within cooldown, absorb wheel events (so
-      // trackpad inertia / fast multi-scrolls don't trigger multiple snaps).
-      if (isAnimating || now - lastWheelAt < 1200) {
-        e.preventDefault()
-        return
-      }
-
-      const currentProgress = Math.max(0, Math.min(1, -rect.top / stickyRange))
-      const currentIdx = Math.round(currentProgress * (N - 1))
-      const dir = e.deltaY > 0 ? 1 : -1
-      const newIdx = currentIdx + dir
-      // Boundary — let native scroll carry the user out of the section.
-      if (newIdx < 0 || newIdx > N - 1) return
-
-      e.preventDefault()
-      lastWheelAt = now
-      const targetProgress = newIdx / (N - 1)
-      const stackTopAbs = rect.top + window.scrollY
-      animateTo(stackTopAbs + targetProgress * stickyRange)
-    }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => {
-      window.removeEventListener('wheel', onWheel)
-      cancelAnimationFrame(rafId)
-    }
-  }, [products.length])
+function QuizResult({ recommendedIdx, onReset }) {
+  const rec = recommendedIdx >= 0 ? PRODUCTS[recommendedIdx] : null
 
   return (
-    <div ref={stackRef} style={{ position: 'relative', height: '300vh' }}>
-      <div
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        padding: '0.9rem 1.25rem',
+        background: '#FFFFFF',
+        border: '1px solid rgba(26,24,20,0.08)',
+        borderRadius: 14,
+        marginBottom: '2.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 14,
+        flexWrap: 'wrap',
+      }}
+    >
+      <p
         style={{
-          position: 'sticky',
-          top: '8vh',
-          height: '88vh',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
+          margin: 0,
+          fontFamily: "'Syne Mono', monospace",
+          fontSize: '0.72rem',
+          color: 'rgba(26,24,20,0.7)',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
         }}
       >
-        {/* Sticky header — stays visible the whole time cards rotate */}
-        {header && (
-          <div style={{ flexShrink: 0 }}>{header}</div>
-        )}
-        {/* Card stack area — perspective for true 3D coverflow rotation */}
-        <div style={{ position: 'relative', flex: 1, minHeight: 0, perspective: '1600px', perspectiveOrigin: 'center center' }}>
-          {products.map((product, i) => (
-            <StackedCard
-              key={product.num}
-              progress={scrollYProgress}
-              index={i}
-              total={products.length}
-            >
-              <Tier1Card
-                product={product}
-                isFlipped={flippedIndex === i}
-                onFlip={() => handleFlip(i)}
-                onChatOpen={onChatOpen}
-              />
-            </StackedCard>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ---- Mobile horizontal snap carousel ---- */
-function MobileCarousel({ products, flippedIndex, handleFlip, onChatOpen }) {
-  return (
-    <>
-      <style>{`.brain-mobile-carousel::-webkit-scrollbar{display:none}`}</style>
-      <div
-        className="brain-mobile-carousel"
+        {rec
+          ? <>Tu sistema más probable →{' '}
+              <a
+                href={`#producto-${rec.num}`}
+                style={{
+                  background: GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textDecoration: 'none',
+                }}
+              >
+                {rec.name}
+              </a>
+            </>
+          : 'Mira los tres — cualquiera puede encajar.'}
+      </p>
+      <button
+        type="button"
+        onClick={onReset}
         style={{
-          display: 'flex',
-          gap: '1rem',
-          overflowX: 'auto',
-          overflowY: 'hidden',
-          scrollSnapType: 'x mandatory',
-          WebkitOverflowScrolling: 'touch',
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none',
-          paddingBottom: '0.5rem',
-          marginLeft: '-1.25rem',
-          marginRight: '-1.25rem',
-          paddingLeft: '1.25rem',
-          paddingRight: '1.25rem',
+          border: 'none',
+          background: 'transparent',
+          color: 'rgba(26,24,20,0.55)',
+          fontFamily: "'Syne Mono', monospace",
+          fontSize: '0.65rem',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: 0,
         }}
       >
-        {products.map((product, i) => (
-          <div
-            key={product.num}
-            style={{
-              flex: '0 0 90vw',
-              scrollSnapAlign: 'center',
-            }}
-          >
-            <Tier1Card
-              product={product}
-              isFlipped={flippedIndex === i}
-              onFlip={() => handleFlip(i)}
-              onChatOpen={onChatOpen}
-            />
-          </div>
-        ))}
-      </div>
-    </>
+        <ArrowClockwise size={11} />
+        Repetir
+      </button>
+    </motion.div>
   )
 }
 
-/* ---- Reduced motion fallback: original flex column ---- */
-function StaticStack({ products, flippedIndex, handleFlip, onChatOpen, isMobile }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
-      {products.map((product, i) => (
-        <Tier1Card
-          key={product.num}
-          product={product}
-          isFlipped={flippedIndex === i}
-          onFlip={() => handleFlip(i)}
-          onChatOpen={onChatOpen}
-        />
-      ))}
-    </div>
-  )
-}
+/* ──────────────────── TIER 2 ──────────────────── */
 
-/* ---- Tier 2 secondary block ---- */
 const MORE_PILLS = [
   { Icon: LockKey,   label: 'Soluciones en local' },
   { Icon: Target,    label: 'Clasificación de leads' },
@@ -850,161 +811,238 @@ const MORE_PILLS = [
   { Icon: Globe,     label: 'Webs y landing pages' },
 ]
 
-function Tier2Block({ onChatOpen }) {
-  const isMobile = useIsMobile()
+function Tier2Block({ onChatOpen, isMobile }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      style={{ marginTop: '3rem', textAlign: isMobile ? 'center' : 'left' }}
+      style={{ marginTop: '4rem' }}
     >
       <div
         style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.7rem',
-          color: 'rgba(26,24,20,0.55)',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          marginBottom: '1.1rem',
+          background: '#FFFFFF',
+          border: '1px solid rgba(26,24,20,0.08)',
+          borderRadius: 18,
+          padding: isMobile ? '1.75rem' : '2.25rem 2.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+          textAlign: isMobile ? 'center' : 'left',
         }}
       >
-        Más soluciones
-      </div>
-
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '2rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-        {MORE_PILLS.map(({ Icon, label }) => (
-          <div
-            key={label}
+        <div>
+          <p
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 7,
-              background: '#FFFFFF',
-              border: '1px solid rgba(26,24,20,0.08)',
-              borderRadius: 999,
-              padding: '8px 16px',
               fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.72rem',
-              color: 'rgba(26,24,20,0.85)',
-              boxShadow: '0 1px 2px rgba(26,24,20,0.04)',
+              fontSize: '0.7rem',
+              color: 'rgba(26,24,20,0.55)',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              margin: '0 0 0.55rem',
             }}
           >
-            <Icon size={14} weight="light" style={{ flexShrink: 0, opacity: 0.7 }} />
-            <span>{label}</span>
-          </div>
-        ))}
-      </div>
-
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: isMobile ? 'center' : 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        padding: '1.25rem 1.75rem',
-        background: '#FFFFFF',
-        border: '1px solid rgba(26,24,20,0.08)',
-        borderRadius: 16,
-        flexDirection: isMobile ? 'column' : 'row',
-      }}>
-        <div>
-          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.9rem', color: 'rgba(26,24,20,0.8)', margin: 0, marginBottom: '0.2rem' }}>
-            ¿No ves tu caso aquí?
+            ¿Tu caso no encaja en los tres?
           </p>
-          <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(26,24,20,0.6)', margin: 0 }}>
-            Si hay algo repetitivo en tu negocio que consume tiempo de tu equipo, casi seguro podemos automatizarlo.
-          </p>
+          <h3
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.4rem, 2.5vw, 1.9rem)',
+              color: '#1A1814',
+              margin: 0,
+              lineHeight: 1.2,
+            }}
+          >
+            Casi seguro encaja en una conversación de 15 minutos.
+          </h3>
         </div>
-        <CtaButton
-          onClick={() => onChatOpen('tier2_other')}
-          variant="ghost"
-          arrow="right"
-          size="md"
-          style={{ height: 42 }}
-        >
-          Probar el asistente
-        </CtaButton>
-      </div>
 
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: '1.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-        {[
-          { Icon: LockKey,     label: 'RGPD compliant' },
-          { Icon: FileText,    label: 'NDA disponible' },
-          { Icon: ShieldCheck, label: 'Datos confidenciales' },
-        ].map(({ Icon, label }) => (
-          <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <Icon size={14} weight="light" style={{ flexShrink: 0, color: 'rgba(26,24,20,0.55)' }} />
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(26,24,20,0.55)', letterSpacing: '0.06em' }}>{label}</span>
-          </div>
-        ))}
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            flexWrap: 'wrap',
+            justifyContent: isMobile ? 'center' : 'flex-start',
+          }}
+        >
+          {MORE_PILLS.map(({ Icon, label }) => (
+            <span
+              key={label}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#FAF8F3',
+                border: '1px solid rgba(26,24,20,0.06)',
+                borderRadius: 999,
+                padding: '6px 12px',
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.68rem',
+                color: 'rgba(26,24,20,0.72)',
+              }}
+            >
+              <Icon size={12} weight="light" style={{ opacity: 0.7 }} />
+              {label}
+            </span>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 12,
+            flexWrap: 'wrap',
+            justifyContent: isMobile ? 'center' : 'flex-start',
+            alignItems: 'center',
+          }}
+        >
+          <CtaButton
+            onClick={() => onChatOpen('tier2_other')}
+            variant="solid"
+            arrow="right"
+            size="md"
+          >
+            Reservar 15 minutos
+          </CtaButton>
+          <span
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.7rem',
+              color: 'rgba(26,24,20,0.55)',
+              letterSpacing: '0.06em',
+            }}
+          >
+            Sin compromiso · te decimos si encaja
+          </span>
+        </div>
       </div>
     </motion.div>
   )
 }
 
-/* ---- Main section ---- */
+/* ──────────────────── MAIN SECTION ──────────────────── */
+
 export default function Products({ onChatOpen }) {
   const isMobile = useIsMobile()
-  const prefersReducedMotion = useReducedMotion()
-  const [flippedIndex, setFlippedIndex] = useState(null)
+  // null = quiz pendiente; -1 = sin recomendación; 0/1/2 = índice recomendado
+  const [recommendedIdx, setRecommendedIdx] = useState(null)
 
-  const handleFlip = (index) => {
-    setFlippedIndex(prev => prev === index ? null : index)
+  const handleQuizResult = (idx) => {
+    setRecommendedIdx(idx)
+    if (idx >= 0) {
+      // Esperar a que el QuizResult reemplace al ProductsQuiz (evita salto
+      // de layout) y luego scroll RAF muy lento y cinematográfico.
+      setTimeout(() => {
+        const el = document.getElementById(`producto-${PRODUCTS[idx].num}`)
+        if (!el) return
+        const navOffset = 96 // ~scrollMarginTop de las cards
+        const targetY = window.scrollY + el.getBoundingClientRect().top - navOffset
+        const startY = window.scrollY
+        const dist = targetY - startY
+        if (Math.abs(dist) < 2) return
+        // Duración proporcional a la distancia, con techo: viajes largos
+        // duran más sin volverse infinitos.
+        const duration = Math.min(2600, Math.max(1400, Math.abs(dist) * 1.6))
+        const t0 = performance.now()
+        // ease-in-out-quint — entrada y salida muy suaves
+        const ease = (t) =>
+          t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2
+        const step = (now) => {
+          const t = Math.min(1, (now - t0) / duration)
+          window.scrollTo(0, startY + dist * ease(t))
+          if (t < 1) requestAnimationFrame(step)
+        }
+        requestAnimationFrame(step)
+      }, 500)
+    }
   }
 
-  const stackProps = { products: PRODUCTS, flippedIndex, handleFlip, onChatOpen }
-
-  const headerBlock = (
-    <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-      <div style={{ marginBottom: '0.85rem' }}>
-        <Eyebrow variant="pill" tone="dark">Lo que hacemos</Eyebrow>
-      </div>
-      <h2
-        style={{
-          fontFamily: "'Instrument Serif', serif",
-          fontSize: 'clamp(1.6rem, 3vw, 2.6rem)',
-          color: '#1A1814',
-          lineHeight: 1.15,
-          margin: 0,
-        }}
-      >
-        Tres sistemas. Un objetivo:
-        <em style={{ fontStyle: 'italic', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-          {' '}que tu negocio funcione solo.
-        </em>
-      </h2>
-    </div>
-  )
-
   return (
-    <AuroraBackground intense variant="light">
-    <section
-      id="lo-que-hacemos"
-      style={{ padding: isMobile ? '5rem 1.25rem' : '6rem 2rem' }}
-    >
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <AuroraBackground variant="light">
+      <section
+        id="lo-que-hacemos"
+        style={{ padding: isMobile ? '5rem 1.25rem' : '6rem 2rem' }}
+      >
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {/* HEADER */}
+          <div
+            style={{
+              textAlign: isMobile ? 'center' : 'left',
+              marginBottom: '2.5rem',
+            }}
+          >
+            <div style={{ marginBottom: '0.85rem' }}>
+              <Eyebrow variant="pill" tone="dark">
+                Lo que ya funciona en otros negocios
+              </Eyebrow>
+            </div>
+            <h2
+              style={{
+                fontFamily: "'Instrument Serif', serif",
+                fontSize: 'clamp(1.8rem, 3.8vw, 2.8rem)',
+                color: '#1A1814',
+                lineHeight: 1.1,
+                margin: '0 0 0.85rem',
+              }}
+            >
+              Tres sistemas. Un objetivo:
+              <em
+                style={{
+                  fontStyle: 'italic',
+                  background: GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                {' '}que tu negocio funcione solo.
+              </em>
+            </h2>
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
+                fontSize: '1rem',
+                color: 'rgba(26,24,20,0.65)',
+                lineHeight: 1.55,
+                margin: 0,
+                maxWidth: 560,
+                marginLeft: isMobile ? 'auto' : 0,
+                marginRight: isMobile ? 'auto' : 0,
+              }}
+            >
+              Elige el que más te aprieta hoy. Operativo en 2 o 3 semanas.
+            </p>
+          </div>
 
-        {/* Tier 1 — 3 cards. Desktop: scroll-driven depth stack with sticky header. Mobile: snap carousel. */}
-        {prefersReducedMotion ? (
-          <>
-            <div style={{ marginBottom: '2.5rem' }}>{headerBlock}</div>
-            <StaticStack {...stackProps} isMobile={isMobile} />
-          </>
-        ) : isMobile ? (
-          <>
-            <div style={{ marginBottom: '2rem' }}>{headerBlock}</div>
-            <MobileCarousel {...stackProps} />
-          </>
-        ) : (
-          <ScrollStack {...stackProps} header={headerBlock} />
-        )}
+          {/* QUIZ */}
+          {recommendedIdx === null ? (
+            <ProductsQuiz onResult={handleQuizResult} isMobile={isMobile} />
+          ) : (
+            <QuizResult
+              recommendedIdx={recommendedIdx}
+              onReset={() => setRecommendedIdx(null)}
+            />
+          )}
 
-        {/* Tier 2 */}
-        <Tier2Block onChatOpen={onChatOpen} />
-      </div>
-    </section>
+          {/* PRODUCT CARDS */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {PRODUCTS.map((product, i) => (
+              <ProductCard
+                key={product.num}
+                product={product}
+                isMobile={isMobile}
+                onChatOpen={onChatOpen}
+                highlighted={recommendedIdx === i}
+              />
+            ))}
+          </div>
+
+          {/* TIER 2 */}
+          <Tier2Block onChatOpen={onChatOpen} isMobile={isMobile} />
+        </div>
+      </section>
     </AuroraBackground>
   )
 }
