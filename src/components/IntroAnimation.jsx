@@ -1,413 +1,507 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// ─── Brand constants ──────────────────────────────────────────────────────────
+/* ──────────────────────────────────────────────────────────────────────────
+   BrAIn — Aperture Morph intro
+   Frame-driven animation (Remotion-style: interpolate / spring / cubic-bezier)
+   Total: 150 frames @ 60fps = 2.5s. Then a 0.5s exit fade.
+   Sequence:
+     1. Staggered entry of b r [ A I ] n (4f stagger, 16f animation each)
+     2. Bracket morph (anticipation + width collapse + glyph fly-out)
+     3. A→a / I→i 3D flip
+     4. Logo scale punch (spring)
+     5. Period drop from above (gravity + bounce) — conic-gradient circle
+     6. Eyebrow + meta line fade-in
+   ──────────────────────────────────────────────────────────────────────── */
 
-const GRAD = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
-const COLORS = ['#4361EE', '#7209B7', '#F72585', '#FB5607', '#22D3EE']
-const GLITCH_POOL = '01<>[]{}/\\=+-*#@$%&?!ΛΣΨΦΩ▲▼◆◇'
-
-const CHARS = [
-  { char: 'b', kind: 'white' },
-  { char: 'r', kind: 'white' },
-  { char: '[', kind: 'grad' },
-  { char: 'A', kind: 'grad' },
-  { char: 'I', kind: 'grad' },
-  { char: ']', kind: 'grad' },
-  { char: 'n', kind: 'white' },
-  { char: '.', kind: 'white' },
-]
-
-const BLOBS = [
-  { color: '#4361EE', size: 700, left: '10%', top: '15%', duration: 45 },
-  { color: '#7209B7', size: 650, left: '70%', top: '60%', duration: 55 },
-  { color: '#F72585', size: 750, left: '20%', top: '75%', duration: 50 },
-  { color: '#FB5607', size: 600, left: '80%', top: '10%', duration: 40 },
-  { color: '#4361EE', size: 680, left: '45%', top: '40%', duration: 60 },
-]
-
-// ─── Timing (ms) ──────────────────────────────────────────────────────────────
-
-const T = {
-  // ignition: when each char position lights up (particles arrive here)
-  ignitionStart: 800,
-  ignitionStagger: 110,
-  // settle: when each position locks to its real letter (sequential, ~300ms after ignition)
-  settleStart: 1100,
-  settleStagger: 110,
-  // particle travel — slower, more graceful
-  particleTravel: 1100,
-  particleArrivalSpread: 280,
-  // glitch cycle rate (ms per symbol swap) — slower, more deliberate
-  glitchSwapMs: 95,
-  shimmer: [1800, 2600],
-  pulse: [2400, 2750],
-  total: 2900,
-  outroFade: 700,
-}
-
-const PARTICLES_PER_CHAR = 4
-
-// ─── Math helpers ─────────────────────────────────────────────────────────────
-
-const clamp01 = (t) => Math.max(0, Math.min(1, t))
-const lerp = (a, b, t) => a + (b - a) * t
-const norm = (x, a, b) => clamp01((x - a) / (b - a))
-
-const easeOutExpo = (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t))
-const easeInOutCubic = (t) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-
-const hash = (n) => {
-  const v = Math.abs(Math.sin(n * 12.9898) * 43758.5453)
-  return v - Math.floor(v)
-}
-const pickGlitch = (seed) =>
-  GLITCH_POOL[Math.floor(hash(seed) * GLITCH_POOL.length)]
-
-// ─── Particle field ───────────────────────────────────────────────────────────
-
-function ParticleField({ elapsed, particles }) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        width: 0,
-        height: 0,
-        pointerEvents: 'none',
-      }}
-    >
-      {particles.map((p) => {
-        const local = elapsed - p.delay
-        if (local < 0) return null
-        const t = clamp01(local / T.particleTravel)
-        // Gentler easing: ease-in-out cubic for graceful drift
-        const eased = easeInOutCubic(t)
-        const x = lerp(p.startX, p.targetX, eased)
-        const y = lerp(p.startY, p.targetY, eased)
-        // Long fade in, gentle dissolve in the last 25%
-        const opacityIn = clamp01(local / 220)
-        const opacityOut = 1 - clamp01((t - 0.75) / 0.25)
-        const opacity = Math.max(0, opacityIn * opacityOut * 0.85)
-        const scale = lerp(0.6, 1, eased) * (1 - clamp01((t - 0.8) / 0.2) * 0.5)
-        return (
-          <div
-            key={p.id}
-            style={{
-              position: 'absolute',
-              width: p.size,
-              height: p.size,
-              marginLeft: -p.size / 2,
-              marginTop: -p.size / 2,
-              borderRadius: '50%',
-              background: p.color,
-              boxShadow: `0 0 ${p.size * 2.4}px ${p.color}`,
-              transform: `translate(${x}px, ${y}px) scale(${scale})`,
-              opacity,
-              willChange: 'transform, opacity',
-            }}
-          />
-        )
-      })}
-    </div>
-  )
-}
-
-// ─── Glyph ────────────────────────────────────────────────────────────────────
-
-function Glyph({ index, char, kind, elapsed, shimmerPos, refCb }) {
-  const ignitionTime = T.ignitionStart + index * T.ignitionStagger
-  const settleTime = T.settleStart + index * T.settleStagger
-  const ignited = elapsed >= ignitionTime
-  const settled = elapsed >= settleTime
-
-  // Soft fade in at ignition (no scale punch — keeps the letter still)
-  const local = elapsed - ignitionTime
-  const opacity = ignited ? clamp01(local / 280) : 0
-
-  let display
-  if (!ignited) display = char // invisible placeholder so layout is stable
-  else if (settled) display = char
-  else display = pickGlitch(Math.floor(elapsed / T.glitchSwapMs) + index * 7)
-
-  const baseStyle = {
-    display: 'inline-block',
-    opacity,
-    willChange: 'opacity',
-    position: 'relative',
+// ── Remotion-style math primitives ───────────────────────────────────────
+const bezier = (mX1, mY1, mX2, mY2) => {
+  const A = (a1, a2) => 1 - 3*a2 + 3*a1
+  const B = (a1, a2) => 3*a2 - 6*a1
+  const C = (a1) => 3*a1
+  const calc = (t, a1, a2) => ((A(a1,a2)*t + B(a1,a2))*t + C(a1))*t
+  const slope = (t, a1, a2) => 3*A(a1,a2)*t*t + 2*B(a1,a2)*t + C(a1)
+  const solve = (x) => {
+    let t = x
+    for (let i = 0; i < 8; i++){
+      const cs = slope(t, mX1, mX2); if (cs === 0) return t
+      t -= (calc(t, mX1, mX2) - x) / cs
+    }
+    return t
   }
-
-  // For grad-kind chars, paint the gradient per-character but anchor it to
-  // the viewport via background-attachment: fixed. This way all chars show
-  // continuous slices of the same gradient — no seams between [, A, I, ].
-  if (kind === 'grad') {
-    return (
-      <span
-        ref={refCb}
-        style={{
-          ...baseStyle,
-          background: GRAD,
-          backgroundSize: '100vw 100vh',
-          backgroundAttachment: 'fixed',
-          backgroundPosition: `${shimmerPos}% 50%`,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}
-      >
-        {display}
-      </span>
-    )
-  }
-
-  return (
-    <span ref={refCb} style={{ ...baseStyle, color: 'white' }}>
-      {display}
-    </span>
-  )
+  return (x) => x <= 0 ? 0 : x >= 1 ? 1 : calc(solve(x), mY1, mY2)
 }
 
-// ─── BrainSplash ──────────────────────────────────────────────────────────────
+const interpolate = (input, [iA, iB], [oA, oB], opts = {}) => {
+  const easing = opts.easing || ((x) => x)
+  if (input <= iA) return oA
+  if (input >= iB) return oB
+  const t = Math.max(0, Math.min(1, (input - iA) / (iB - iA)))
+  return oA + (oB - oA) * easing(t)
+}
 
-function BrainSplash({ onReady }) {
-  const [elapsed, setElapsed] = useState(0)
-  const [positions, setPositions] = useState(null)
-  const [ready, setReady] = useState(false)
-  const charRefs = useRef([])
-  const wrapperRef = useRef(null)
-  const startRef = useRef(null)
+const spring = ({ frame, fps, config = {} }) => {
+  if (frame <= 0) return 0
+  const stiffness = config.stiffness ?? 100
+  const damping   = config.damping   ?? 10
+  const mass      = config.mass      ?? 1
+  const dt = 1 / fps
+  let v = 0, x = 0
+  const steps = Math.ceil(frame)
+  for (let i = 0; i < steps; i++){
+    const a = (-stiffness * (x - 1) - damping * v) / mass
+    v += a * dt
+    x += v * dt
+  }
+  return x
+}
+
+const EASE_OUT_QUINT = bezier(0.22, 1, 0.36, 1)
+const EASE_IN_QUART  = bezier(0.5, 0, 0.75, 0)
+const EASE_INOUT     = bezier(0.65, 0, 0.35, 1)
+const EASE_SCAN      = bezier(0.83, 0, 0.17, 1)
+const EASE_GRAVITY   = bezier(0.55, 0.05, 0.85, 0.20)
+
+const FPS = 60
+const TOTAL_FRAMES = 150
+const STAGGER = 4
+const ENTRY_DUR = 16
+
+// ── Brand tokens ─────────────────────────────────────────────────────────
+const BG    = '#FAF8F3'
+const INK   = '#14110E'
+const HAIR  = 'rgba(20,17,14,0.10)'
+const MUTED = 'rgba(20,17,14,0.42)'
+const GRAD  = 'linear-gradient(118deg, #3A55E0 0%, #6E0BB5 38%, #E81F7B 68%, #F35D0A 100%)'
+
+// ── BrainSplash: the actual animated wordmark ───────────────────────────
+function BrainSplash({ onComplete }) {
+  const stageRef = useRef(null)
+  const logoRef = useRef(null)
+  const bRef = useRef(null)
+  const rRef = useRef(null)
+  const nRef = useRef(null)
+  const lbRef = useRef(null)
+  const rbRef = useRef(null)
+  const lbGlyphRef = useRef(null)
+  const rbGlyphRef = useRef(null)
+  const AupRef = useRef(null)
+  const AloRef = useRef(null)
+  const IupRef = useRef(null)
+  const IloRef = useRef(null)
+  const dotRef = useRef(null)
+  const scanRef = useRef(null)
+  const eyebrowRef = useRef(null)
+  const pulseRef = useRef(null)
+  const metaRef = useRef(null)
+
   const rafRef = useRef(null)
+  const startTsRef = useRef(null)
+  const completedRef = useRef(false)
+  const measurementsRef = useRef({ lbW: 0, rbW: 0, fall: 600 })
+
+  const startOf = (i) => i * STAGGER
+  const entryO = (f, i) => interpolate(f, [startOf(i), startOf(i)+ENTRY_DUR], [0,1], { easing: EASE_OUT_QUINT })
+  const entryB = (f, i) => interpolate(f, [startOf(i), startOf(i)+ENTRY_DUR], [14,0], { easing: EASE_OUT_QUINT })
+  const entryY = (f, i) => interpolate(f, [startOf(i), startOf(i)+ENTRY_DUR], [22,0], { easing: EASE_OUT_QUINT })
+
+  const render = (frame) => {
+    const { lbW, rbW, fall } = measurementsRef.current
+
+    // 1. Staggered entry — b(0) r(1) [(2) A(3) I(4) ](5) n(6)
+    bRef.current.style.opacity = entryO(frame, 0)
+    bRef.current.style.filter = `blur(${entryB(frame, 0)}px)`
+    bRef.current.style.transform = `translateY(${entryY(frame, 0)}px)`
+
+    rRef.current.style.opacity = entryO(frame, 1)
+    rRef.current.style.filter = `blur(${entryB(frame, 1)}px)`
+    rRef.current.style.transform = `translateY(${entryY(frame, 1)}px)`
+
+    nRef.current.style.opacity = entryO(frame, 6)
+    nRef.current.style.filter = `blur(${entryB(frame, 6)}px)`
+    nRef.current.style.transform = `translateY(${entryY(frame, 6)}px)`
+
+    // A upper (index 3) + I upper (index 4) — entry + perpetual mesh + flip-out
+    const AentryO = entryO(frame, 3)
+    const AflipR = interpolate(frame, [62, 94], [0, -92], { easing: EASE_INOUT })
+    const AflipO = interpolate(frame, [62, 94], [1, 0], { easing: EASE_INOUT })
+    AupRef.current.style.opacity = AentryO * AflipO
+    AupRef.current.style.filter = `blur(${entryB(frame, 3)}px)`
+    AupRef.current.style.transform = `translateY(${entryY(frame, 3)}px) rotateX(${AflipR}deg)`
+    AupRef.current.style.backgroundPosition = `${50 + Math.sin(frame / 30) * 50}% 50%`
+
+    const IentryO = entryO(frame, 4)
+    const IflipR = interpolate(frame, [66, 98], [0, -92], { easing: EASE_INOUT })
+    const IflipO = interpolate(frame, [66, 98], [1, 0], { easing: EASE_INOUT })
+    IupRef.current.style.opacity = IentryO * IflipO
+    IupRef.current.style.filter = `blur(${entryB(frame, 4)}px)`
+    IupRef.current.style.transform = `translateY(${entryY(frame, 4)}px) rotateX(${IflipR}deg)`
+    IupRef.current.style.backgroundPosition = `${50 + Math.sin(frame / 30 + 0.4) * 50}% 50%`
+
+    // 2. Bracket morph — width collapse + glyph anticipation/explosion
+    lbRef.current.style.opacity = entryO(frame, 2)
+    lbRef.current.style.filter = `blur(${entryB(frame, 2)}px)`
+    lbRef.current.style.transform = `translateY(${entryY(frame, 2)}px)`
+    rbRef.current.style.opacity = entryO(frame, 5)
+    rbRef.current.style.filter = `blur(${entryB(frame, 5)}px)`
+    rbRef.current.style.transform = `translateY(${entryY(frame, 5)}px)`
+
+    lbRef.current.style.width = `${interpolate(frame, [58, 92], [lbW, 0], { easing: EASE_IN_QUART })}px`
+    rbRef.current.style.width = `${interpolate(frame, [58, 92], [rbW, 0], { easing: EASE_IN_QUART })}px`
+
+    let lbGX = 0, lbGS = 1, lbGO = 1
+    if (frame >= 50 && frame < 58){
+      lbGX = interpolate(frame, [50, 58], [0, 3], { easing: EASE_OUT_QUINT })
+      lbGS = interpolate(frame, [50, 58], [1, 1.08], { easing: EASE_OUT_QUINT })
+    } else if (frame >= 58){
+      lbGX = interpolate(frame, [58, 92], [3, -110], { easing: EASE_IN_QUART })
+      lbGS = interpolate(frame, [58, 92], [1.08, 0.5], { easing: EASE_IN_QUART })
+      lbGO = interpolate(frame, [58, 86], [1, 0], { easing: EASE_IN_QUART })
+    }
+    lbGlyphRef.current.style.transform = `translate(${lbGX}px, 0) scale(${lbGS})`
+    lbGlyphRef.current.style.opacity = lbGO
+
+    let rbGX = 0, rbGS = 1, rbGO = 1
+    if (frame >= 50 && frame < 58){
+      rbGX = interpolate(frame, [50, 58], [0, -3], { easing: EASE_OUT_QUINT })
+      rbGS = interpolate(frame, [50, 58], [1, 1.08], { easing: EASE_OUT_QUINT })
+    } else if (frame >= 58){
+      rbGX = interpolate(frame, [58, 92], [-3, 110], { easing: EASE_IN_QUART })
+      rbGS = interpolate(frame, [58, 92], [1.08, 0.5], { easing: EASE_IN_QUART })
+      rbGO = interpolate(frame, [58, 86], [1, 0], { easing: EASE_IN_QUART })
+    }
+    rbGlyphRef.current.style.transform = `translate(${rbGX}px, 0) scale(${rbGS})`
+    rbGlyphRef.current.style.opacity = rbGO
+
+    // 3. Lower a / i flip-in
+    const AloR = interpolate(frame, [78, 110], [-90, 0], { easing: EASE_OUT_QUINT })
+    const AloO = interpolate(frame, [78, 110], [0, 1], { easing: EASE_OUT_QUINT })
+    AloRef.current.style.opacity = AloO
+    AloRef.current.style.transform = `translateX(-50%) rotateX(${AloR}deg)`
+
+    const IloR = interpolate(frame, [82, 114], [-90, 0], { easing: EASE_OUT_QUINT })
+    const IloO = interpolate(frame, [82, 114], [0, 1], { easing: EASE_OUT_QUINT })
+    IloRef.current.style.opacity = IloO
+    IloRef.current.style.transform = `translateX(-50%) rotateX(${IloR}deg)`
+
+    // 4. Scan-bar sweep
+    const scanPos = interpolate(frame, [56, 100], [150, -50], { easing: EASE_SCAN })
+    let scanOpacity = 0
+    if (frame >= 56 && frame < 66) scanOpacity = interpolate(frame, [56, 66], [0, 1], { easing: EASE_OUT_QUINT })
+    else if (frame >= 66 && frame < 92) scanOpacity = 1
+    else if (frame >= 92 && frame < 100) scanOpacity = interpolate(frame, [92, 100], [1, 0], { easing: EASE_OUT_QUINT })
+    scanRef.current.style.backgroundPosition = `${scanPos}% 0`
+    scanRef.current.style.opacity = scanOpacity
+
+    // 5. Logo punch (spring scale)
+    const punch = spring({ frame: frame - 100, fps: FPS, config: { stiffness: 140, damping: 13, mass: 0.8 } })
+    logoRef.current.style.transform = `scale(${1 + (punch - 1) * 0.035})`
+
+    // 6. Period drop — conic-gradient circle from above with bounce
+    const DROP_START = 105
+    const FALL_END = 125
+    let dotY, dotOpacity = 0
+    if (frame < DROP_START){
+      dotY = -fall
+      dotOpacity = 0
+    } else if (frame < FALL_END){
+      dotY = interpolate(frame, [DROP_START, FALL_END], [-fall, 0], { easing: EASE_GRAVITY })
+      dotOpacity = 1
+    } else {
+      const t = (frame - FALL_END) / FPS
+      dotY = -38 * Math.exp(-t * 6) * Math.sin(t * 18)
+      dotOpacity = 1
+    }
+    let dotScale = 1
+    if (frame >= FALL_END && frame < FALL_END + 10){
+      if (frame < FALL_END + 4){
+        dotScale = interpolate(frame, [FALL_END, FALL_END + 4], [1, 1.22], { easing: EASE_OUT_QUINT })
+      } else {
+        dotScale = interpolate(frame, [FALL_END + 4, FALL_END + 10], [1.22, 1], { easing: EASE_OUT_QUINT })
+      }
+    }
+    dotRef.current.style.opacity = dotOpacity
+    dotRef.current.style.transform = `translateY(${dotY}px) scale(${dotScale})`
+
+    // 7. Eyebrow + meta fade-in
+    const eO = interpolate(frame, [125, 145], [0, 1], { easing: EASE_OUT_QUINT })
+    const eY = interpolate(frame, [125, 145], [-8, 0], { easing: EASE_OUT_QUINT })
+    eyebrowRef.current.style.opacity = eO
+    eyebrowRef.current.style.transform = `translate(-50%, ${eY}px)`
+
+    const mO = interpolate(frame, [130, 150], [0, 1], { easing: EASE_OUT_QUINT })
+    metaRef.current.style.opacity = mO
+
+    // 8. Live-dot perpetual pulse
+    const pulseT = 0.55 + (Math.sin(frame / 12) * 0.5 + 0.5) * 0.45
+    pulseRef.current.style.opacity = pulseT
+    pulseRef.current.style.transform = `scale(${0.9 + (pulseT - 0.55) * 0.5})`
+  }
 
   const measure = () => {
-    if (!wrapperRef.current) return
-    const wr = wrapperRef.current.getBoundingClientRect()
-    const cx = wr.left + wr.width / 2
-    const cy = wr.top + wr.height / 2
-    const pos = charRefs.current.map((el) => {
-      if (!el) return { x: 0, y: 0 }
-      const r = el.getBoundingClientRect()
-      return { x: r.left + r.width / 2 - cx, y: r.top + r.height / 2 - cy }
-    })
-    setPositions(pos)
+    if (!lbRef.current || !rbRef.current || !logoRef.current) return
+    lbRef.current.style.width = ''
+    rbRef.current.style.width = ''
+    const lbW = lbRef.current.getBoundingClientRect().width
+    const rbW = rbRef.current.getBoundingClientRect().width
+    const r = logoRef.current.getBoundingClientRect()
+    const fall = r.top + r.height + 80
+    measurementsRef.current = { lbW, rbW, fall }
   }
 
-  // First measurement before paint (font may still be fallback)
-  useLayoutEffect(() => {
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [])
-
-  // Wait for the real font to load, then re-measure with correct metrics,
-  // then mark ready (which starts the RAF and the parent timer).
   useEffect(() => {
     let cancelled = false
     const fontsReady = (document.fonts && document.fonts.ready) || Promise.resolve()
-    Promise.race([
-      fontsReady,
-      new Promise((r) => setTimeout(r, 1200)), // hard cap so we never hang
-    ]).then(() => {
+    Promise.race([fontsReady, new Promise(r => setTimeout(r, 1200))]).then(() => {
       if (cancelled) return
-      // One frame of breathing room so the browser settles layout post-font swap
-      requestAnimationFrame(() => {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
         if (cancelled) return
         measure()
-        setReady(true)
-        onReady?.()
-      })
+        startTsRef.current = null
+        const tick = (ts) => {
+          if (cancelled) return
+          if (startTsRef.current == null) startTsRef.current = ts
+          const elapsedMs = ts - startTsRef.current
+          const frame = Math.min(TOTAL_FRAMES, (elapsedMs / 1000) * FPS)
+          render(frame)
+          if (frame < TOTAL_FRAMES){
+            rafRef.current = requestAnimationFrame(tick)
+          } else {
+            // Hold final state briefly, then signal complete
+            if (!completedRef.current){
+              completedRef.current = true
+              setTimeout(() => onComplete?.(), 350)
+            }
+            // Keep perpetual pulse alive
+            const perpetual = (ts2) => {
+              if (cancelled) return
+              const elapsed2 = ts2 - startTsRef.current
+              const f = (elapsed2 / 1000) * FPS
+              const pulseT = 0.55 + (Math.sin(f / 12) * 0.5 + 0.5) * 0.45
+              if (pulseRef.current){
+                pulseRef.current.style.opacity = pulseT
+                pulseRef.current.style.transform = `scale(${0.9 + (pulseT - 0.55) * 0.5})`
+              }
+              rafRef.current = requestAnimationFrame(perpetual)
+            }
+            rafRef.current = requestAnimationFrame(perpetual)
+          }
+        }
+        rafRef.current = requestAnimationFrame(tick)
+      }))
     })
+
+    const onResize = () => measure()
+    window.addEventListener('resize', onResize)
     return () => {
       cancelled = true
+      cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('resize', onResize)
     }
-  }, [onReady])
+  }, [onComplete])
 
-  // RAF loop — only starts once the font is loaded and positions are final
-  useEffect(() => {
-    if (!ready) return
-    const tick = (ts) => {
-      if (startRef.current == null) startRef.current = ts
-      setElapsed(ts - startRef.current)
-      rafRef.current = requestAnimationFrame(tick)
-    }
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [ready])
-
-  // Build particles once positions are known
-  const particles = useMemo(() => {
-    if (!positions) return []
-    const arr = []
-    for (let charIdx = 0; charIdx < CHARS.length; charIdx++) {
-      const ignitionTime = T.ignitionStart + charIdx * T.ignitionStagger
-      for (let j = 0; j < PARTICLES_PER_CHAR; j++) {
-        const i = charIdx * PARTICLES_PER_CHAR + j
-        const angle = hash(i + 1) * Math.PI * 2
-        const dist = 550 + hash(i + 7) * 500
-        // Stagger arrival within a window ending at ignitionTime
-        const arrivalOffset = (j / (PARTICLES_PER_CHAR - 1)) * T.particleArrivalSpread
-        const delay = Math.max(
-          0,
-          ignitionTime - T.particleTravel - T.particleArrivalSpread + arrivalOffset,
-        )
-        arr.push({
-          id: i,
-          startX: Math.cos(angle) * dist,
-          startY: Math.sin(angle) * dist,
-          // Target near the char center with a small jitter
-          targetX: positions[charIdx].x + (hash(i + 13) - 0.5) * 50,
-          targetY: positions[charIdx].y + (hash(i + 19) - 0.5) * 50,
-          size: 3.5 + hash(i + 23) * 4,
-          color: COLORS[(charIdx + j) % COLORS.length],
-          delay,
-        })
-      }
-    }
-    return arr
-  }, [positions])
-
-  // Shimmer position on [AI]
-  const shimmerT = norm(elapsed, T.shimmer[0], T.shimmer[1])
-  const shimmerPos = lerp(150, -50, easeInOutCubic(shimmerT))
-
-  // Soft glow behind logo — appears with the shimmer
-  const glowOpacity = norm(elapsed, T.shimmer[0] - 200, T.shimmer[0] + 200) * 0.45
-
-  // Settle pulse
-  let pulse = 1
-  if (elapsed >= T.pulse[0] && elapsed <= T.pulse[1]) {
-    const t = (elapsed - T.pulse[0]) / (T.pulse[1] - T.pulse[0])
-    pulse = 1 + Math.sin(t * Math.PI) * 0.03
+  // Styles
+  const sLogo = {
+    position: 'relative',
+    fontFamily: "'Syne Mono', monospace",
+    fontSize: 'clamp(4.2rem, 12vw, 10rem)',
+    lineHeight: 1,
+    letterSpacing: '-0.025em',
+    color: INK,
+    display: 'inline-flex',
+    alignItems: 'baseline',
+    isolation: 'isolate',
+    willChange: 'transform',
+  }
+  const sCh = { display: 'inline-block', willChange: 'opacity,filter,transform' }
+  const sMorph = { display: 'inline-block', position: 'relative', perspective: '900px' }
+  const sUpper = {
+    display: 'inline-block',
+    background: GRAD,
+    backgroundSize: '220% 220%',
+    WebkitBackgroundClip: 'text', backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent', color: 'transparent',
+    transformOrigin: '50% 100%',
+    backfaceVisibility: 'hidden',
+    willChange: 'opacity,transform,background-position',
+  }
+  const sLower = {
+    position: 'absolute',
+    left: '50%', bottom: 0,
+    transform: 'translateX(-50%)',
+    color: INK,
+    opacity: 0,
+    transformOrigin: '50% 0%',
+    backfaceVisibility: 'hidden',
+    lineHeight: 1,
+    willChange: 'opacity,transform',
+  }
+  const sBracket = {
+    display: 'inline-block',
+    color: INK,
+    overflow: 'hidden',
+    verticalAlign: 'baseline',
+    willChange: 'width',
+  }
+  const sBracketGlyph = { display: 'inline-block', willChange: 'transform,opacity' }
+  const sDot = {
+    display: 'inline-block',
+    position: 'relative',
+    color: 'transparent',
+    transformOrigin: '50% 70%',
+    opacity: 0,
+    willChange: 'transform,opacity',
+  }
+  const sDotAfter = {
+    content: '""',
+    position: 'absolute',
+    bottom: '0.06em',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '0.17em',
+    height: '0.17em',
+    borderRadius: '50%',
+    background: `conic-gradient(from 215deg, #3A55E0 0deg, #6E0BB5 90deg, #E81F7B 180deg, #F35D0A 270deg, #3A55E0 360deg)`,
+    boxShadow: `inset 0 0.012em 0.025em rgba(255,255,255,0.45), 0 0 0.22em rgba(110,11,181,0.30), 0 0 0.35em rgba(247,37,133,0.20)`,
+  }
+  const sScan = {
+    position: 'absolute',
+    top: '50%', left: 0, right: 0,
+    height: '1px',
+    pointerEvents: 'none',
+    background: `linear-gradient(90deg, transparent 0%, rgba(110,11,181,0) 30%, rgba(110,11,181,0.9) 48%, rgba(247,37,133,1) 50%, rgba(243,93,10,0.9) 52%, transparent 70%, transparent 100%)`,
+    backgroundSize: '200% 100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: '150% 0',
+    opacity: 0,
+    filter: 'blur(0.4px) drop-shadow(0 0 6px rgba(247,37,133,0.6))',
+    transform: 'translateY(-50%)',
+    willChange: 'background-position,opacity',
   }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div
-        ref={wrapperRef}
-        style={{
-          position: 'relative',
-          transform: `scale(${pulse})`,
-          willChange: 'transform',
-        }}
-      >
-        <ParticleField elapsed={elapsed} particles={particles} />
+    <>
+      <style>{`@keyframes brainSplashDotAfter { from{} to{} }`}</style>
 
-        {/* Soft glow behind logo */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '80%',
-            height: 4,
-            transform: 'translate(-50%, -50%) scaleX(2.5)',
-            filter: 'blur(80px)',
-            background: GRAD,
-            opacity: glowOpacity,
-            pointerEvents: 'none',
-            zIndex: -1,
-          }}
-        />
+      <div ref={eyebrowRef} style={{
+        position: 'fixed', top: 32, left: '50%',
+        display: 'inline-flex', alignItems: 'center', gap: 10,
+        padding: '8px 16px 8px 14px',
+        border: `1px solid ${HAIR}`,
+        background: 'rgba(255,255,255,0.55)',
+        backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: 999,
+        font: "500 11px/1 'DM Sans', sans-serif",
+        letterSpacing: '0.22em', textTransform: 'uppercase',
+        color: MUTED,
+        whiteSpace: 'nowrap',
+        opacity: 0,
+        zIndex: 50,
+      }}>
+        <span ref={pulseRef} style={{
+          width: 7, height: 7, borderRadius: '50%',
+          background: '#6E0BB5',
+          boxShadow: '0 0 10px rgba(110,11,181,0.7)',
+          willChange: 'transform,opacity',
+        }}/>
+        <span>AI Agency · Live</span>
+      </div>
 
-        <div
-          style={{
-            fontFamily: "'Syne Mono', ui-monospace, monospace",
-            fontSize: 'clamp(4rem, 11vw, 9rem)',
-            letterSpacing: '0.05em',
-            lineHeight: 1,
-            userSelect: 'none',
-            display: 'flex',
-            alignItems: 'baseline',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {CHARS.map((c, i) => (
-            <Glyph
-              key={i}
-              index={i}
-              char={c.char}
-              kind={c.kind}
-              elapsed={elapsed}
-              shimmerPos={shimmerPos}
-              refCb={(el) => (charRefs.current[i] = el)}
-            />
-          ))}
+      <div ref={stageRef} style={{
+        position: 'relative', zIndex: 2,
+        display: 'grid', placeItems: 'center',
+        padding: '0 24px',
+      }}>
+        <div ref={logoRef} style={sLogo} aria-label="brain.">
+          <span ref={bRef} style={sCh}>b</span>
+          <span ref={rRef} style={sCh}>r</span>
+          <span ref={lbRef} style={sBracket}>
+            <span ref={lbGlyphRef} style={sBracketGlyph}>[</span>
+          </span>
+          <span style={sMorph}>
+            <span ref={AupRef} style={sUpper}>A</span>
+            <span ref={AloRef} style={sLower}>a</span>
+          </span>
+          <span style={sMorph}>
+            <span ref={IupRef} style={sUpper}>I</span>
+            <span ref={IloRef} style={sLower}>i</span>
+          </span>
+          <span ref={rbRef} style={sBracket}>
+            <span ref={rbGlyphRef} style={sBracketGlyph}>]</span>
+          </span>
+          <span ref={nRef} style={sCh}>n</span>
+          <span ref={dotRef} style={sDot}>
+            .
+            <span style={sDotAfter}/>
+          </span>
+          <span ref={scanRef} style={sScan} aria-hidden="true"/>
         </div>
       </div>
-    </div>
+
+      <div ref={metaRef} style={{
+        position: 'fixed', bottom: 30, left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex', alignItems: 'center', gap: 14,
+        font: "400 11px/1 'DM Sans', sans-serif",
+        letterSpacing: '0.24em', textTransform: 'uppercase',
+        color: MUTED,
+        whiteSpace: 'nowrap',
+        opacity: 0,
+        zIndex: 50,
+      }}>
+        <span>MURCIA</span>
+        <span style={{ width: 26, height: 1, background: HAIR }}/>
+        <span>EST 2026</span>
+        <span style={{ width: 26, height: 1, background: HAIR }}/>
+        <span>INTELLIGENCE REFINED</span>
+      </div>
+    </>
   )
 }
 
-// ─── IntroAnimation ───────────────────────────────────────────────────────────
-
+// ── Outer overlay: handles mount, ambient background, exit fade ─────────
 export default function IntroAnimation({ onComplete }) {
   const [done, setDone] = useState(false)
-  const [started, setStarted] = useState(false)
 
-  // Once BrainSplash signals it is ready (font loaded + positions measured),
-  // start the outro timer. This way the parent doesn't fade out before the
-  // animation has had a chance to play.
-  useEffect(() => {
-    if (!started) return
-    const t = setTimeout(() => {
-      setDone(true)
-      setTimeout(() => onComplete?.(), T.outroFade)
-    }, T.total)
-    return () => clearTimeout(t)
-  }, [started, onComplete])
+  const handleAnimationComplete = () => {
+    setDone(true)
+    // Exit fade is 500ms; signal parent slightly before so the fade overlaps
+    setTimeout(() => onComplete?.(), 500)
+  }
 
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          exit={{
-            opacity: 0,
-            transition: { duration: T.outroFade / 1000, ease: [0.4, 0, 0.2, 1] },
-          }}
+          exit={{ opacity: 0, transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] } }}
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: '#050508',
+            background: BG,
             overflow: 'hidden',
+            display: 'grid',
+            placeItems: 'center',
+            fontFamily: "'DM Sans', sans-serif",
+            color: INK,
           }}
         >
-          {/* Aurora blobs */}
-          <div
-            aria-hidden
-            role="presentation"
-            style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          >
-            {BLOBS.map((blob, i) => (
-              <div
-                key={i}
-                style={{
-                  position: 'absolute',
-                  left: blob.left,
-                  top: blob.top,
-                  width: blob.size,
-                  height: blob.size,
-                  borderRadius: '50%',
-                  background: blob.color,
-                  filter: 'blur(120px)',
-                  opacity: 0.07,
-                  animation: `floatBlob ${blob.duration}s ease-in-out infinite`,
-                  animationDelay: `${i * -9}s`,
-                }}
-              />
-            ))}
-          </div>
+          {/* Whisper-quiet ambient depth */}
+          <div aria-hidden style={{
+            position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
+            background: `
+              radial-gradient(60% 50% at 50% 42%, rgba(110,11,181,0.05), transparent 70%),
+              radial-gradient(40% 35% at 70% 70%, rgba(58,85,224,0.04), transparent 70%)
+            `,
+          }}/>
+          {/* Grain */}
+          <div aria-hidden style={{
+            position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 60,
+            opacity: 0.028, mixBlendMode: 'multiply',
+            backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")`,
+          }}/>
 
-          <BrainSplash onReady={() => setStarted(true)} />
+          <BrainSplash onComplete={handleAnimationComplete} />
         </motion.div>
       )}
     </AnimatePresence>

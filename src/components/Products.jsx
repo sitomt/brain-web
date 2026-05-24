@@ -20,6 +20,8 @@ import AgentDemo from '../remotion/AgentDemo'
 import AuroraBackground from './AuroraBackground'
 import CtaButton from './CtaButton'
 import Eyebrow from './Eyebrow'
+import baktun13Logo from '../assets/baktun13-logo.png'
+import clesolLogo from '../assets/clesol-logo.png'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 const EASE = [0.22, 1, 0.36, 1]
@@ -53,9 +55,9 @@ const PRODUCTS = [
     ctaLabel: 'Probar cómo atendería tu negocio',
     // Multi-caso → rotación que comunica "para cualquier sector"
     cases: [
-      { initials: 'B13', tag: 'Baktun 13',     sector: 'Gimnasio',    quote: '3 semanas. De cero a operativo.' },
-      { initials: 'VA',  tag: 'Venta Alegría', sector: 'Restaurante', quote: '100% digitalizado, hasta los albaranes por foto.' },
-      { initials: 'CL',  tag: 'Clesol',        sector: 'Servicios',   quote: 'Leads clasificados sin que nadie levante el dedo.' },
+      { logo: 'baktun13',      tag: 'Baktun 13',     sector: 'Gimnasio',    quote: '3 semanas. De cero a operativo.' },
+      { logo: 'venta-alegria', tag: 'Venta Alegría', sector: 'Restaurante', quote: '100% digitalizado, hasta los albaranes por foto.' },
+      { logo: 'clesol',        tag: 'Clesol',        sector: 'Servicios',   quote: 'Leads clasificados sin que nadie levante el dedo.' },
     ],
     component: ChatbotDemo,
   },
@@ -82,7 +84,7 @@ const PRODUCTS = [
     price: { from: '2.000€', maintenance: '200€/mes' },
     ctaLabel: 'Ver qué automatizaríamos en tu caso',
     cases: [
-      { initials: 'CL', tag: 'Clesol', sector: 'Servicios', quote: 'Clasificación automática de leads operativa en 2 semanas.' },
+      { logo: 'clesol', tag: 'Clesol', sector: 'Servicios', quote: 'Clasificación automática de leads operativa en 2 semanas.' },
     ],
     component: AgentDemo,
   },
@@ -109,7 +111,7 @@ const PRODUCTS = [
     price: { from: '1.500€', maintenance: '150€/mes' },
     ctaLabel: 'Hazle una pregunta a un negocio real',
     cases: [
-      { initials: 'B13', tag: 'Baktun 13', sector: 'Gimnasio', quote: 'App de gestión con IA en 3 semanas.' },
+      { logo: 'baktun13', tag: 'Baktun 13', sector: 'Gimnasio', quote: 'App de gestión con IA en 3 semanas.' },
     ],
     component: DataQueryDemo,
   },
@@ -175,6 +177,67 @@ function LazyVideoColumn({ component }) {
   )
 }
 
+/* ──────────────────── CASE LOGO ──────────────────── */
+
+function CaseLogo({ logo, tag }) {
+  if (logo === 'baktun13') {
+    return (
+      <div
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 9,
+          background: '#1A1814',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 5,
+          flexShrink: 0,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+        }}
+      >
+        <img
+          src={baktun13Logo}
+          alt={tag}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+      </div>
+    )
+  }
+
+  if (logo === 'clesol') {
+    return (
+      <img
+        src={clesolLogo}
+        alt={tag}
+        style={{ height: 24, width: 'auto', flexShrink: 0, display: 'block' }}
+      />
+    )
+  }
+
+  // venta-alegria — wordmark editorial
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'baseline',
+        gap: 6,
+        fontFamily: "'Instrument Serif', serif",
+        fontStyle: 'italic',
+        fontSize: '1.15rem',
+        color: '#1A1814',
+        letterSpacing: '0.005em',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        lineHeight: 1,
+      }}
+    >
+      <span style={{ fontSize: '0.7em', opacity: 0.55, transform: 'translateY(-1px)' }}>✦</span>
+      Venta Alegría
+    </span>
+  )
+}
+
 /* ──────────────────── ROTATING CASES (social proof) ──────────────────── */
 
 function CasesStrip({ cases }) {
@@ -201,24 +264,8 @@ function CasesStrip({ cases }) {
         borderRadius: 12,
       }}
     >
-      <div
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: '50%',
-          background: GRADIENT,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#fff',
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.62rem',
-          flexShrink: 0,
-          letterSpacing: '0.02em',
-        }}
-      >
-        {c.initials}
-      </div>
+      <CaseLogo logo={c.logo} tag={c.tag} />
+
       <AnimatePresence mode="wait">
         <motion.div
           key={idx}
@@ -250,7 +297,7 @@ function CasesStrip({ cases }) {
               margin: '3px 0 0',
             }}
           >
-            {c.tag} · {c.sector}
+            {c.sector}
           </p>
         </motion.div>
       </AnimatePresence>
@@ -290,20 +337,20 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: '#FFFFFF',
+        background: '#FEFCF7',
         border: `1px solid ${
-          highlighted ? 'rgba(114,9,183,0.4)' : 'rgba(26,24,20,0.08)'
+          highlighted ? 'rgba(114,9,183,0.4)' : 'rgba(26,24,20,0.06)'
         }`,
-        borderRadius: 18,
-        padding: isMobile ? '1.5rem' : '2.25rem',
+        borderRadius: 24,
+        padding: isMobile ? '1.75rem' : '2.75rem 2.5rem',
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : '0.95fr 1.05fr',
-        gap: isMobile ? '1.5rem' : '2.5rem',
+        gap: isMobile ? '1.5rem' : '3rem',
         position: 'relative',
-        transform: hovered && !isMobile ? 'translateY(-4px)' : 'translateY(0)',
+        transform: hovered && !isMobile ? 'translateY(-2px)' : 'translateY(0)',
         boxShadow: hovered && !isMobile
-          ? '0 12px 32px -16px rgba(26,24,20,0.18)'
-          : '0 1px 0 rgba(26,24,20,0.02)',
+          ? 'inset 0 1px 0 rgba(255,255,255,0.85), 0 18px 44px -24px rgba(26,24,20,0.18), 0 2px 0 rgba(26,24,20,0.02)'
+          : 'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12), 0 1px 0 rgba(26,24,20,0.02)',
         transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s',
         scrollMarginTop: '6rem',
       }}
@@ -340,7 +387,7 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '1.15rem',
+          gap: '1.4rem',
           order: isMobile ? 2 : 0,
           minWidth: 0,
         }}
@@ -389,7 +436,7 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
           </div>
         </header>
 
-        {/* Outcomes — máx 3, hairline indent */}
+        {/* Outcome principal — solo el más impactante en estado colapsado */}
         <ul
           style={{
             listStyle: 'none',
@@ -400,32 +447,29 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
             gap: '0.7rem',
           }}
         >
-          {product.outcomes.map((o, i) => (
-            <li
-              key={i}
+          <li
+            style={{
+              display: 'flex',
+              gap: 14,
+              alignItems: 'flex-start',
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 400,
+              fontSize: '0.92rem',
+              color: '#1A1814',
+              lineHeight: 1.5,
+            }}
+          >
+            <span
               style={{
-                display: 'flex',
-                gap: 14,
-                alignItems: 'flex-start',
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 400,
-                fontSize: '0.92rem',
-                color: '#1A1814',
-                lineHeight: 1.5,
+                marginTop: 11,
+                width: 16,
+                height: 1,
+                background: 'rgba(26,24,20,0.45)',
+                flexShrink: 0,
               }}
-            >
-              <span
-                style={{
-                  marginTop: 11,
-                  width: 16,
-                  height: 1,
-                  background: 'rgba(26,24,20,0.45)',
-                  flexShrink: 0,
-                }}
-              />
-              <span>{o}</span>
-            </li>
-          ))}
+            />
+            <span>{product.outcomes[0]}</span>
+          </li>
         </ul>
 
         {/* Acordeón "ver todo lo que incluye" */}
@@ -436,17 +480,19 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
             style={{
               border: 'none',
               background: 'transparent',
-              color: 'rgba(26,24,20,0.65)',
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.7rem',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
+              color: 'rgba(26,24,20,0.55)',
+              fontFamily: "'Instrument Serif', serif",
+              fontStyle: 'italic',
+              fontSize: '0.95rem',
               cursor: 'pointer',
               padding: 0,
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
+              transition: 'color 0.2s ease',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(26,24,20,0.85)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(26,24,20,0.55)')}
           >
             {expanded ? <Minus size={12} /> : <Plus size={12} />}
             {expanded ? 'Ocultar detalle' : 'Ver todo lo que incluye'}
@@ -462,53 +508,133 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
               >
                 <div
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-                    gap: '0.5rem 1.5rem',
-                    paddingTop: '0.9rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.4rem',
+                    paddingTop: '1.4rem',
+                    marginTop: '0.4rem',
+                    borderTop: '1px solid rgba(26,24,20,0.06)',
                   }}
                 >
-                  {product.bullets.map((b, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                      <span
-                        style={{
-                          width: 4,
-                          height: 4,
-                          borderRadius: '50%',
-                          background: 'rgba(26,24,20,0.4)',
-                          marginTop: 8,
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontWeight: 300,
-                          fontSize: '0.82rem',
-                          color: 'rgba(26,24,20,0.65)',
-                          lineHeight: 1.55,
-                        }}
-                      >
-                        {b}
-                      </span>
+                  {/* Outcomes restantes (2 y 3) */}
+                  {product.outcomes.length > 1 && (
+                    <ul
+                      style={{
+                        listStyle: 'none',
+                        padding: 0,
+                        margin: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.7rem',
+                      }}
+                    >
+                      {product.outcomes.slice(1).map((o, i) => (
+                        <li
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            gap: 14,
+                            alignItems: 'flex-start',
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontWeight: 400,
+                            fontSize: '0.92rem',
+                            color: '#1A1814',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          <span
+                            style={{
+                              marginTop: 11,
+                              width: 16,
+                              height: 1,
+                              background: 'rgba(26,24,20,0.45)',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span>{o}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* Bullets detallados */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                      gap: '0.5rem 1.5rem',
+                    }}
+                  >
+                    {product.bullets.map((b, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                        <span
+                          style={{
+                            width: 4,
+                            height: 4,
+                            borderRadius: '50%',
+                            background: 'rgba(26,24,20,0.4)',
+                            marginTop: 8,
+                            flexShrink: 0,
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontWeight: 300,
+                            fontSize: '0.82rem',
+                            color: 'rgba(26,24,20,0.65)',
+                            lineHeight: 1.55,
+                          }}
+                        >
+                          {b}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Mantenimiento + risk pills */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <span
+                      style={{
+                        fontFamily: "'Syne Mono', monospace",
+                        fontSize: '0.78rem',
+                        color: 'rgba(26,24,20,0.55)',
+                      }}
+                    >
+                      + mantenimiento desde {product.price.maintenance}
+                    </span>
+                    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                      {[
+                        { Icon: ShieldCheck, label: 'RGPD compliant' },
+                        { Icon: FileText,    label: 'NDA disponible' },
+                        { Icon: LockKey,     label: 'Datos en tu infra' },
+                      ].map(({ Icon, label }) => (
+                        <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                          <Icon size={12} weight="regular" style={{ color: '#22C55E', flexShrink: 0 }} />
+                          <span
+                            style={{
+                              fontFamily: "'Syne Mono', monospace",
+                              fontSize: '0.65rem',
+                              color: 'rgba(26,24,20,0.55)',
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            {label}
+                          </span>
+                        </span>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Social proof — rotating for 01, static for 02/03 */}
+                  <CasesStrip cases={product.cases} />
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* Separator */}
-        <div
-          style={{
-            height: 1,
-            background:
-              'linear-gradient(90deg, rgba(26,24,20,0.12) 0%, rgba(26,24,20,0.02) 100%)',
-          }}
-        />
-
-        {/* PRICE — editorial typography, no pill, no gradient */}
+        {/* PRICE — minimalista: solo "Desde X€" */}
         <div>
           <p
             style={{
@@ -522,60 +648,17 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
           >
             Desde
           </p>
-          <div
+          <span
             style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 12,
-              flexWrap: 'wrap',
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
+              color: '#1A1814',
+              lineHeight: 1,
             }}
           >
-            <span
-              style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
-                color: '#1A1814',
-                lineHeight: 1,
-              }}
-            >
-              {product.price.from}
-            </span>
-            <span
-              style={{
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.78rem',
-                color: 'rgba(26,24,20,0.55)',
-              }}
-            >
-              + mantenimiento desde {product.price.maintenance}
-            </span>
-          </div>
-          {/* Risk reversal in-situ */}
-          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
-            {[
-              { Icon: ShieldCheck, label: 'RGPD compliant' },
-              { Icon: FileText,    label: 'NDA disponible' },
-              { Icon: LockKey,     label: 'Datos en tu infra' },
-            ].map(({ Icon, label }) => (
-              <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                <Icon size={12} weight="regular" style={{ color: '#22C55E', flexShrink: 0 }} />
-                <span
-                  style={{
-                    fontFamily: "'Syne Mono', monospace",
-                    fontSize: '0.65rem',
-                    color: 'rgba(26,24,20,0.55)',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {label}
-                </span>
-              </span>
-            ))}
-          </div>
+            {product.price.from}
+          </span>
         </div>
-
-        {/* Social proof — rotating for 01, static for 02/03 */}
-        <CasesStrip cases={product.cases} />
 
         {/* CTA */}
         <div style={{ marginTop: 'auto', paddingTop: '0.25rem' }}>
@@ -625,11 +708,13 @@ function ProductsQuiz({ onResult, isMobile }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        padding: isMobile ? '1.25rem 1.25rem' : '1.5rem 1.75rem',
-        background: '#FFFFFF',
-        border: '1px solid rgba(26,24,20,0.08)',
-        borderRadius: 14,
+        padding: isMobile ? '1.5rem 1.25rem' : '1.75rem 2rem',
+        background: '#FEFCF7',
+        border: '1px solid rgba(26,24,20,0.06)',
+        borderRadius: 18,
         marginBottom: '2.5rem',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12), 0 1px 0 rgba(26,24,20,0.02)',
       }}
     >
       <div
@@ -695,27 +780,33 @@ function ProductsQuiz({ onResult, isMobile }) {
                 type="button"
                 onClick={() => answer(val)}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#1A1814'
-                  e.currentTarget.style.color = '#FAF8F3'
-                  e.currentTarget.style.borderColor = '#1A1814'
+                  e.currentTarget.style.background = '#F4EFE5'
+                  e.currentTarget.style.borderColor = 'rgba(26,24,20,0.35)'
+                  e.currentTarget.style.transform = 'translateY(-1px)'
+                  e.currentTarget.style.boxShadow =
+                    'inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 20px -16px rgba(26,24,20,0.18)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = '#FAF8F3'
-                  e.currentTarget.style.color = '#1A1814'
-                  e.currentTarget.style.borderColor = 'rgba(26,24,20,0.15)'
+                  e.currentTarget.style.borderColor = 'rgba(26,24,20,0.12)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow =
+                    'inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 0 rgba(26,24,20,0.02)'
                 }}
                 style={{
                   flex: 1,
-                  height: 44,
-                  border: '1px solid rgba(26,24,20,0.15)',
+                  height: 46,
+                  border: '1px solid rgba(26,24,20,0.12)',
                   background: '#FAF8F3',
-                  borderRadius: 10,
+                  borderRadius: 12,
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
-                  fontSize: '0.92rem',
+                  fontSize: '0.95rem',
                   color: '#1A1814',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease',
+                  boxShadow:
+                    'inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 0 rgba(26,24,20,0.02)',
                 }}
               >
                 {label}
@@ -737,16 +828,18 @@ function QuizResult({ recommendedIdx, onReset }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        padding: '0.9rem 1.25rem',
-        background: '#FFFFFF',
-        border: '1px solid rgba(26,24,20,0.08)',
-        borderRadius: 14,
+        padding: '1rem 1.5rem',
+        background: '#FEFCF7',
+        border: '1px solid rgba(26,24,20,0.06)',
+        borderRadius: 18,
         marginBottom: '2.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 14,
         flexWrap: 'wrap',
+        boxShadow:
+          'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12), 0 1px 0 rgba(26,24,20,0.02)',
       }}
     >
       <p
@@ -962,14 +1055,14 @@ export default function Products({ onChatOpen }) {
     <AuroraBackground variant="light">
       <section
         id="lo-que-hacemos"
-        style={{ padding: isMobile ? '5rem 1.25rem' : '6rem 2rem' }}
+        style={{ padding: isMobile ? '4.5rem 1.25rem' : '6rem 2rem' }}
       >
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           {/* HEADER */}
           <div
             style={{
               textAlign: isMobile ? 'center' : 'left',
-              marginBottom: '2.5rem',
+              marginBottom: '3.25rem',
             }}
           >
             <div style={{ marginBottom: '0.85rem' }}>
@@ -1027,7 +1120,7 @@ export default function Products({ onChatOpen }) {
           )}
 
           {/* PRODUCT CARDS */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {PRODUCTS.map((product, i) => (
               <ProductCard
                 key={product.num}

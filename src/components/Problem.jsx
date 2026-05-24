@@ -38,6 +38,16 @@ const problems = [
   },
   {
     num: '03',
+    figure: '0%',
+    figureLabel: 'de tus datos se convierten en decisiones',
+    title: 'Sabes que las respuestas están ahí.',
+    body: 'Ventas, clientes, márgenes, repetición.\nNadie tiene tiempo de mirarlo.',
+    realCost: 'Decides por intuición lo que podrías decidir con evidencia.',
+    component: Problem4_Data,
+    accent: 'rgba(251,86,7,0.18)',
+  },
+  {
+    num: '04',
     figure: '1',
     figureLabel: 'persona sabe cómo funciona todo. Tú.',
     title: 'Si te pasa algo, se para todo.',
@@ -46,16 +56,6 @@ const problems = [
     component: Problem3_Flow,
     accent: 'rgba(247,37,133,0.22)',
     highlight: true,
-  },
-  {
-    num: '04',
-    figure: '0%',
-    figureLabel: 'de tus datos se convierten en decisiones',
-    title: 'Sabes que las respuestas están ahí.',
-    body: 'Ventas, clientes, márgenes, repetición.\nNadie tiene tiempo de mirarlo.',
-    realCost: 'Decides por intuición lo que podrías decidir con evidencia.',
-    component: Problem4_Data,
-    accent: 'rgba(251,86,7,0.18)',
   },
 ]
 
@@ -153,22 +153,6 @@ function LazyVideoColumn({ component, compact = false }) {
         )}
       </div>
     </div>
-  )
-}
-
-function Index({ children }) {
-  return (
-    <span
-      style={{
-        fontFamily: "'Syne Mono', monospace",
-        fontSize: '0.78rem',
-        letterSpacing: '0.22em',
-        color: 'rgba(255,255,255,0.32)',
-        textTransform: 'uppercase',
-      }}
-    >
-      {children}
-    </span>
   )
 }
 
@@ -300,15 +284,15 @@ function ProblemBlock({ p, layout, isMobile }) {
     transition: { duration: 0.85, ease: EASE_PREMIUM },
   }
 
-  // HERO layout — problem 03, no video, big cifra + statement
-  if (layout === 'hero' && !isMobile) {
+  // HERO layout — problem 04, no video, big cifra + statement
+  if (layout === 'hero') {
     return (
       <motion.div
         {...blockReveal}
         style={{
           position: 'relative',
-          borderRadius: 28,
-          padding: '3.5rem 3rem',
+          borderRadius: isMobile ? 22 : 28,
+          padding: isMobile ? '2.25rem 1.5rem' : '3.5rem 3rem',
           background:
             'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
           border: '1px solid rgba(255,255,255,0.08)',
@@ -330,13 +314,13 @@ function ProblemBlock({ p, layout, isMobile }) {
           style={{
             position: 'relative',
             display: 'grid',
-            gridTemplateColumns: '1fr 1.2fr',
-            gap: '3rem',
-            alignItems: 'center',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
+            gap: isMobile ? '2rem' : '3rem',
+            alignItems: isMobile ? 'flex-start' : 'center',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <Index>{p.num} / 04 — punto crítico</Index>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
+            <Eyebrow variant="pill" tone="light">Punto crítico</Eyebrow>
             <Figure value={p.figure} label={p.figureLabel} size="xl" highlight />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -349,12 +333,10 @@ function ProblemBlock({ p, layout, isMobile }) {
     )
   }
 
-  // Default — text+video grid (used by 01, 04, and mobile fallback for 02/03)
-  const figureSize = p.num === '02' ? 'lg+' : 'lg'
+  // Default — text+video grid
   const textBlock = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <Index>{p.num} / 04</Index>
-      <Figure value={p.figure} label={p.figureLabel} size={figureSize} />
+      <Figure value={p.figure} label={p.figureLabel} size="lg" />
       <Title>{p.title}</Title>
       <Body>{p.body}</Body>
       <RealCost>{p.realCost}</RealCost>
@@ -383,8 +365,8 @@ function ProblemBlock({ p, layout, isMobile }) {
       style={{
         display: 'grid',
         gridTemplateColumns: reversed ? '0.95fr 1.05fr' : '1.05fr 0.95fr',
-        gap: '3rem',
-        alignItems: 'center',
+        gap: reversed ? '4.5rem' : '3rem',
+        alignItems: reversed ? 'center' : 'start',
       }}
     >
       {reversed ? videoBlock : textBlock}
@@ -415,15 +397,14 @@ export default function Problem() {
   const isMobile = useIsMobile()
 
   // Asymmetric layout map — breaks pattern fatigue, peak at block 03.
-  const layouts = ['text-video', 'video-text', 'hero', 'text-video']
+  const layouts = ['text-video', 'video-text', 'text-video', 'hero']
 
   return (
     <AuroraBackground
       id="servicios"
       style={{
-        padding: isMobile ? '4rem 1.25rem' : '6.5rem 2rem',
+        padding: isMobile ? '3rem 1.25rem' : '4.5rem 2rem',
         position: 'relative',
-        filter: 'saturate(0.78)',
       }}
     >
       <GrainOverlay />
@@ -500,8 +481,8 @@ export default function Problem() {
             <div key={i}>
               <ProblemBlock p={p} layout={layouts[i]} isMobile={isMobile} />
 
-              {/* Micro-commitment después del problema 02 */}
-              {i === 1 && (
+              {/* Micro-commitment después del problema 03 — antesala al más duro */}
+              {i === 2 && (
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -525,7 +506,7 @@ export default function Problem() {
                     ¿Reconoces alguno hasta aquí?
                     <br />
                     <span style={{ color: 'rgba(255,255,255,0.85)' }}>
-                      Los dos siguientes son los que más cuestan.
+                      El siguiente es el que de verdad duele.
                     </span>
                   </p>
                 </motion.div>

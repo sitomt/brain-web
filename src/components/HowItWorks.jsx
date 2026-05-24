@@ -20,7 +20,7 @@ const STEPS = [
   {
     num: '03',
     title: 'Operativo en 30 días',
-    desc: 'Tu negocio funciona solo. Nosotros lo monitorizamos, lo ajustamos y lo hacemos crecer contigo.',
+    desc: 'Lo monitorizamos, lo ajustamos y lo hacemos crecer contigo.',
   },
 ]
 
@@ -34,36 +34,15 @@ export default function HowItWorks() {
     }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
-        {/* Header */}
+        {/* Header — solo eyebrow: la tesis ya está en el remate de Problem */}
         <motion.div
           initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: EASE_PREMIUM }}
-          style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
+          style={{ marginBottom: isMobile ? '2.5rem' : '3rem', textAlign: isMobile ? 'center' : 'left' }}
         >
-          <div style={{ marginBottom: '0.85rem' }}>
-            <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
-          </div>
-          <h2 style={{
-            fontFamily: "'Instrument Serif',serif",
-            fontSize: 'clamp(1.8rem,4vw,2.8rem)',
-            color: '#fff',
-            lineHeight: 1.1,
-            margin: 0,
-          }}>
-            De la primera llamada
-            <br />
-            <em style={{
-              fontStyle: 'italic',
-              background: GRADIENT,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-              a un negocio que se mueve solo.
-            </em>
-          </h2>
+          <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
         </motion.div>
 
         {/* Steps — staggered orchestration */}
