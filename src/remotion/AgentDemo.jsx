@@ -1,6 +1,6 @@
 import { useCurrentFrame, interpolate, Easing, AbsoluteFill } from 'remotion'
 
-const BG = '#0A0A0C'
+const BG = '#0D0D10'
 const C = ['#4361EE', '#7209B7', '#F72585', '#FB5607', '#22c55e']
 
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
@@ -25,18 +25,20 @@ const orchSize  = 52, orchHalf  = 26
 const nodeSize  = 44, nodeHalf  = 22
 const agentSize = 44, agentHalf = 22
 
+// Tool positions tuned (was 0.25/0.75 originally) to stay within the cover
+// crop region of LazyVideoColumn while keeping a generous spread.
 const TOOLS = [
-  { icon: '✉',  label: 'EMAIL',     text: 'Solicitud recibida',   color: C[0], x: 296, y: Math.round(Z2H * 0.12) },  // 37
-  { icon: '📊', label: 'CRM',       text: 'Lead #1247 creado',    color: C[1], x: Math.round(Z2W * 0.75), y: Math.round(Z2H * 0.38) },  // 444, 117
-  { icon: '📅', label: 'AGENDA',    text: 'Cita agendada',        color: C[2], x: Math.round(Z2W * 0.70), y: Math.round(Z2H * 0.72) },  // 414, 222
-  { icon: '💬', label: 'WHATSAPP',  text: 'Recordatorio enviado', color: C[3], x: Math.round(Z2W * 0.30), y: Math.round(Z2H * 0.72) },  // 178, 222
-  { icon: '📈', label: 'ANALYTICS', text: 'Informe generado',     color: C[4], x: Math.round(Z2W * 0.25), y: Math.round(Z2H * 0.38) },  // 148, 117
+  { icon: '✉',  label: 'EMAIL',     text: 'Solicitud recibida',   color: C[0], x: 296, y: Math.round(Z2H * 0.12) },
+  { icon: '📊', label: 'CRM',       text: 'Lead #1247 creado',    color: C[1], x: Math.round(Z2W * 0.72), y: Math.round(Z2H * 0.38) },
+  { icon: '📅', label: 'AGENDA',    text: 'Cita agendada',        color: C[2], x: Math.round(Z2W * 0.68), y: Math.round(Z2H * 0.74) },
+  { icon: '💬', label: 'WHATSAPP',  text: 'Recordatorio enviado', color: C[3], x: Math.round(Z2W * 0.32), y: Math.round(Z2H * 0.74) },
+  { icon: '📈', label: 'ANALYTICS', text: 'Informe generado',     color: C[4], x: Math.round(Z2W * 0.28), y: Math.round(Z2H * 0.38) },
 ]
 
 const AGENTS = [
-  { icon: '🎯', label: 'CAPTACIÓN', color: C[0], x: Math.round(Z2W * 0.18), y: Math.round(Z2H * 0.65), miniTools: ['✉', '📅'] },  // 107, 200
-  { icon: '📊', label: 'CRM',       color: C[1], x: 296,                     y: Math.round(Z2H * 0.65), miniTools: ['📊', '📈'] },  // 296, 200
-  { icon: '💬', label: 'SOPORTE',   color: C[2], x: Math.round(Z2W * 0.82), y: Math.round(Z2H * 0.65), miniTools: ['💬', '✉'] },  // 485, 200
+  { icon: '🎯', label: 'CAPTACIÓN', color: C[0], x: Math.round(Z2W * 0.22), y: Math.round(Z2H * 0.65), miniTools: ['✉', '📅'] },
+  { icon: '📊', label: 'CRM',       color: C[1], x: 296,                     y: Math.round(Z2H * 0.65), miniTools: ['📊', '📈'] },
+  { icon: '💬', label: 'SOPORTE',   color: C[2], x: Math.round(Z2W * 0.78), y: Math.round(Z2H * 0.65), miniTools: ['💬', '✉'] },
 ]
 
 const toolLineLens = TOOLS.map(t => Math.hypot(t.x - cx, t.y - cy))

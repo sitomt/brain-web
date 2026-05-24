@@ -1,29 +1,29 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Player } from '@remotion/player'
 import CometCard from './CometCard'
+import CtaButton from './CtaButton'
 import useIsMobile from '../hooks/useIsMobile'
 import HeroChatDemo from '../remotion/HeroChatDemo'
+import { EASE_PREMIUM } from '../lib/motion'
 
 const COMP_W = 420
 const COMP_H = 380
 
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
+  initial: { opacity: 0, y: 30, filter: 'blur(8px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
 })
-
 
 export default function Hero({ onChatOpen }) {
   const isMobile = useIsMobile()
-  const [empecemosHovered, setEmpecemosHovered] = useState(false)
+
   return (
     <section
       id="hero"
       style={{
         background: '#FAF8F3',
-        minHeight: '100vh',
+        minHeight: '100dvh',
         display: 'flex',
         alignItems: 'center',
         padding: isMobile ? '5.5rem 1.25rem 3rem' : '8rem 2rem 4rem',
@@ -42,27 +42,6 @@ export default function Hero({ onChatOpen }) {
       >
         {/* Left column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
-          <motion.div {...fadeUp(0.1)}>
-            <span
-              style={{
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.72rem',
-                background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                letterSpacing: '0.1em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: isMobile ? 'center' : 'flex-start',
-                gap: 8,
-              }}
-            >
-              <span style={{ width: 32, height: 1, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', display: isMobile ? 'none' : 'inline-block', flexShrink: 0 }} />
-              Agencia de IA · Murcia, España
-            </span>
-          </motion.div>
-
           <motion.h1 {...fadeUp(0.2)} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(2.4rem, 8vw, 5rem)', lineHeight: 1.05, color: '#1A1814' }}>
             Inteligencia que trabaja
             <br />
@@ -81,93 +60,49 @@ export default function Hero({ onChatOpen }) {
 
           <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
-              Mientras duermes, contesta. Mientras comes, vende.
+              El negocio no para, tú sí deberías.
             </span>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem', lineHeight: 1.7, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Tu negocio deja de depender de ti.
             </span>
           </motion.div>
 
-          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-            <button
-              onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#2A2824' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#1A1814' }}
+          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+              <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="md" magnetic>
+                Probar el asistente
+              </CtaButton>
+              <CtaButton
+                onClick={() => document.getElementById('lo-que-hacemos')?.scrollIntoView({ behavior: 'smooth' })}
+                variant="ghost"
+                arrow="down"
+                size="md"
+              >
+                Ver soluciones
+              </CtaButton>
+            </div>
+            <span
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: '0.9rem',
-                padding: isMobile ? '11px 22px' : '12px 28px',
-                borderRadius: 999,
-                border: 'none',
-                background: '#1A1814',
-                color: '#FAF8F3',
-                cursor: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                transition: 'background 0.25s ease',
-              }}
-            >
-              Ver soluciones ↓
-            </button>
-            <button
-              onMouseEnter={() => setEmpecemosHovered(true)}
-              onMouseLeave={() => setEmpecemosHovered(false)}
-              onClick={onChatOpen}
-              style={{
-                position: 'relative',
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: '0.9rem',
-                padding: isMobile ? '11px 22px' : '12px 28px',
-                borderRadius: 999,
-                cursor: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                border: '1.5px solid',
-                borderColor: empecemosHovered ? 'transparent' : '#1A1814',
-                background: 'transparent',
-                color: empecemosHovered ? '#ffffff' : '#1A1814',
-                transition: 'color 0.3s ease, border-color 0.3s ease',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: 999,
-                  background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
-                  opacity: empecemosHovered ? 1 : 0,
-                  transition: 'opacity 0.3s ease',
-                  zIndex: 0,
-                }}
-              />
-              <span style={{ position: 'relative', zIndex: 1 }}>Hablemos →</span>
-            </button>
-          </motion.div>
-
-          <motion.div {...fadeUp(0.5)}>
-            <p
-              style={{
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.72rem',
-                color: 'rgba(26,24,20,0.55)',
-                margin: 0,
-                letterSpacing: '0.06em',
+                fontWeight: 300,
+                fontSize: '0.78rem',
+                color: 'rgba(26,24,20,0.5)',
+                fontStyle: 'italic',
+                lineHeight: 1.5,
                 textAlign: isMobile ? 'center' : 'left',
               }}
             >
-              Primera reunión gratuita · Sin tecnicismos · Resultado en menos de 30 días
-            </p>
+              Habla con el mismo asistente que pondremos en tu negocio.
+            </span>
           </motion.div>
+
         </div>
 
         {/* Right column — Animated chat */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.95, delay: 0.5, ease: EASE_PREMIUM }}
           style={{ display: 'flex', justifyContent: 'center' }}
         >
           <motion.div

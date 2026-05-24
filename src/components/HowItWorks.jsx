@@ -1,5 +1,8 @@
 import { motion } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
+import Eyebrow from './Eyebrow'
+import { ArrowRight } from './icons/ArrowIcon'
+import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
@@ -27,28 +30,21 @@ export default function HowItWorks() {
   return (
     <div style={{
       background: '#0D0D10',
-      padding: isMobile ? '4rem 1.25rem' : '5rem 2rem',
+      padding: isMobile ? '5rem 1.25rem' : '6rem 2rem',
     }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: EASE_PREMIUM }}
           style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
-          <span style={{
-            fontFamily: "'Syne Mono',monospace",
-            fontSize: '0.72rem',
-            color: 'rgba(255,255,255,0.45)',
-            letterSpacing: '0.1em',
-            display: 'block',
-            marginBottom: '0.75rem',
-          }}>
-            — El proceso
-          </span>
+          <div style={{ marginBottom: '0.85rem' }}>
+            <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
+          </div>
           <h2 style={{
             fontFamily: "'Instrument Serif',serif",
             fontSize: 'clamp(1.8rem,4vw,2.8rem)',
@@ -70,24 +66,24 @@ export default function HowItWorks() {
           </h2>
         </motion.div>
 
-        {/* Steps */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
-          gap: isMobile ? '2rem' : '2px',
-          position: 'relative',
-        }}>
+        {/* Steps — staggered orchestration */}
+        <motion.div
+          {...STAGGER(0.12, 0.05)}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
+            gap: isMobile ? '2rem' : '2px',
+            position: 'relative',
+          }}
+        >
           {STEPS.map((step, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: i * 0.12 }}
+              variants={STAGGER_CHILD}
               style={{
                 padding: isMobile ? '0' : '0 2.5rem',
                 borderRight: (!isMobile && i < STEPS.length - 1) ? '1px solid rgba(255,255,255,0.07)' : 'none',
-                paddingLeft: (!isMobile && i > 0) ? '2.5rem' : (isMobile ? 0 : 0),
+                paddingLeft: (!isMobile && i > 0) ? '2.5rem' : 0,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
@@ -136,16 +132,16 @@ export default function HowItWorks() {
                   top: '2.2rem',
                   left: `calc(${(i + 1) * (100 / 3)}% - 8px)`,
                   transform: 'translateX(-50%)',
-                  color: 'rgba(255,255,255,0.15)',
-                  fontSize: '0.8rem',
+                  color: 'rgba(255,255,255,0.18)',
                   pointerEvents: 'none',
+                  display: 'inline-flex',
                 }}>
-                  →
+                  <ArrowRight size={14} />
                 </div>
               )}
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
       </div>
     </div>

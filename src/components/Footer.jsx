@@ -9,7 +9,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
     <footer style={{
       background: '#07070A',
       borderTop: '1px solid rgba(255,255,255,0.06)',
-      padding: isMobile ? '2rem 1.25rem' : '2.5rem 2rem',
+      padding: isMobile ? '1rem 1.25rem' : '1.1rem 2rem',
     }}>
       <div style={{
         maxWidth: 1100,
@@ -18,12 +18,12 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
         flexDirection: isMobile ? 'column' : 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: '1.25rem',
+        gap: isMobile ? '0.6rem' : '1rem',
         textAlign: isMobile ? 'center' : 'left',
       }}>
 
         {/* Brand + contacto */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <span style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
               <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '1rem', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)' }}>br</span>

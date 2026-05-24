@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
+import { STAGGER, STAGGER_CHILD } from '../lib/motion'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
@@ -22,10 +23,7 @@ export default function TrustBar() {
       overflow: 'hidden',
     }}>
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        {...STAGGER(0.08, 0.05)}
         style={{
           maxWidth: 1100,
           margin: '0 auto',
@@ -35,8 +33,9 @@ export default function TrustBar() {
         }}
       >
         {ITEMS.map((item, i) => (
-          <div
+          <motion.div
             key={i}
+            variants={STAGGER_CHILD}
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -66,7 +65,7 @@ export default function TrustBar() {
             }}>
               {item.label}
             </span>
-          </div>
+          </motion.div>
         ))}
       </motion.div>
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
+import { ArrowRight } from './icons/ArrowIcon'
 
 const SCROLL_LINKS = [
   { label: 'Soluciones', target: 'products' },
@@ -166,7 +167,7 @@ export default function Navigation({ visible, onChatOpen }) {
               color: theme.linkColor,
               background: 'none',
               border: 'none',
-              cursor: 'none',
+              cursor: 'pointer',
               opacity: 0.7,
               transition: 'opacity 0.2s, color 0.6s ease',
             }}
@@ -188,7 +189,7 @@ export default function Navigation({ visible, onChatOpen }) {
               color: location.pathname === '/nosotros' ? '#fff' : theme.linkColor,
               background: 'none',
               border: 'none',
-              cursor: 'none',
+              cursor: 'pointer',
               opacity: location.pathname === '/nosotros' ? 1 : 0.7,
               transition: 'opacity 0.2s, color 0.6s ease',
             }}
@@ -199,42 +200,65 @@ export default function Navigation({ visible, onChatOpen }) {
           </button>
         )}
 
-        <button
-          onMouseEnter={() => setBtnHovered(true)}
-          onMouseLeave={() => setBtnHovered(false)}
-          onClick={onChatOpen}
-          style={{
-            position: 'relative',
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500,
-            fontSize: isMobile ? '0.8rem' : '0.9rem',
-            padding: isMobile ? '9px 16px' : '12px 28px',
-            borderRadius: 999,
-            cursor: 'none',
-            display: 'inline-flex',
-            alignItems: 'center',
-            border: '1.5px solid',
-            borderColor: btnHovered ? 'transparent' : theme.btnBorder,
-            background: 'transparent',
-            color: btnHovered ? '#ffffff' : theme.btnText,
-            overflow: 'hidden',
-            transition: 'color 0.3s ease, border-color 0.3s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <div
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 12 }}>
+          <button
+            onMouseEnter={() => setBtnHovered(true)}
+            onMouseLeave={() => setBtnHovered(false)}
+            onClick={onChatOpen}
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: 'relative',
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: isMobile ? '0.8rem' : '0.9rem',
+              paddingLeft: isMobile ? 14 : 18,
+              paddingRight: 4,
+              height: isMobile ? 38 : 44,
               borderRadius: 999,
-              background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
-              opacity: btnHovered ? 1 : 0,
-              transition: 'opacity 0.3s ease',
-              zIndex: 0,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              border: '1.5px solid',
+              borderColor: btnHovered ? 'transparent' : theme.btnBorder,
+              background: 'transparent',
+              color: btnHovered ? '#ffffff' : theme.btnText,
+              overflow: 'hidden',
+              transition: 'color 0.3s cubic-bezier(0.32,0.72,0,1), border-color 0.3s cubic-bezier(0.32,0.72,0,1)',
+              whiteSpace: 'nowrap',
             }}
-          />
-          <span style={{ position: 'relative', zIndex: 1 }}>Hablemos →</span>
-        </button>
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: 999,
+                background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
+                opacity: btnHovered ? 1 : 0,
+                transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)',
+                zIndex: 0,
+              }}
+            />
+            <span style={{ position: 'relative', zIndex: 1 }}>Probar el asistente</span>
+            <span
+              style={{
+                position: 'relative',
+                zIndex: 1,
+                width: isMobile ? 28 : 32,
+                height: isMobile ? 28 : 32,
+                borderRadius: 999,
+                background: btnHovered ? 'rgba(255,255,255,0.18)' : theme.btnBorder.includes('255') ? 'rgba(255,255,255,0.08)' : 'rgba(26,24,20,0.08)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'currentColor',
+                flexShrink: 0,
+                transition: 'background 0.3s cubic-bezier(0.32,0.72,0,1)',
+              }}
+            >
+              <ArrowRight size={isMobile ? 12 : 13} />
+            </span>
+          </button>
+        </div>
 
       </div>
     </motion.nav>

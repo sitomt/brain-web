@@ -17,7 +17,6 @@ body {
   background: #FAF8F3;
   color: #1A1814;
   overflow-x: hidden;
-  cursor: none;
 }
 
 #root { width: 100%; }
@@ -39,6 +38,13 @@ body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #1A1814; }
 ::-webkit-scrollbar-thumb { background: var(--brain-gradient); border-radius: 2px; }
+
+/* Pulse for live indicator dots */
+@keyframes brainPulse {
+  0%   { transform: scale(1);   opacity: 0.5; }
+  70%  { transform: scale(2.4); opacity: 0;   }
+  100% { transform: scale(2.4); opacity: 0;   }
+}
 
 /* Aurora blob float — used by IntroAnimation */
 @keyframes floatBlob {

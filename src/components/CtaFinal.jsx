@@ -1,10 +1,18 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import AuroraBackground from './AuroraBackground'
+import CtaButton from './CtaButton'
+import Eyebrow from './Eyebrow'
 import useIsMobile from '../hooks/useIsMobile'
+import { EASE_PREMIUM } from '../lib/motion'
+
+const REVEAL = (delay = 0) => ({
+  initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  viewport: { once: true, amount: 0.25 },
+  transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
+})
 
 export default function CtaFinal({ onChatOpen }) {
-  const [hovered, setHovered] = useState(false)
   const isMobile = useIsMobile()
 
   const handleReserva = () => {
@@ -21,27 +29,12 @@ export default function CtaFinal({ onChatOpen }) {
   return (
     <AuroraBackground intense style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem' }}>
       <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{
-            fontFamily: "'Syne Mono',monospace",
-            fontSize: '0.7rem',
-            color: 'rgba(255,255,255,0.4)',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Primera reunión, gratis
+        <motion.div {...REVEAL(0)}>
+          <Eyebrow variant="pill" tone="light">Primera reunión, gratis</Eyebrow>
         </motion.div>
 
         <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.05 }}
+          {...REVEAL(0.05)}
           style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.6rem,6vw,4.8rem)', color: '#fff', lineHeight: 1.05, margin: 0 }}
         >
           Treinta minutos.<br />
@@ -51,10 +44,7 @@ export default function CtaFinal({ onChatOpen }) {
         </motion.h2>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.15 }}
+          {...REVEAL(0.15)}
           style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 520 }}
         >
           Te decimos qué automatizamos en tu negocio, cómo lo hacemos
@@ -62,67 +52,29 @@ export default function CtaFinal({ onChatOpen }) {
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.25 }}
-          style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+          {...REVEAL(0.25)}
+          style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: isMobile ? '1.5rem' : '2.5rem' }}
         >
-          <button
+          <CtaButton
             onClick={handleReserva}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            style={{
-              position: 'relative',
-              fontFamily: "'DM Sans',sans-serif",
-              fontWeight: 500,
-              fontSize: isMobile ? '0.9rem' : '1rem',
-              padding: isMobile ? '0.9rem 1.75rem' : '1rem 2.5rem',
-              borderRadius: 999,
-              border: '1.5px solid',
-              borderColor: hovered ? 'transparent' : '#ffffff',
-              background: 'transparent',
-              color: '#fff',
-              cursor: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              overflow: 'hidden',
-              transition: 'border-color 0.3s ease',
-              textAlign: 'center',
-            }}
+            variant="light"
+            arrow="right"
+            size="lg"
+            magnetic
           >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: 999,
-                background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)',
-                opacity: hovered ? 1 : 0,
-                transition: 'opacity 0.3s ease',
-                zIndex: 0,
-              }}
-            />
-            <span style={{ position: 'relative', zIndex: 1 }}>
-              Hablemos.
-            </span>
-          </button>
+            Probar el asistente
+          </CtaButton>
         </motion.div>
 
         <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.06em', margin: '-0.5rem 0 0' }}
+          {...REVEAL(0.32)}
+          style={{ fontFamily: "'DM Sans',sans-serif", fontStyle: 'italic', fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', margin: '-0.75rem 0 0', lineHeight: 1.5, maxWidth: 460 }}
         >
-          Normalmente responde en menos de 2 horas
+          El mismo asistente que pondremos en tu negocio.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.4 }}
+          {...REVEAL(0.4)}
           style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}
         >
           {['Sin permanencia', 'Resultados en 30 días', 'Sin coste inicial'].map((item) => (

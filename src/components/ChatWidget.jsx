@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
+import { ArrowRight } from './icons/ArrowIcon'
 
 const responses = [
   {
@@ -113,6 +114,9 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [showQuickReplies, setShowQuickReplies] = useState(false)
+  // Live count for the "personas hablando ahora" indicator.
+  // Starts 2–4, drifts ±1 every 8–15s, clamped to 1–5.
+  const [liveCount, setLiveCount] = useState(() => 2 + Math.floor(Math.random() * 3))
   const wasOpenRef = useRef(false)
   const lastContextRef = useRef(null)
   const endRef = useRef(null)
@@ -122,6 +126,23 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing, showQuickReplies])
+
+  // Drift the live count by ±1 every 8–15s, clamped between 1 and 5
+  useEffect(() => {
+    let timeoutId
+    const tick = () => {
+      setLiveCount(prev => {
+        const delta = Math.random() < 0.5 ? -1 : 1
+        const next = prev + delta
+        if (next < 1) return 1
+        if (next > 5) return 5
+        return next
+      })
+      timeoutId = setTimeout(tick, 8000 + Math.random() * 7000)
+    }
+    timeoutId = setTimeout(tick, 8000 + Math.random() * 7000)
+    return () => clearTimeout(timeoutId)
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -192,6 +213,65 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
 
   return (
     <>
+      {/* Live "personas hablando ahora" indicator — discreet, sits to the left of the closed widget */}
+      <AnimatePresence>
+        {!isOpen && !isMobile && (
+          <motion.div
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 12 }}
+            transition={{ duration: 0.5, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'fixed',
+              bottom: btnBottom + 8,
+              right: btnRight + 52 + 12,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 9,
+              padding: '0 14px',
+              borderRadius: 999,
+              background: 'rgba(26,24,20,0.82)',
+              backdropFilter: 'blur(14px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 4px 18px rgba(0,0,0,0.22)',
+              color: 'rgba(255,255,255,0.85)',
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.7rem',
+              letterSpacing: '0.04em',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              zIndex: 199,
+            }}
+          >
+            {/* Pulsing live dot */}
+            <span style={{ position: 'relative', display: 'inline-flex', width: 8, height: 8, flexShrink: 0 }}>
+              <motion.span
+                animate={{ scale: [1, 2.6], opacity: [0.55, 0] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  background: '#22C55E',
+                }}
+              />
+              <span style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                background: '#22C55E',
+                boxShadow: '0 0 6px rgba(34,197,94,0.7)',
+              }} />
+            </span>
+            <span>
+              {liveCount} {liveCount === 1 ? 'persona' : 'personas'} hablando
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating button */}
       <motion.button
         onClick={isOpen ? onClose : onOpen}
@@ -206,7 +286,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
           borderRadius: '50%',
           background: '#1A1814',
           border: 'none',
-          cursor: 'none',
+          cursor: 'pointer',
           zIndex: 200,
           display: 'flex',
           alignItems: 'center',
@@ -348,9 +428,10 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
               />
               <button
                 onClick={send}
-                style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', color: '#fff', fontSize: '0.9rem', cursor: 'none', flexShrink: 0 }}
+                aria-label="Enviar"
+                style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', color: '#fff', cursor: 'pointer', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                →
+                <ArrowRight size={14} />
               </button>
             </div>
           </motion.div>

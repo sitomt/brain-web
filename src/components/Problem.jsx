@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Player } from '@remotion/player'
 import AuroraBackground from './AuroraBackground'
+import Eyebrow from './Eyebrow'
 import useIsMobile from '../hooks/useIsMobile'
 import Problem1_Clock from '../remotion/Problem1_Clock'
 import Problem2_Calls from '../remotion/Problem2_Calls'
 import Problem3_Flow from '../remotion/Problem3_Flow'
 import Problem4_Data from '../remotion/Problem4_Data'
+import { EASE_PREMIUM } from '../lib/motion'
 
 const GRADIENT = 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)'
 
@@ -81,14 +83,23 @@ function LazyVideoColumn({ component }) {
 
   return (
     <div
+      style={{
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 24,
+        padding: 5,
+      }}
+    >
+    <div
       ref={wrapRef}
       style={{
         position: 'relative',
         minHeight: 360,
         overflow: 'hidden',
-        borderRadius: 20,
+        borderRadius: 19,
         border: '1px solid rgba(255,255,255,0.08)',
         background: '#0A0A0C',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
       }}
     >
       {showPlayer ? (
@@ -124,16 +135,17 @@ function LazyVideoColumn({ component }) {
         <div style={{ position: 'absolute', inset: 0, background: '#0A0A0C' }} />
       )}
     </div>
+    </div>
   )
 }
 
 function ProblemRow({ p, isMobile }) {
   const textBlock = (
     <motion.div
-      initial={{ opacity: 0, x: isMobile ? 0 : -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, x: isMobile ? 0 : -20, filter: 'blur(6px)' }}
+      whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.8, ease: EASE_PREMIUM }}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -184,10 +196,10 @@ function ProblemRow({ p, isMobile }) {
 
   const videoBlock = (
     <motion.div
-      initial={{ opacity: 0, x: isMobile ? 0 : 20 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, x: isMobile ? 0 : 20, filter: 'blur(8px)' }}
+      whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, delay: 0.1 }}
+      transition={{ duration: 0.85, delay: 0.1, ease: EASE_PREMIUM }}
     >
       <LazyVideoColumn component={p.component} />
     </motion.div>
@@ -226,24 +238,15 @@ export default function Problem() {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: EASE_PREMIUM }}
           style={{ marginBottom: isMobile ? '3rem' : '4.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
-          <span
-            style={{
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.72rem',
-              color: 'rgba(255,255,255,0.35)',
-              letterSpacing: '0.1em',
-              display: 'block',
-              marginBottom: '1.25rem',
-            }}
-          >
-            — El coste invisible
-          </span>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <Eyebrow variant="pill" tone="light">El coste invisible</Eyebrow>
+          </div>
 
           <h2
             style={{
@@ -296,10 +299,10 @@ export default function Problem() {
 
         {/* Remate */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.85, ease: EASE_PREMIUM }}
           style={{ marginTop: '4rem', textAlign: 'center' }}
         >
           <p

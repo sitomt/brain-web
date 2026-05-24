@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import CustomCursor from './components/CustomCursor'
 import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
 import Hero from './components/Hero'
@@ -16,6 +15,7 @@ import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
+import ExitIntentModal from './components/ExitIntentModal'
 import Nosotros from './pages/Nosotros'
 
 function AppContent() {
@@ -38,8 +38,6 @@ function AppContent() {
 
   return (
     <>
-      <CustomCursor />
-
       {/* Intro splash only on home, only once */}
       {isHome && !introComplete && (
         <IntroAnimation onComplete={() => setIntroComplete(true)} />
@@ -99,6 +97,10 @@ function AppContent() {
         onOpen={() => openChat(null)}
         onClose={() => setChatOpen(false)}
       />
+
+      {isHome && introComplete && (
+        <ExitIntentModal onChatOpen={() => openChat('exit_intent')} />
+      )}
 
       <CookieBanner key={cookieBannerKey} onOpenLegal={openLegal} />
 

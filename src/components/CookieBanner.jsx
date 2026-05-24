@@ -72,7 +72,7 @@ export default function CookieBanner({ onOpenLegal }) {
                         onClick={() => onOpenLegal('cookies')}
                         style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontSize: '0.82rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
                       >
-                        Política de cookies →
+                        Política de cookies
                       </button>
                     </p>
                   </div>

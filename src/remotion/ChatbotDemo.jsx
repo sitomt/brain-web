@@ -47,7 +47,7 @@ function ChatBubble({ from, text, opacity, faded }) {
         background: isUser ? GRADIENT : 'rgba(255,255,255,0.1)',
         color: '#fff',
         fontFamily: "'DM Sans', sans-serif",
-        fontSize: 12,
+        fontSize: 13,
         maxWidth: '82%',
         lineHeight: 1.55,
       }}>
@@ -145,7 +145,7 @@ export default function ChatbotDemo() {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 340,
+        width: 380,
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: 16,
@@ -161,29 +161,29 @@ export default function ChatbotDemo() {
           gap: 10,
         }}>
           <div style={{
-            width: 32,
-            height: 32,
+            width: 36,
+            height: 36,
             borderRadius: 999,
             background: GRADIENT,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 11,
+            fontSize: 13,
             fontFamily: "'Syne Mono', monospace",
             color: '#fff',
             fontWeight: 700,
           }}>AI</div>
           <div style={{ flex: 1 }}>
-            <div style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>BrAIn Asistente</div>
+            <div style={{ color: '#fff', fontSize: 15, fontWeight: 600 }}>BrAIn Asistente</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <div style={{ width: 6, height: 6, borderRadius: 999, background: '#22c55e' }} />
-              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>En línea · 24h</span>
+              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>En línea · 24h</span>
             </div>
           </div>
           {/* The hook: late-night timestamp → loss aversion */}
           <div style={{
             fontFamily: "'Syne Mono', monospace",
-            fontSize: 11,
+            fontSize: 13,
             color: 'rgba(255,255,255,0.28)',
             letterSpacing: '0.05em',
           }}>23:47</div>
@@ -230,7 +230,7 @@ export default function ChatbotDemo() {
                 background: 'rgba(255,255,255,0.1)',
                 color: '#fff',
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: 12,
+                fontSize: 13,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
@@ -239,7 +239,7 @@ export default function ChatbotDemo() {
                 <span style={{
                   display: 'inline-block',
                   transform: `scale(${phoneScale})`,
-                  fontSize: 15,
+                  fontSize: 16,
                 }}>📲</span>
                 ¿Te mando un recordatorio por WhatsApp el viernes?
               </div>
@@ -260,7 +260,7 @@ export default function ChatbotDemo() {
             background: 'rgba(255,255,255,0.06)',
             borderRadius: 999,
             padding: '7px 14px',
-            fontSize: 12,
+            fontSize: 13,
             color: inputText ? '#fff' : 'rgba(255,255,255,0.3)',
             fontFamily: "'DM Sans', sans-serif",
             minHeight: 30,

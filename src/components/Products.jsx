@@ -1,12 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { Player } from '@remotion/player'
-import { Lock, Target, Zap, Monitor, Globe, FileText, ShieldCheck } from 'lucide-react'
+import {
+  LockKey,
+  Target,
+  Lightning,
+  Monitor,
+  Globe,
+  FileText,
+  ShieldCheck,
+} from '@phosphor-icons/react'
 import useIsMobile from '../hooks/useIsMobile'
 import ChatbotDemo from '../remotion/ChatbotDemo'
 import DataQueryDemo from '../remotion/DataQueryDemo'
 import AgentDemo from '../remotion/AgentDemo'
 import AuroraBackground from './AuroraBackground'
+import CtaButton from './CtaButton'
+import Eyebrow from './Eyebrow'
+import { ArrowRight, ArrowLeft } from './icons/ArrowIcon'
+import { EASE_PREMIUM } from '../lib/motion'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
@@ -93,6 +105,9 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
     const updateScale = () => {
       const { width, height } = el.getBoundingClientRect()
       if (width > 0 && height > 0) {
+        // Cover scaling: video fills the entire column (both axes). Any side
+        // crop is minimal since demos compose centered content. Parent bg is
+        // #0D0D10 (matches demo bg) so there's no visible seam in any edge.
         setCoverScale(Math.max(width / COMP_W, height / COMP_H))
       }
     }
@@ -125,6 +140,7 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
         overflow: 'hidden',
         height: '100%',
         minHeight: isMobile ? 280 : 480,
+        background: '#0D0D10',
       }}
     >
       {showPlayer ? (
@@ -160,7 +176,7 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
         <motion.div
           animate={{ opacity: [0.04, 0.1, 0.04] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ position: 'absolute', inset: 0, background: '#1A1814' }}
+          style={{ position: 'absolute', inset: 0, background: '#0D0D10' }}
         />
       )}
     </div>
@@ -168,8 +184,9 @@ function LazyVideoColumn({ component, isMobile, isActive }) {
 }
 
 /* ---- Front face flip button ---- */
-function FlipButton({ onClick }) {
+function FlipButton({ onClick, label = 'Ver precios', direction = 'right' }) {
   const [hovered, setHovered] = useState(false)
+  const Arrow = direction === 'left' ? ArrowLeft : ArrowRight
   return (
     <button
       onClick={onClick}
@@ -178,22 +195,58 @@ function FlipButton({ onClick }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 8,
-        padding: '10px 22px',
+        gap: 10,
+        paddingLeft: direction === 'left' ? 14 : 18,
+        paddingRight: direction === 'left' ? 18 : 14,
+        height: 42,
         borderRadius: 999,
-        border: `1px solid ${hovered ? 'rgba(26,24,20,0.45)' : 'rgba(26,24,20,0.2)'}`,
-        background: hovered ? 'rgba(26,24,20,0.09)' : 'rgba(26,24,20,0.05)',
-        color: hovered ? '#1A1814' : 'rgba(26,24,20,0.85)',
+        border: `1px solid ${hovered ? 'rgba(26,24,20,0.45)' : 'rgba(26,24,20,0.18)'}`,
+        background: hovered ? 'rgba(26,24,20,0.07)' : 'rgba(26,24,20,0.03)',
+        color: hovered ? '#1A1814' : 'rgba(26,24,20,0.8)',
         fontFamily: "'DM Sans', sans-serif",
         fontWeight: 500,
         fontSize: '0.85rem',
-        cursor: 'none',
-        transition: 'border-color 0.25s ease, background 0.25s ease, color 0.25s ease',
+        cursor: 'pointer',
+        transition: 'all 0.35s cubic-bezier(0.32,0.72,0,1)',
         width: 'fit-content',
         marginTop: 'auto',
       }}
     >
-      Ver precios →
+      {direction === 'left' && (
+        <span
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: 999,
+            background: 'rgba(26,24,20,0.08)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
+            transform: hovered ? 'translateX(-2px)' : 'translateX(0)',
+          }}
+        >
+          <Arrow size={12} />
+        </span>
+      )}
+      {label}
+      {direction === 'right' && (
+        <span
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: 999,
+            background: 'rgba(26,24,20,0.08)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
+            transform: hovered ? 'translateX(2px)' : 'translateX(0)',
+          }}
+        >
+          <Arrow size={12} />
+        </span>
+      )}
     </button>
   )
 }
@@ -212,12 +265,14 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
         transform: 'rotateY(180deg)',
         background: '#FFFFFF',
         border: '1px solid rgba(26,24,20,0.07)',
-        borderRadius: 24,
+        borderRadius: 22,
         padding: isMobile ? '2rem' : '3rem',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
+      {/* Centered content block */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
       {/* 1. Number + Name (human primary, technical whispered) */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexShrink: 0 }}>
         <span
@@ -271,42 +326,31 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
         }}
       />
 
-      {/* 3. Price badge */}
+      {/* 3. Price badge — gradient pill with white text for readability */}
       <div
         style={{
           display: 'inline-block',
           background: GRADIENT,
           borderRadius: 999,
-          padding: 1,
+          padding: '10px 20px',
           alignSelf: isMobile ? 'center' : 'flex-start',
           marginBottom: '1.5rem',
           flexShrink: 0,
+          boxShadow: '0 4px 18px rgba(114,9,183,0.25)',
         }}
       >
-        <div
+        <span
           style={{
-            background: '#0D0D10',
-            borderRadius: 999,
-            padding: '10px 20px',
-            display: 'flex',
-            alignItems: 'center',
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.85rem',
+            color: '#FFFFFF',
+            letterSpacing: '0.04em',
+            whiteSpace: 'nowrap',
+            fontWeight: 500,
           }}
         >
-          <span
-            style={{
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.82rem',
-              background: GRADIENT,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              letterSpacing: '0.04em',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {product.precio}
-          </span>
-        </div>
+          {product.precio}
+        </span>
       </div>
 
       {/* 4. Bullets title */}
@@ -377,6 +421,8 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
           {product.closingLine}
         </p>
       )}
+      </div>
+      {/* end centered content */}
 
       {/* 7. Footer row — Volver + CTA */}
       <div
@@ -384,50 +430,42 @@ function CardBack({ product, onFlip, onChatOpen, isMobile }) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginTop: 'auto',
           paddingTop: '1.5rem',
           flexShrink: 0,
           gap: '1rem',
         }}
       >
-        <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
+        <FlipButton label="Volver" direction="left" onClick={(e) => { e.stopPropagation(); onFlip() }} />
 
-        <button
+        <CtaButton
           onClick={(e) => { e.stopPropagation(); onChatOpen(product.contextId) }}
-          onMouseEnter={() => setCtaBtnHovered(true)}
-          onMouseLeave={() => setCtaBtnHovered(false)}
-          style={{
-            padding: '10px 22px',
-            borderRadius: 999,
-            border: `1px solid ${ctaBtnHovered ? 'rgba(26,24,20,0.5)' : 'rgba(26,24,20,0.2)'}`,
-            background: 'transparent',
-            color: ctaBtnHovered ? '#1A1814' : 'rgba(26,24,20,0.75)',
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500,
-            fontSize: '0.85rem',
-            cursor: 'none',
-            transition: 'border-color 0.2s, color 0.2s',
-            whiteSpace: 'nowrap',
-          }}
+          variant="solid"
+          arrow="right"
+          size="md"
+          style={{ height: 42, paddingLeft: 16 }}
         >
-          Hablemos →
-        </button>
+          Probar el asistente
+        </CtaButton>
       </div>
     </div>
   )
 }
 
 /* ---- Tier 1 card with 3D flip ---- */
-function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
+function Tier1Card({ product, isFlipped, onFlip, onChatOpen }) {
   const isMobile = useIsMobile()
 
+  // Double-bezel outer shell — physical "machined" feel
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      style={{ perspective: '1200px' }}
+    <div
+      style={{
+        perspective: '1200px',
+        height: '100%',
+        background: 'rgba(26,24,20,0.025)',
+        border: '1px solid rgba(26,24,20,0.06)',
+        borderRadius: 28,
+        padding: 6,
+      }}
     >
       {/* Rotating container */}
       <div
@@ -437,6 +475,7 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
           transition: 'transform 0.7s cubic-bezier(0.4,0.2,0.2,1)',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           minHeight: isMobile ? 760 : 580,
+          height: '100%',
         }}
       >
         {/* ── FRONT FACE ── */}
@@ -448,90 +487,98 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
             WebkitBackfaceVisibility: 'hidden',
             background: '#FFFFFF',
             border: '1px solid rgba(26,24,20,0.07)',
-            borderRadius: 24,
+            borderRadius: 22,
             overflow: 'hidden',
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           }}
         >
-          {/* Text column */}
+          {/* Text column — same structure as back: flex:1 centered content + fixed footer */}
           <div
             style={{
               padding: isMobile ? '2rem' : '3rem',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: isMobile ? 'center' : 'flex-start',
-              textAlign: isMobile ? 'center' : 'left',
-              gap: '1.25rem',
               order: isMobile ? 2 : 0,
             }}
           >
-            {/* Name — human (primary) + technical badge */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <h3
+            {/* Centered content */}
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: isMobile ? 'center' : 'flex-start',
+              textAlign: isMobile ? 'center' : 'left',
+              gap: '1.25rem',
+              minHeight: 0,
+            }}>
+              {/* Name — human (primary) + technical badge */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
+                <h3
+                  style={{
+                    fontFamily: "'Instrument Serif', serif",
+                    fontSize: 'clamp(2.2rem, 5vw, 3rem)',
+                    color: '#1A1814',
+                    lineHeight: 1.0,
+                    margin: 0,
+                  }}
+                >
+                  {product.humanName}
+                </h3>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    fontFamily: "'Syne Mono', monospace",
+                    fontSize: '0.65rem',
+                    color: 'rgba(26,24,20,0.55)',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    background: 'rgba(26,24,20,0.06)',
+                    border: '1px solid rgba(26,24,20,0.12)',
+                    borderRadius: 999,
+                    padding: '4px 12px',
+                  }}
+                >
+                  {product.name}
+                </span>
+              </div>
+
+              {/* Tagline */}
+              <p
                 style={{
                   fontFamily: "'Instrument Serif', serif",
-                  fontSize: 'clamp(2.2rem, 5vw, 3rem)',
-                  color: '#1A1814',
-                  lineHeight: 1.0,
+                  fontStyle: 'italic',
+                  fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                  background: GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  lineHeight: 1.3,
+                  margin: 0,
+                  whiteSpace: 'pre-line',
+                }}
+              >
+                {product.benefit}
+              </p>
+
+              {/* Description */}
+              <p
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 300,
+                  fontSize: '0.9rem',
+                  color: 'rgba(26,24,20,0.6)',
+                  lineHeight: 1.8,
                   margin: 0,
                 }}
               >
-                {product.humanName}
-              </h3>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignSelf: isMobile ? 'center' : 'flex-start',
-                  fontFamily: "'Syne Mono', monospace",
-                  fontSize: '0.65rem',
-                  color: 'rgba(26,24,20,0.55)',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  background: 'rgba(26,24,20,0.06)',
-                  border: '1px solid rgba(26,24,20,0.12)',
-                  borderRadius: 999,
-                  padding: '4px 12px',
-                }}
-              >
-                {product.name}
-              </span>
+                {product.desc}
+              </p>
             </div>
 
-            {/* Tagline */}
-            <p
-              style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontStyle: 'italic',
-                fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-                background: GRADIENT,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1.3,
-                margin: 0,
-                whiteSpace: 'pre-line',
-              }}
-            >
-              {product.benefit}
-            </p>
-
-            {/* Description */}
-            <p
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: '0.9rem',
-                color: 'rgba(26,24,20,0.6)',
-                lineHeight: 1.8,
-                margin: 0,
-              }}
-            >
-              {product.desc}
-            </p>
-
-            {/* Flip button — pinned to bottom so it mirrors the back face position */}
-            <div style={{ alignSelf: isMobile ? 'center' : 'flex-start', marginTop: 'auto' }}>
+            {/* Footer — FlipButton at bottom-left, mirrors back face position exactly */}
+            <div style={{ paddingTop: '1.5rem', flexShrink: 0, alignSelf: isMobile ? 'center' : 'flex-start' }}>
               <FlipButton onClick={(e) => { e.stopPropagation(); onFlip() }} />
             </div>
           </div>
@@ -554,17 +601,253 @@ function Tier1Card({ product, index, isFlipped, onFlip, onChatOpen }) {
           isMobile={isMobile}
         />
       </div>
+    </div>
+  )
+}
+
+/* ---- Vertical coverflow ----
+   Active card centered & flat. Off cards translate horizontally, rotate on Y,
+   shrink and dim — so they read as preview thumbnails of "next/previous".
+   The user always sees the 3 cards, but only one is in focus and detail. */
+function StackedCard({ progress, index, total, children }) {
+  const N = total
+
+  // queuePos: signed distance to the active card. 0 = active centered; positive
+  // = waiting to the right; negative = passed to the left.
+  const queuePos = (p) => index - p * (N - 1)
+
+  const x = useTransform(progress, (p) => {
+    const q = queuePos(p)
+    const sign = q < 0 ? -1 : 1
+    const cd = Math.min(2, Math.abs(q))
+    return sign * cd * 360
+  })
+  const scale = useTransform(progress, (p) => {
+    const cd = Math.min(2, Math.abs(queuePos(p)))
+    return Math.max(0.45, 0.92 - cd * 0.28)
+  })
+  const rotateY = useTransform(progress, (p) => {
+    const q = queuePos(p)
+    const sign = q < 0 ? -1 : 1
+    const cd = Math.min(2, Math.abs(q))
+    return -sign * cd * 32
+  })
+  // Cards stay fully opaque so they read as solid surfaces stacked in depth —
+  // no content bleed-through between front and back cards.
+  const opacity = useTransform(progress, (p) => {
+    const cd = Math.min(2, Math.abs(queuePos(p)))
+    // Only fade beyond queue distance > 1.5 (cards leaving viewport).
+    return cd > 1.5 ? Math.max(0, 1 - (cd - 1.5) * 2) : 1
+  })
+  const zIndex = useTransform(progress, (p) => Math.round(100 - Math.abs(queuePos(p)) * 30))
+  const pointerEvents = useTransform(progress, (p) => (Math.abs(queuePos(p)) < 0.15 ? 'auto' : 'none'))
+
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        x,
+        scale,
+        rotateY,
+        opacity,
+        zIndex,
+        pointerEvents,
+        transformStyle: 'preserve-3d',
+        transformOrigin: 'center center',
+        willChange: 'transform, opacity',
+      }}
+    >
+      {children}
     </motion.div>
+  )
+}
+
+function ScrollStack({ products, flippedIndex, handleFlip, onChatOpen, header }) {
+  const stackRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: stackRef,
+    offset: ['start start', 'end end'],
+  })
+
+  // Snap-scroll: when the section is pinned, hijack wheel events so one scroll
+  // = one card advance. Uses a custom RAF-driven scroll animation with
+  // ease-in-out-quart for a smooth, premium, cinematic feel (native
+  // behavior:'smooth' is browser-dependent and often abrupt).
+  useEffect(() => {
+    const N = products.length
+    let rafId = null
+    let isAnimating = false
+    let lastWheelAt = 0
+    const ANIM_MS = 1100
+
+    // ease-in-out-quart — slow start, smooth acceleration, slow finish.
+    const ease = (t) => t < 0.5
+      ? 8 * t * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 4) / 2
+
+    const animateTo = (targetY, onDone) => {
+      cancelAnimationFrame(rafId)
+      const startY = window.scrollY
+      const dist = targetY - startY
+      const t0 = performance.now()
+      isAnimating = true
+      const step = (now) => {
+        const t = Math.min(1, (now - t0) / ANIM_MS)
+        window.scrollTo(0, startY + dist * ease(t))
+        if (t < 1) {
+          rafId = requestAnimationFrame(step)
+        } else {
+          isAnimating = false
+          onDone && onDone()
+        }
+      }
+      rafId = requestAnimationFrame(step)
+    }
+
+    const onWheel = (e) => {
+      const el = stackRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const stickyRange = el.offsetHeight - window.innerHeight
+      if (rect.top > 1 || rect.bottom < window.innerHeight - 1) return
+
+      const now = performance.now()
+      // While an animation runs OR within cooldown, absorb wheel events (so
+      // trackpad inertia / fast multi-scrolls don't trigger multiple snaps).
+      if (isAnimating || now - lastWheelAt < 1200) {
+        e.preventDefault()
+        return
+      }
+
+      const currentProgress = Math.max(0, Math.min(1, -rect.top / stickyRange))
+      const currentIdx = Math.round(currentProgress * (N - 1))
+      const dir = e.deltaY > 0 ? 1 : -1
+      const newIdx = currentIdx + dir
+      // Boundary — let native scroll carry the user out of the section.
+      if (newIdx < 0 || newIdx > N - 1) return
+
+      e.preventDefault()
+      lastWheelAt = now
+      const targetProgress = newIdx / (N - 1)
+      const stackTopAbs = rect.top + window.scrollY
+      animateTo(stackTopAbs + targetProgress * stickyRange)
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      cancelAnimationFrame(rafId)
+    }
+  }, [products.length])
+
+  return (
+    <div ref={stackRef} style={{ position: 'relative', height: '300vh' }}>
+      <div
+        style={{
+          position: 'sticky',
+          top: '8vh',
+          height: '88vh',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}
+      >
+        {/* Sticky header — stays visible the whole time cards rotate */}
+        {header && (
+          <div style={{ flexShrink: 0 }}>{header}</div>
+        )}
+        {/* Card stack area — perspective for true 3D coverflow rotation */}
+        <div style={{ position: 'relative', flex: 1, minHeight: 0, perspective: '1600px', perspectiveOrigin: 'center center' }}>
+          {products.map((product, i) => (
+            <StackedCard
+              key={product.num}
+              progress={scrollYProgress}
+              index={i}
+              total={products.length}
+            >
+              <Tier1Card
+                product={product}
+                isFlipped={flippedIndex === i}
+                onFlip={() => handleFlip(i)}
+                onChatOpen={onChatOpen}
+              />
+            </StackedCard>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---- Mobile horizontal snap carousel ---- */
+function MobileCarousel({ products, flippedIndex, handleFlip, onChatOpen }) {
+  return (
+    <>
+      <style>{`.brain-mobile-carousel::-webkit-scrollbar{display:none}`}</style>
+      <div
+        className="brain-mobile-carousel"
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+          paddingBottom: '0.5rem',
+          marginLeft: '-1.25rem',
+          marginRight: '-1.25rem',
+          paddingLeft: '1.25rem',
+          paddingRight: '1.25rem',
+        }}
+      >
+        {products.map((product, i) => (
+          <div
+            key={product.num}
+            style={{
+              flex: '0 0 90vw',
+              scrollSnapAlign: 'center',
+            }}
+          >
+            <Tier1Card
+              product={product}
+              isFlipped={flippedIndex === i}
+              onFlip={() => handleFlip(i)}
+              onChatOpen={onChatOpen}
+            />
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
+/* ---- Reduced motion fallback: original flex column ---- */
+function StaticStack({ products, flippedIndex, handleFlip, onChatOpen, isMobile }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
+      {products.map((product, i) => (
+        <Tier1Card
+          key={product.num}
+          product={product}
+          isFlipped={flippedIndex === i}
+          onFlip={() => handleFlip(i)}
+          onChatOpen={onChatOpen}
+        />
+      ))}
+    </div>
   )
 }
 
 /* ---- Tier 2 secondary block ---- */
 const MORE_PILLS = [
-  { Icon: Lock,    label: 'Soluciones en local' },
-  { Icon: Target,  label: 'Clasificación de leads' },
-  { Icon: Zap,     label: 'Automatizaciones' },
-  { Icon: Monitor, label: 'Software a medida' },
-  { Icon: Globe,   label: 'Webs y landing pages' },
+  { Icon: LockKey,   label: 'Soluciones en local' },
+  { Icon: Target,    label: 'Clasificación de leads' },
+  { Icon: Lightning, label: 'Automatizaciones' },
+  { Icon: Monitor,   label: 'Software a medida' },
+  { Icon: Globe,     label: 'Webs y landing pages' },
 ]
 
 function Tier2Block({ onChatOpen }) {
@@ -608,7 +891,7 @@ function Tier2Block({ onChatOpen }) {
               boxShadow: '0 1px 2px rgba(26,24,20,0.04)',
             }}
           >
-            <Icon size={12} strokeWidth={1.5} style={{ flexShrink: 0, opacity: 0.7 }} />
+            <Icon size={14} weight="light" style={{ flexShrink: 0, opacity: 0.7 }} />
             <span>{label}</span>
           </div>
         ))}
@@ -634,37 +917,25 @@ function Tier2Block({ onChatOpen }) {
             Si hay algo repetitivo en tu negocio que consume tiempo de tu equipo, casi seguro podemos automatizarlo.
           </p>
         </div>
-        <button
+        <CtaButton
           onClick={() => onChatOpen('tier2_other')}
-          style={{
-            flexShrink: 0,
-            padding: '9px 22px',
-            borderRadius: 999,
-            border: '1px solid rgba(26,24,20,0.2)',
-            background: 'transparent',
-            color: 'rgba(26,24,20,0.75)',
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 400,
-            fontSize: '0.85rem',
-            cursor: 'none',
-            transition: 'border-color 0.2s, color 0.2s',
-            whiteSpace: 'nowrap',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(26,24,20,0.5)'; e.currentTarget.style.color = '#1A1814' }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,24,20,0.2)'; e.currentTarget.style.color = 'rgba(26,24,20,0.75)' }}
+          variant="ghost"
+          arrow="right"
+          size="md"
+          style={{ height: 42 }}
         >
-          Hablemos →
-        </button>
+          Probar el asistente
+        </CtaButton>
       </div>
 
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: '1.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
         {[
-          { Icon: Lock,        label: 'RGPD compliant' },
+          { Icon: LockKey,     label: 'RGPD compliant' },
           { Icon: FileText,    label: 'NDA disponible' },
           { Icon: ShieldCheck, label: 'Datos confidenciales' },
         ].map(({ Icon, label }) => (
           <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <Icon size={12} strokeWidth={1.5} style={{ flexShrink: 0, color: 'rgba(26,24,20,0.55)' }} />
+            <Icon size={14} weight="light" style={{ flexShrink: 0, color: 'rgba(26,24,20,0.55)' }} />
             <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(26,24,20,0.55)', letterSpacing: '0.06em' }}>{label}</span>
           </div>
         ))}
@@ -676,68 +947,59 @@ function Tier2Block({ onChatOpen }) {
 /* ---- Main section ---- */
 export default function Products({ onChatOpen }) {
   const isMobile = useIsMobile()
+  const prefersReducedMotion = useReducedMotion()
   const [flippedIndex, setFlippedIndex] = useState(null)
 
   const handleFlip = (index) => {
     setFlippedIndex(prev => prev === index ? null : index)
   }
 
+  const stackProps = { products: PRODUCTS, flippedIndex, handleFlip, onChatOpen }
+
+  const headerBlock = (
+    <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
+      <div style={{ marginBottom: '0.85rem' }}>
+        <Eyebrow variant="pill" tone="dark">Lo que hacemos</Eyebrow>
+      </div>
+      <h2
+        style={{
+          fontFamily: "'Instrument Serif', serif",
+          fontSize: 'clamp(1.6rem, 3vw, 2.6rem)',
+          color: '#1A1814',
+          lineHeight: 1.15,
+          margin: 0,
+        }}
+      >
+        Tres sistemas. Un objetivo:
+        <em style={{ fontStyle: 'italic', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          {' '}que tu negocio funcione solo.
+        </em>
+      </h2>
+    </div>
+  )
+
   return (
     <AuroraBackground intense variant="light">
     <section
       id="lo-que-hacemos"
-      style={{ padding: isMobile ? '4rem 1.25rem' : '6rem 2rem' }}
+      style={{ padding: isMobile ? '5rem 1.25rem' : '6rem 2rem' }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{ marginBottom: '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
-        >
-          <span
-            style={{
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.72rem',
-              color: 'rgba(26,24,20,0.55)',
-              letterSpacing: '0.1em',
-              display: 'block',
-              marginBottom: '1.25rem',
-            }}
-          >
-            — Lo que hacemos
-          </span>
-          <h2
-            style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 'clamp(2rem,4vw,3.5rem)',
-              color: '#1A1814',
-              lineHeight: 1.1,
-              margin: 0,
-            }}
-          >
-            Tres sistemas. Un objetivo:
-            <br />
-            que tu negocio funcione solo.
-          </h2>
-        </motion.div>
-
-        {/* Tier 1 — 3 flip cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
-          {PRODUCTS.map((product, index) => (
-            <Tier1Card
-              key={product.num}
-              product={product}
-              index={index}
-              isFlipped={flippedIndex === index}
-              onFlip={() => handleFlip(index)}
-              onChatOpen={onChatOpen}
-            />
-          ))}
-        </div>
+        {/* Tier 1 — 3 cards. Desktop: scroll-driven depth stack with sticky header. Mobile: snap carousel. */}
+        {prefersReducedMotion ? (
+          <>
+            <div style={{ marginBottom: '2.5rem' }}>{headerBlock}</div>
+            <StaticStack {...stackProps} isMobile={isMobile} />
+          </>
+        ) : isMobile ? (
+          <>
+            <div style={{ marginBottom: '2rem' }}>{headerBlock}</div>
+            <MobileCarousel {...stackProps} />
+          </>
+        ) : (
+          <ScrollStack {...stackProps} header={headerBlock} />
+        )}
 
         {/* Tier 2 */}
         <Tier2Block onChatOpen={onChatOpen} />
