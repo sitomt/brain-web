@@ -1,126 +1,133 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 import Eyebrow from './Eyebrow'
-import { ArrowRight } from './icons/ArrowIcon'
-import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
-
-const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
+import WipeReveal from './WipeReveal'
+import { EASE_PREMIUM } from '../lib/motion'
+import { BRAND, ACCENT, gradientText } from '../lib/tokens'
+import { h2, bodyLg } from '../lib/typography'
 
 const STEPS = [
   {
     num: '01',
-    title: 'Diagnóstico gratuito',
-    desc: 'Nos cuentas cómo funciona tu negocio. Identificamos qué procesos consumen más tiempo y dónde puede entrar la IA.',
+    title: 'Diagnóstico',
+    desc: 'Analizamos tu operación contigo e identificamos dónde la tecnología genera más valor. Sin coste y sin compromiso.',
   },
   {
     num: '02',
-    title: 'Sistema a medida',
-    desc: 'Diseñamos e implementamos exactamente lo que necesitas. Sin soluciones genéricas. Sin meses de espera.',
+    title: 'Diseño a medida',
+    desc: 'Definimos e implementamos la solución exacta para tu caso. Nada genérico, nada sobredimensionado.',
   },
   {
     num: '03',
     title: 'Operativo en 30 días',
-    desc: 'Lo monitorizamos, lo ajustamos y lo hacemos crecer contigo.',
+    desc: 'Lo ponemos en producción, lo medimos y lo ajustamos contigo a medida que crece.',
   },
 ]
 
+const RAIL = 64 // ancho de la columna del número (px)
+
 export default function HowItWorks() {
   const isMobile = useIsMobile()
+  const trackRef = useRef(null)
+
+  // La línea se "dibuja" conforme la sección recorre el viewport.
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ['start 0.8', 'end 0.6'],
+  })
+  const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1])
 
   return (
-    <div style={{
-      background: '#0D0D10',
-      padding: isMobile ? '5rem 1.25rem' : '6rem 2rem',
-    }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ background: '#0D0D10', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem' }}>
+      <div style={{ maxWidth: 880, margin: '0 auto', position: 'relative' }}>
 
-        {/* Header — solo eyebrow: la tesis ya está en el remate de Problem */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: EASE_PREMIUM }}
-          style={{ marginBottom: isMobile ? '2.5rem' : '3rem', textAlign: isMobile ? 'center' : 'left' }}
+          style={{ marginBottom: isMobile ? '3rem' : '4rem', textAlign: isMobile ? 'center' : 'left' }}
         >
-          <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
+          <div style={{ marginBottom: '1.25rem', display: 'inline-flex' }}>
+            <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
+          </div>
+          <h2 style={{ ...h2 }}>
+            <span style={{ color: '#fff' }}>De la idea a producción, </span>
+            <WipeReveal delay={0.2}>
+              <em style={{ fontStyle: 'italic', ...gradientText }}>en tres pasos.</em>
+            </WipeReveal>
+          </h2>
+          <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
+            Un método claro, sin sorpresas y con resultados medibles desde el primer mes.
+          </p>
         </motion.div>
 
-        {/* Steps — staggered orchestration */}
-        <motion.div
-          {...STAGGER(0.12, 0.05)}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
-            gap: isMobile ? '2rem' : '2px',
-            position: 'relative',
-          }}
-        >
-          {STEPS.map((step, i) => (
+        {/* Steps — secuencia vertical con rail animado */}
+        <div ref={trackRef} style={{ position: 'relative' }}>
+          {/* línea base */}
+          {!isMobile && (
+            <div style={{ position: 'absolute', left: RAIL / 2, top: 8, bottom: 40, width: 1, background: 'rgba(255,255,255,0.1)' }} />
+          )}
+          {/* línea de progreso */}
+          {!isMobile && (
             <motion.div
-              key={i}
-              variants={STAGGER_CHILD}
               style={{
-                padding: isMobile ? '0' : '0 2.5rem',
-                borderRight: (!isMobile && i < STEPS.length - 1) ? '1px solid rgba(255,255,255,0.07)' : 'none',
-                paddingLeft: (!isMobile && i > 0) ? '2.5rem' : 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
+                position: 'absolute', left: RAIL / 2 - 0.5, top: 8, bottom: 40, width: 2,
+                background: BRAND.gradient, transformOrigin: 'top', scaleY: lineScale, borderRadius: 2,
               }}
-            >
-              {/* Number */}
-              <span style={{
-                fontFamily: "'Syne Mono',monospace",
-                fontSize: '0.72rem',
-                background: GRADIENT,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                letterSpacing: '0.1em',
-              }}>
-                {step.num}
-              </span>
+            />
+          )}
 
-              {/* Title */}
-              <h3 style={{
-                fontFamily: "'Instrument Serif',serif",
-                fontSize: 'clamp(1.3rem,2.5vw,1.6rem)',
-                color: '#ffffff',
-                lineHeight: 1.15,
-                margin: 0,
-              }}>
-                {step.title}
-              </h3>
-
-              {/* Description */}
-              <p style={{
-                fontFamily: "'DM Sans',sans-serif",
-                fontWeight: 300,
-                fontSize: '0.9rem',
-                color: 'rgba(255,255,255,0.6)',
-                lineHeight: 1.75,
-                margin: 0,
-              }}>
-                {step.desc}
-              </p>
-
-              {/* Connector arrow — only on desktop between steps */}
-              {!isMobile && i < STEPS.length - 1 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '2.2rem',
-                  left: `calc(${(i + 1) * (100 / 3)}% - 8px)`,
-                  transform: 'translateX(-50%)',
-                  color: 'rgba(255,255,255,0.18)',
-                  pointerEvents: 'none',
-                  display: 'inline-flex',
-                }}>
-                  <ArrowRight size={14} />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+            style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '2.5rem' : '3.5rem' }}
+          >
+            {STEPS.map((step) => (
+              <motion.div
+                key={step.num}
+                variants={{
+                  hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
+                  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: EASE_PREMIUM } },
+                }}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'auto 1fr' : `${RAIL}px 1fr`,
+                  gap: isMobile ? '1rem' : '2rem',
+                  alignItems: 'start',
+                }}
+              >
+                {/* Número badge */}
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{
+                    width: isMobile ? 44 : 52, height: isMobile ? 44 : 52, borderRadius: 999,
+                    background: '#0D0D10', border: '1px solid rgba(255,255,255,0.14)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                  }}>
+                    <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.82rem', color: ACCENT, letterSpacing: '0.05em' }}>
+                      {step.num}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
+
+                {/* Contenido */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', paddingTop: isMobile ? 6 : 10 }}>
+                  <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: '#fff', lineHeight: 1.1, margin: 0 }}>
+                    {step.title}
+                  </h3>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: 0, maxWidth: '52ch' }}>
+                    {step.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
 
       </div>
     </div>

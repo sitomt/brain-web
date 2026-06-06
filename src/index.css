@@ -2,6 +2,9 @@
 
 :root {
   --brain-gradient: linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607);
+  --accent: #4361EE;
+  --ink: #1A1814;
+  --cream: #FAF8F3;
   --font-serif: 'Instrument Serif', serif;
   --font-sans: 'DM Sans', sans-serif;
   --font-mono: 'Syne Mono', monospace;
@@ -17,7 +20,18 @@ body {
   background: #FAF8F3;
   color: #1A1814;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
+
+/* Accessible focus ring — keyboard users only */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
 
 #root { width: 100%; }
 
@@ -35,9 +49,17 @@ body {
 
 .gradient-bg { background: var(--brain-gradient); }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #1A1814; }
-::-webkit-scrollbar-thumb { background: var(--brain-gradient); border-radius: 2px; }
+/* Neutral, discreet scrollbar — the gradient bar was an "AI template" tell */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(26,24,20,0.18);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(26,24,20,0.32); background-clip: content-box; }
+html { scrollbar-width: thin; scrollbar-color: rgba(26,24,20,0.22) transparent; }
 
 /* Pulse for live indicator dots */
 @keyframes brainPulse {
@@ -64,5 +86,17 @@ body {
   }
   .product-card-inner {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Accessibility — respect users who prefer less motion.
+   Neutralises non-essential animation (reveals, floats, loops) while
+   keeping the interface fully usable and static. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -109,7 +109,7 @@ export default function ExitIntentModal({ onChatOpen }) {
                 marginBottom: '1.25rem',
               }}
             >
-              UN MINUTO ANTES DE IRTE
+              ANTES DE IRTE
             </span>
 
             <h3
@@ -122,7 +122,7 @@ export default function ExitIntentModal({ onChatOpen }) {
                 marginBottom: '0.9rem',
               }}
             >
-              ¿Te vas sin probar el asistente?
+              ¿Hablamos antes de que te vayas?
             </h3>
 
             <p
@@ -136,8 +136,8 @@ export default function ExitIntentModal({ onChatOpen }) {
                 marginBottom: '1.75rem',
               }}
             >
-              Es la forma más rápida de entender qué podemos hacer por tu negocio.
-              Pregúntale lo que quieras — responde en segundos.
+              En una conversación corta te decimos qué podríamos hacer por tu
+              negocio. Con claridad y sin compromiso.
             </p>
 
             <div
@@ -154,7 +154,7 @@ export default function ExitIntentModal({ onChatOpen }) {
                 arrow="right"
                 size="md"
               >
-                Probar el asistente
+                Hablar con nosotros
               </CtaButton>
               <button
                 onClick={() => setOpen(false)}

@@ -22,10 +22,10 @@ export default function Eyebrow({
           border: `1px solid ${isLight ? 'rgba(255,255,255,0.12)' : 'rgba(26,24,20,0.12)'}`,
           background: isLight ? 'rgba(255,255,255,0.04)' : 'rgba(26,24,20,0.03)',
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.68rem',
+          fontSize: '0.74rem',
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color: isLight ? 'rgba(255,255,255,0.6)' : 'rgba(26,24,20,0.55)',
+          color: isLight ? 'rgba(255,255,255,0.65)' : 'rgba(26,24,20,0.6)',
           whiteSpace: 'nowrap',
           ...style,
         }}

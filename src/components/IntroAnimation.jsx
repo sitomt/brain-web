@@ -64,14 +64,13 @@ const EASE_GRAVITY   = bezier(0.55, 0.05, 0.85, 0.20)
 
 const FPS = 60
 const TOTAL_FRAMES = 150
+const SPEED = 1.14
 const STAGGER = 4
 const ENTRY_DUR = 16
 
 // ── Brand tokens ─────────────────────────────────────────────────────────
 const BG    = '#FAF8F3'
 const INK   = '#14110E'
-const HAIR  = 'rgba(20,17,14,0.10)'
-const MUTED = 'rgba(20,17,14,0.42)'
 const GRAD  = 'linear-gradient(118deg, #3A55E0 0%, #6E0BB5 38%, #E81F7B 68%, #F35D0A 100%)'
 
 // ── BrainSplash: the actual animated wordmark ───────────────────────────
@@ -91,9 +90,6 @@ function BrainSplash({ onComplete }) {
   const IloRef = useRef(null)
   const dotRef = useRef(null)
   const scanRef = useRef(null)
-  const eyebrowRef = useRef(null)
-  const pulseRef = useRef(null)
-  const metaRef = useRef(null)
 
   const rafRef = useRef(null)
   const startTsRef = useRef(null)
@@ -223,19 +219,6 @@ function BrainSplash({ onComplete }) {
     dotRef.current.style.opacity = dotOpacity
     dotRef.current.style.transform = `translateY(${dotY}px) scale(${dotScale})`
 
-    // 7. Eyebrow + meta fade-in
-    const eO = interpolate(frame, [125, 145], [0, 1], { easing: EASE_OUT_QUINT })
-    const eY = interpolate(frame, [125, 145], [-8, 0], { easing: EASE_OUT_QUINT })
-    eyebrowRef.current.style.opacity = eO
-    eyebrowRef.current.style.transform = `translate(-50%, ${eY}px)`
-
-    const mO = interpolate(frame, [130, 150], [0, 1], { easing: EASE_OUT_QUINT })
-    metaRef.current.style.opacity = mO
-
-    // 8. Live-dot perpetual pulse
-    const pulseT = 0.55 + (Math.sin(frame / 12) * 0.5 + 0.5) * 0.45
-    pulseRef.current.style.opacity = pulseT
-    pulseRef.current.style.transform = `scale(${0.9 + (pulseT - 0.55) * 0.5})`
   }
 
   const measure = () => {
@@ -262,7 +245,7 @@ function BrainSplash({ onComplete }) {
           if (cancelled) return
           if (startTsRef.current == null) startTsRef.current = ts
           const elapsedMs = ts - startTsRef.current
-          const frame = Math.min(TOTAL_FRAMES, (elapsedMs / 1000) * FPS)
+          const frame = Math.min(TOTAL_FRAMES, (elapsedMs / 1000) * FPS * SPEED)
           render(frame)
           if (frame < TOTAL_FRAMES){
             rafRef.current = requestAnimationFrame(tick)
@@ -270,21 +253,8 @@ function BrainSplash({ onComplete }) {
             // Hold final state briefly, then signal complete
             if (!completedRef.current){
               completedRef.current = true
-              setTimeout(() => onComplete?.(), 350)
+              setTimeout(() => onComplete?.(), 150)
             }
-            // Keep perpetual pulse alive
-            const perpetual = (ts2) => {
-              if (cancelled) return
-              const elapsed2 = ts2 - startTsRef.current
-              const f = (elapsed2 / 1000) * FPS
-              const pulseT = 0.55 + (Math.sin(f / 12) * 0.5 + 0.5) * 0.45
-              if (pulseRef.current){
-                pulseRef.current.style.opacity = pulseT
-                pulseRef.current.style.transform = `scale(${0.9 + (pulseT - 0.55) * 0.5})`
-              }
-              rafRef.current = requestAnimationFrame(perpetual)
-            }
-            rafRef.current = requestAnimationFrame(perpetual)
           }
         }
         rafRef.current = requestAnimationFrame(tick)
@@ -383,30 +353,6 @@ function BrainSplash({ onComplete }) {
     <>
       <style>{`@keyframes brainSplashDotAfter { from{} to{} }`}</style>
 
-      <div ref={eyebrowRef} style={{
-        position: 'fixed', top: 32, left: '50%',
-        display: 'inline-flex', alignItems: 'center', gap: 10,
-        padding: '8px 16px 8px 14px',
-        border: `1px solid ${HAIR}`,
-        background: 'rgba(255,255,255,0.55)',
-        backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-        borderRadius: 999,
-        font: "500 11px/1 'DM Sans', sans-serif",
-        letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: MUTED,
-        whiteSpace: 'nowrap',
-        opacity: 0,
-        zIndex: 50,
-      }}>
-        <span ref={pulseRef} style={{
-          width: 7, height: 7, borderRadius: '50%',
-          background: '#6E0BB5',
-          boxShadow: '0 0 10px rgba(110,11,181,0.7)',
-          willChange: 'transform,opacity',
-        }}/>
-        <span>AI Agency · Live</span>
-      </div>
-
       <div ref={stageRef} style={{
         position: 'relative', zIndex: 2,
         display: 'grid', placeItems: 'center',
@@ -438,23 +384,6 @@ function BrainSplash({ onComplete }) {
         </div>
       </div>
 
-      <div ref={metaRef} style={{
-        position: 'fixed', bottom: 30, left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex', alignItems: 'center', gap: 14,
-        font: "400 11px/1 'DM Sans', sans-serif",
-        letterSpacing: '0.24em', textTransform: 'uppercase',
-        color: MUTED,
-        whiteSpace: 'nowrap',
-        opacity: 0,
-        zIndex: 50,
-      }}>
-        <span>MURCIA</span>
-        <span style={{ width: 26, height: 1, background: HAIR }}/>
-        <span>EST 2026</span>
-        <span style={{ width: 26, height: 1, background: HAIR }}/>
-        <span>INTELLIGENCE REFINED</span>
-      </div>
     </>
   )
 }
@@ -466,14 +395,14 @@ export default function IntroAnimation({ onComplete }) {
   const handleAnimationComplete = () => {
     setDone(true)
     // Exit fade is 500ms; signal parent slightly before so the fade overlaps
-    setTimeout(() => onComplete?.(), 500)
+    setTimeout(() => onComplete?.(), 350)
   }
 
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          exit={{ opacity: 0, transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] } }}
+          exit={{ opacity: 0, transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] } }}
           style={{
             position: 'fixed',
             inset: 0,

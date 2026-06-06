@@ -1,10 +1,16 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { Player } from '@remotion/player'
 import CometCard from './CometCard'
 import CtaButton from './CtaButton'
+import Eyebrow from './Eyebrow'
+import SplitText from './SplitText'
+import RotatingWord from './RotatingWord'
 import useIsMobile from '../hooks/useIsMobile'
 import HeroChatDemo from '../remotion/HeroChatDemo'
 import { EASE_PREMIUM } from '../lib/motion'
+import { gradientText } from '../lib/tokens'
+import { display, bodyLg } from '../lib/typography'
 
 const COMP_W = 420
 const COMP_H = 380
@@ -15,98 +21,147 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
 })
 
+const TRUST = ['Baktun 13', 'Clesol', 'Venta Alegría']
+
 export default function Hero({ onChatOpen }) {
   const isMobile = useIsMobile()
+  const reduce = useReducedMotion()
+  const sectionRef = useRef(null)
+
+  // Subtle parallax on the chat demo as the hero scrolls away.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const demoY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 80])
 
   return (
     <section
-      id="hero"
+      ref={sectionRef}
       style={{
         background: '#FAF8F3',
         minHeight: '100dvh',
         display: 'flex',
         alignItems: 'center',
-        padding: isMobile ? '5.5rem 1.25rem 3rem' : '8rem 2rem 4rem',
+        padding: isMobile ? '6.5rem 1.25rem 3rem' : '9rem 2rem 5rem',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Very subtle warm aura — adds depth without colour noise */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '-20%',
+          right: '-10%',
+          width: 720,
+          height: 720,
+          background: 'radial-gradient(circle at center, rgba(67,97,238,0.06), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
       <div
         style={{
-          maxWidth: 1200,
+          maxWidth: 1180,
           margin: '0 auto',
           width: '100%',
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: isMobile ? '2rem' : '4rem',
+          gridTemplateColumns: isMobile ? '1fr' : '1.05fr 0.95fr',
+          gap: isMobile ? '2.5rem' : '4rem',
           alignItems: 'center',
+          position: 'relative',
         }}
       >
         {/* Left column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
-          <motion.h1 {...fadeUp(0.2)} style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(2.4rem, 8vw, 5rem)', lineHeight: 1.05, color: '#1A1814' }}>
-            Inteligencia que trabaja
-            <br />
-            <em
-              style={{
-                fontStyle: 'italic',
-                background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              mientras tú no estás.
-            </em>
-          </motion.h1>
-
-          <motion.div {...fadeUp(0.3)} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: '#4A4740', lineHeight: 1.7 }}>
-              El negocio no para, tú sí deberías.
-            </span>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem', lineHeight: 1.7, background: 'linear-gradient(135deg, #4361EE, #7209B7, #F72585, #FB5607)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Tu negocio deja de depender de ti.
-            </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
+          <motion.div {...fadeUp(0.1)}>
+            <Eyebrow variant="pill" tone="dark">Agencia de IA · Murcia</Eyebrow>
           </motion.div>
+
+          <SplitText
+            as="h1"
+            style={{ ...display, color: '#1A1814' }}
+            delay={0.2}
+            segments={[
+              { text: 'Tecnología con criterio' },
+              { break: true },
+              { text: 'de empresario.', style: { fontStyle: 'italic', ...gradientText } },
+            ]}
+          />
+
+          {/* Rotating sectors (#06) — reinforces "para cualquier negocio" */}
+          <motion.div
+            {...fadeUp(0.28)}
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 8,
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.15rem, 2.4vw, 1.5rem)',
+              color: 'rgba(26,24,20,0.55)',
+              justifyContent: isMobile ? 'center' : 'flex-start',
+            }}
+          >
+            <span style={{ fontStyle: 'italic' }}>IA para</span>
+            <RotatingWord
+              words={['restaurantes', 'gimnasios', 'despachos', 'ecommerce', 'tu negocio']}
+              style={{ fontStyle: 'italic', ...gradientText }}
+            />
+          </motion.div>
+
+          <motion.p {...fadeUp(0.3)} style={{ ...bodyLg, color: '#4A4740' }}>
+            Diseñamos e implementamos sistemas de IA para tu negocio. Con el
+            criterio de quien también dirige empresas, no solo de quien programa.
+          </motion.p>
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="md" magnetic>
-                Probar el asistente
+              <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="lg" magnetic>
+                Hablar con nosotros
               </CtaButton>
               <CtaButton
                 onClick={() => document.getElementById('lo-que-hacemos')?.scrollIntoView({ behavior: 'smooth' })}
                 variant="ghost"
                 arrow="down"
-                size="md"
+                size="lg"
               >
                 Ver soluciones
               </CtaButton>
             </div>
-            <span
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: '0.78rem',
-                color: 'rgba(26,24,20,0.5)',
-                fontStyle: 'italic',
-                lineHeight: 1.5,
-                textAlign: isMobile ? 'center' : 'left',
-              }}
-            >
-              Habla con el mismo asistente que pondremos en tu negocio.
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.88rem', color: 'rgba(26,24,20,0.55)', fontStyle: 'italic', lineHeight: 1.5 }}>
+              Hablas con el mismo tipo de asistente que implementamos en cada proyecto.
             </span>
           </motion.div>
 
+          {/* Trust strip */}
+          <motion.div
+            {...fadeUp(0.55)}
+            style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start', marginTop: '0.5rem' }}
+          >
+            <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.45)' }}>
+              Ya operan con nosotros
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+              {TRUST.map((name, i) => (
+                <span key={name} style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+                  {i > 0 && <span style={{ width: 3, height: 3, borderRadius: 999, background: 'rgba(26,24,20,0.2)' }} />}
+                  <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '0.95rem', color: 'rgba(26,24,20,0.62)' }}>{name}</span>
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
-        {/* Right column — Animated chat */}
+        {/* Right column — Animated chat with parallax + float */}
         <motion.div
           initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.95, delay: 0.5, ease: EASE_PREMIUM }}
-          style={{ display: 'flex', justifyContent: 'center' }}
+          style={{ display: 'flex', justifyContent: 'center', y: demoY }}
         >
           <motion.div
-            animate={{ y: [0, -10, 0] }}
+            animate={reduce ? undefined : { y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             style={{ width: '100%', maxWidth: 420 }}
           >

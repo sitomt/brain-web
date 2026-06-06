@@ -39,7 +39,8 @@ export default function AuroraBackground({ children, className = '', intense = f
               // Soft radial gradient — smooth alpha falloff, no rectangular
               // bounding box, no banding from filter:blur.
               background: `radial-gradient(circle at center, ${rgba(blob.color, peakAlpha)} 0%, ${rgba(blob.color, peakAlpha * 0.78)} 12%, ${rgba(blob.color, peakAlpha * 0.55)} 24%, ${rgba(blob.color, peakAlpha * 0.36)} 36%, ${rgba(blob.color, peakAlpha * 0.21)} 48%, ${rgba(blob.color, peakAlpha * 0.10)} 60%, ${rgba(blob.color, peakAlpha * 0.03)} 70%, ${rgba(blob.color, 0)} 80%)`,
-              transform: 'translate(-50%, -50%)',
+              marginLeft: -blob.size / 2,
+              marginTop: -blob.size / 2,
               mixBlendMode: isLight ? 'multiply' : 'screen',
               willChange: 'transform',
             }}

@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import CtaFinal from '../components/CtaFinal'
 import useIsMobile from '../hooks/useIsMobile'
+import { ACCENT } from '../lib/tokens'
+import { SITE_URL } from '../lib/site'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 const G_TEXT = {
@@ -131,25 +133,25 @@ const NOSOTROS_SCHEMA = {
   '@graph': [
     {
       '@type': 'AboutPage',
-      '@id': 'https://TU-DOMINIO.es/nosotros',
-      url: 'https://TU-DOMINIO.es/nosotros',
+      '@id': `${SITE_URL}/nosotros`,
+      url: `${SITE_URL}/nosotros`,
       name: 'Nosotros · BrAIn — Agencia de IA en Murcia',
       description: 'Somos empresarios que automatizamos nuestros propios negocios antes de ayudar a otros. Conoce al equipo detrás de BrAIn, agencia de IA en Murcia.',
-      isPartOf: { '@id': 'https://TU-DOMINIO.es/#organization' },
+      isPartOf: { '@id': `${SITE_URL}/#organization` },
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://TU-DOMINIO.es/' },
-          { '@type': 'ListItem', position: 2, name: 'Nosotros', item: 'https://TU-DOMINIO.es/nosotros' },
+          { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Nosotros', item: `${SITE_URL}/nosotros` },
         ],
       },
     },
     {
       '@type': 'Person',
-      '@id': 'https://TU-DOMINIO.es/#ginesmunuera',
+      '@id': `${SITE_URL}/#ginesmunuera`,
       name: 'Ginés Munuera',
       jobTitle: 'Fundador',
-      worksFor: { '@id': 'https://TU-DOMINIO.es/#organization' },
+      worksFor: { '@id': `${SITE_URL}/#organization` },
       address: { '@type': 'PostalAddress', addressLocality: 'Murcia', addressCountry: 'ES' },
       knowsAbout: ['Inteligencia Artificial', 'Automatización empresarial', 'Chatbots', 'Agentes IA'],
     },
@@ -198,7 +200,7 @@ export default function Nosotros({ onChatOpen }) {
           }}
         >
           <motion.div {...fade(0)}>
-            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.7rem', ...G_TEXT, letterSpacing: '0.1em', display: 'block', marginBottom: '1.5rem' }}>
+            <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.7rem', color: ACCENT, letterSpacing: '0.1em', display: 'block', marginBottom: '1.5rem' }}>
               — Nosotros
             </span>
             <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2.5rem,4vw,3.5rem)', color: '#fff', lineHeight: 1.1, margin: 0 }}>
@@ -362,7 +364,7 @@ export default function Nosotros({ onChatOpen }) {
                   ...G_TEXT,
                 }}
               >
-                Vendemos alivio.
+                Resolvemos problemas de negocio.
               </p>
             </div>
 
@@ -376,7 +378,7 @@ export default function Nosotros({ onChatOpen }) {
                       width: 6,
                       height: 6,
                       borderRadius: '50%',
-                      background: GRADIENT,
+                      background: ACCENT,
                       marginTop: '0.55rem',
                     }}
                   />

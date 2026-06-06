@@ -2,10 +2,12 @@ import { motion } from 'framer-motion'
 import AuroraBackground from './AuroraBackground'
 import CometCard from './CometCard'
 import Eyebrow from './Eyebrow'
+import WipeReveal from './WipeReveal'
 import useIsMobile from '../hooks/useIsMobile'
 import baktunLogo from '../assets/baktun13-logo.png'
 import clesolLogo from '../assets/clesol-logo.png'
 import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
+import { ACCENT } from '../lib/tokens'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
@@ -122,20 +124,20 @@ function BezeledCase({ c, isMobile }) {
 
         {/* Stat — dominant editorial element */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.2rem' }}>
-          <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', color: '#ffffff', lineHeight: 1.0 }}>
+          <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2rem, 3.2vw, 2.6rem)', color: '#ffffff', lineHeight: 1.0 }}>
             {c.stat}
           </span>
-          <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em' }}>
+          <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.74rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.06em' }}>
             {c.statDetail}
           </span>
         </div>
 
         {/* Type tag */}
-        <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.65rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.74rem', color: ACCENT, letterSpacing: '0.1em' }}>
           {c.type}
         </div>
 
-        <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.95rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, margin: 0, flexGrow: 1 }}>
+        <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.02rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.7, margin: 0, flexGrow: 1 }}>
           {c.result}
         </p>
       </CometCard>
@@ -151,7 +153,7 @@ export default function Cases() {
   const gridTemplate = isMobile ? '1fr' : 'repeat(6, 1fr)'
 
   return (
-    <AuroraBackground id="casos" intense style={{ background: '#020203', padding: isMobile ? '5rem 1.25rem' : '6.5rem 2rem' }}>
+    <AuroraBackground id="casos" intense style={{ background: '#0A0A0B', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
@@ -171,19 +173,21 @@ export default function Cases() {
               margin: 0,
             }}
           >
-            <span style={{ color: '#fff', display: 'block' }}>Negocios reales.</span>
-            <em
-              style={{
-                fontStyle: 'italic',
-                display: 'block',
-                background: GRADIENT,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Resultados reales.
-            </em>
+            <span style={{ color: '#fff', display: 'block' }}>Empresas reales.</span>
+            <WipeReveal display="block" delay={0.2}>
+              <em
+                style={{
+                  fontStyle: 'italic',
+                  display: 'block',
+                  background: GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Resultados medibles.
+              </em>
+            </WipeReveal>
           </h2>
         </motion.div>
 
@@ -233,9 +237,9 @@ export default function Cases() {
         >
           Tres sectores distintos.
           <br />
-          Tres problemas distintos.
+          Tres retos distintos.
           <br />
-          Una misma solución.
+          Un mismo método.
         </motion.p>
       </div>
     </AuroraBackground>

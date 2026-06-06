@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
 import Hero from './components/Hero'
-import Problem from './components/Problem'
+import Enfoque from './components/Enfoque'
 import Products from './components/Products'
 import Cases from './components/Cases'
 import TrustBar from './components/TrustBar'
@@ -16,7 +16,11 @@ import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
 import ExitIntentModal from './components/ExitIntentModal'
-import Nosotros from './pages/Nosotros'
+import ScrollProgress from './components/ScrollProgress'
+import CursorGlow from './components/CursorGlow'
+
+// Lazy-loaded route — keeps the /nosotros page out of the initial bundle.
+const Nosotros = lazy(() => import('./pages/Nosotros'))
 
 function AppContent() {
   const [introComplete, setIntroComplete] = useState(false)
@@ -38,6 +42,12 @@ function AppContent() {
 
   return (
     <>
+      {/* Cursor glow trail (#09) — desktop only, behind content */}
+      <CursorGlow />
+
+      {/* Scroll progress bar (#04) — hidden during the home intro splash */}
+      {(!isHome || introComplete) && <ScrollProgress />}
+
       {/* Intro splash only on home, only once */}
       {isHome && !introComplete && (
         <IntroAnimation onComplete={() => setIntroComplete(true)} />
@@ -60,19 +70,19 @@ function AppContent() {
               style={{ position: 'relative', zIndex: 1 }}
             >
               <main>
-                <section id="hero">
+                <section id="hero" style={{ position: 'relative' }}>
                   <Hero onChatOpen={() => openChat('hero')} />
                 </section>
                 <TrustBar />
-                <section id="problem">
-                  <Problem />
+                <section id="enfoque">
+                  <Enfoque />
                 </section>
                 <HowItWorks />
                 <SectionBridge direction="darkToLight" darkColor="#0D0D10" lightColor="#FAF8F3" />
                 <section id="products">
                   <Products onChatOpen={openChat} />
                 </section>
-                <SectionBridge direction="lightToDark" lightColor="#FAF8F3" darkColor="#020203" />
+                <SectionBridge direction="lightToDark" lightColor="#FAF8F3" darkColor="#0A0A0B" />
                 <section id="cases">
                   <Cases />
                 </section>
@@ -87,7 +97,11 @@ function AppContent() {
 
         <Route
           path="/nosotros"
-          element={<Nosotros onChatOpen={() => openChat('nosotros')} />}
+          element={
+            <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#0A0A0B' }} />}>
+              <Nosotros onChatOpen={() => openChat('nosotros')} />
+            </Suspense>
+          }
         />
       </Routes>
 

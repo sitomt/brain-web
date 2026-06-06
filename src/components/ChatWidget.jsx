@@ -88,10 +88,10 @@ const DEFAULT_GREETING = '¡Hola! Soy el asistente de BrAIn. ¿En qué puedo ayu
 
 const CONTEXT_GREETINGS = {
   navbar: DEFAULT_GREETING,
-  hero: '¡Hola! Vienes desde el principio — ¿qué parte de tu negocio te gustaría que funcionara sin ti?',
-  contact_center: 'Te interesa Contact Center IA: que tu negocio atienda solo, a cualquier hora. ¿Por qué canal te entran hoy más consultas — WhatsApp, teléfono o web?',
-  back_office: 'Te interesa Back Office IA: quitarle a tu equipo lo repetitivo. ¿Qué tarea os roba más tiempo cada semana — emails, facturas, informes?',
-  asistente: 'Te interesa el Asistente IA: preguntarle a tu negocio en español y obtener respuesta. ¿Qué dato te gustaría poder consultar al instante?',
+  hero: '¡Hola! Soy el asistente de BrAIn. ¿Qué parte de tu negocio te gustaría mejorar?',
+  contact_center: 'Te interesa Atención al Cliente: atender cada conversación al instante, en cualquier canal. ¿Por dónde te entran hoy más consultas — WhatsApp, teléfono o web?',
+  back_office: 'Te interesa Operaciones: automatizar las tareas administrativas que se repiten. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
+  asistente: 'Te interesa Inteligencia de Negocio: preguntar a tus datos y obtener la respuesta al instante. ¿Qué dato te gustaría poder consultar?',
   tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
   cta_final: '¡Vamos allá! Para preparar la reunión con Sito, ¿en qué sector trabajas?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
@@ -275,6 +275,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       {/* Floating button */}
       <motion.button
         onClick={isOpen ? onClose : onOpen}
+        aria-label={isOpen ? 'Cerrar chat' : 'Abrir chat'}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.94 }}
         style={{
@@ -306,8 +307,16 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
           }}
         />
         <div style={{ position: 'absolute', inset: 2, borderRadius: '50%', background: '#1A1814' }} />
-        <span style={{ position: 'relative', fontSize: '1.1rem', zIndex: 1 }}>
-          {isOpen ? '✕' : '💬'}
+        <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex', color: '#fff' }}>
+          {isOpen ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          ) : (
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z" />
+            </svg>
+          )}
         </span>
       </motion.button>
 
