@@ -13,7 +13,7 @@ const SCROLL_LINKS = [
 ]
 
 // Sections are either light (cream) or dark — the floating pill adapts contrast.
-const DARK_SECTIONS = new Set(['enfoque', 'cases', 'cta'])
+const DARK_SECTIONS = new Set(['enfoque', 'herramientas', 'proceso', 'cases', 'cta'])
 
 const LIGHT_THEME = {
   pillBg: 'rgba(250,248,243,0.72)',
@@ -69,6 +69,7 @@ export default function Navigation({ visible, onChatOpen }) {
     const navTop = isMobile ? 12 : 16
     const navBottom = navTop + (isMobile ? 54 : 60)
 
+    let rafId = null
     const check = () => {
       const dark = DARK_IDS.some((id) => {
         const el = document.getElementById(id)
@@ -79,9 +80,19 @@ export default function Navigation({ visible, onChatOpen }) {
       setIsDark(dark)
     }
 
-    window.addEventListener('scroll', check, { passive: true })
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(check)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', check, { passive: true })
     check()
-    return () => window.removeEventListener('scroll', check)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', check)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [isHome, isMobile])
 
   const theme = isHome ? (isDark ? DARK_THEME : LIGHT_THEME) : DARK_THEME
@@ -101,7 +112,7 @@ export default function Navigation({ visible, onChatOpen }) {
         transition={{ duration: 0.6, ease: EASE_PREMIUM }}
         style={{
           position: 'fixed',
-          top: isMobile ? 12 : 16,
+          top: isMobile ? 'calc(12px + env(safe-area-inset-top))' : 16,
           left: isMobile ? 12 : 20,
           right: isMobile ? 12 : 20,
           marginLeft: 'auto',
@@ -176,7 +187,7 @@ export default function Navigation({ visible, onChatOpen }) {
               }}
             >
               <span style={{ position: 'absolute', inset: 0, borderRadius: 999, background: BRAND.gradient, opacity: btnHovered ? 1 : 0, transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)', zIndex: 0 }} />
-              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>Hablar con nosotros</span>
+              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>Habla con nuestra IA</span>
               <span style={{ position: 'relative', zIndex: 1, width: 32, height: 32, borderRadius: 999, background: btnHovered ? 'rgba(255,255,255,0.2)' : theme.innerBg, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: btnHovered ? '#fff' : theme.text, flexShrink: 0, transition: 'background 0.3s, color 0.3s' }}>
                 <ArrowRight size={13} />
               </span>
@@ -191,20 +202,21 @@ export default function Navigation({ visible, onChatOpen }) {
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={menuOpen}
             style={{
-              width: 42, height: 42, borderRadius: 999, border: 'none', cursor: 'pointer',
+              width: 44, height: 44, borderRadius: 999, border: 'none', cursor: 'pointer',
               background: theme.innerBg, display: 'inline-flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center', gap: 5, flexShrink: 0,
+              transition: 'background 0.08s',
             }}
           >
             <motion.span
               animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.3, ease: EASE_PREMIUM }}
-              style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block' }}
+              style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block', transition: 'background 0.08s' }}
             />
             <motion.span
               animate={menuOpen ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.3, ease: EASE_PREMIUM }}
-              style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block' }}
+              style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block', transition: 'background 0.08s' }}
             />
           </button>
         )}
@@ -254,7 +266,7 @@ export default function Navigation({ visible, onChatOpen }) {
                 background: BRAND.gradient, color: '#fff', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem',
               }}
             >
-              Hablar con nosotros
+              Habla con nuestra IA
               <span style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowRight size={15} />
               </span>

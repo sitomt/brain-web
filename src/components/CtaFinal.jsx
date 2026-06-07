@@ -64,7 +64,7 @@ export default function CtaFinal({ onChatOpen }) {
             size="lg"
             magnetic
           >
-            Solicitar diagnóstico
+            Reservar mi diagnóstico
           </CtaButton>
         </motion.div>
 
@@ -79,7 +79,7 @@ export default function CtaFinal({ onChatOpen }) {
           {...REVEAL(0.4)}
           style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}
         >
-          {['Sin permanencia', 'Operativo en semanas', 'Primera reunión sin coste'].map((item) => (
+          {['Sin permanencia', 'Operativo en semanas', 'Sin compromiso'].map((item) => (
             <span
               key={item}
               style={{

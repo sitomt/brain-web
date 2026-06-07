@@ -19,14 +19,28 @@ function rgba(hex, a) {
 
 export default function AuroraBackground({ children, className = '', intense = false, variant = 'dark', id, style = {} }) {
   const isLight = variant === 'light'
-  const baseBg = isLight ? '#FAF8F3' : '#0A0A0A'
+  const baseBg = isLight ? '#FAF8F3' : '#0A0A0B'
   // Peak alpha at the center of each blob's radial gradient
   const peakAlpha = isLight ? (intense ? 0.18 : 0.08) : (intense ? 0.28 : 0.1)
 
   return (
     <div id={id} className={`relative ${className}`} style={{ background: baseBg, ...style }}>
-      {/* Blobs live in their own clipping layer so children can use position: sticky */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+      {/* Blobs live in their own clipping layer so children can use position: sticky.
+          A vertical mask fades the aurora to zero at the top and bottom edges, so the
+          glow never gets clipped mid-luminance — each section edge ends in pure baseBg
+          and joins seamlessly with the section above/below (no visible horizontal seam). */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+          maskImage:
+            'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+        }}
+      >
         {blobs.map((blob, i) => (
           <motion.div
             key={i}

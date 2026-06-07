@@ -44,6 +44,26 @@ const cases = [
     result: 'Foto del albarán al chat. La IA lo procesa, estructura y añade a la base de datos. Control de costes en tiempo real, reportes automáticos y alertas si algún gasto se dispara.',
     span: 'narrow',
   },
+  {
+    type: 'Hostelería · Gestión de bares',
+    name: 'Foodmatica',
+    logo: null,
+    logoPlaceholder: 'Fo',
+    stat: 'Software a medida',
+    statDetail: 'back office + automatizaciones',
+    result: 'Software propio a medida para gestionar sus bares de principio a fin. Back office completo con automatizaciones que eliminan el trabajo manual del día a día y mantienen las cuentas siempre al día.',
+    span: 'narrow',
+  },
+  {
+    type: 'Operaciones · Italia',
+    name: 'Playgame Italia',
+    logo: null,
+    logoPlaceholder: 'Pg',
+    stat: 'Back office',
+    statDetail: 'operaciones automatizadas',
+    result: 'Operaciones de back office automatizadas. Los procesos internos que antes consumían horas del equipo ahora los resuelven sistemas a medida, sin errores y a cualquier hora.',
+    span: 'narrow',
+  },
 ]
 
 function LogoArea({ c, isMobile }) {
@@ -73,7 +93,9 @@ function LogoArea({ c, isMobile }) {
           width: 48,
           height: 48,
           borderRadius: '50%',
-          background: GRADIENT,
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.14)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -83,7 +105,7 @@ function LogoArea({ c, isMobile }) {
         <span
           style={{
             fontFamily: "'Instrument Serif', serif",
-            fontSize: '1rem',
+            fontSize: '1.05rem',
             color: '#fff',
             lineHeight: 1,
           }}
@@ -235,9 +257,9 @@ export default function Cases() {
             lineHeight: 1.7,
           }}
         >
-          Tres sectores distintos.
+          Sectores distintos.
           <br />
-          Tres retos distintos.
+          Retos distintos.
           <br />
           Un mismo método.
         </motion.p>

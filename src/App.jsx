@@ -5,12 +5,12 @@ import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
 import Hero from './components/Hero'
 import Enfoque from './components/Enfoque'
+import Herramientas from './components/Herramientas'
 import Products from './components/Products'
 import Cases from './components/Cases'
 import TrustBar from './components/TrustBar'
 import HowItWorks from './components/HowItWorks'
 import CtaFinal from './components/CtaFinal'
-import SectionBridge from './components/SectionBridge'
 import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
@@ -71,18 +71,20 @@ function AppContent() {
             >
               <main>
                 <section id="hero" style={{ position: 'relative' }}>
-                  <Hero onChatOpen={() => openChat('hero')} />
+                  <Hero onChatOpen={() => openChat('hero')} introComplete={introComplete} />
                 </section>
                 <TrustBar />
                 <section id="enfoque">
                   <Enfoque />
                 </section>
+                <section id="herramientas">
+                  <Herramientas />
+                </section>
                 <HowItWorks />
-                <SectionBridge direction="darkToLight" darkColor="#0D0D10" lightColor="#FAF8F3" />
+                {/* Products = panel claro elevado flotando sobre fondo oscuro continuo */}
                 <section id="products">
                   <Products onChatOpen={openChat} />
                 </section>
-                <SectionBridge direction="lightToDark" lightColor="#FAF8F3" darkColor="#0A0A0B" />
                 <section id="cases">
                   <Cases />
                 </section>

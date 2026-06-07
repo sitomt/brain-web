@@ -16,7 +16,7 @@ const PILLARS = [
   {
     num: '01',
     title: 'Criterio de negocio',
-    desc: 'Decidimos como quien rinde cuentas a final de mes, no solo como quien escribe código. La tecnología es el medio; el resultado es lo que importa.',
+    desc: 'Decidimos como quien rinde cuentas a final de mes. La tecnología es el medio; el resultado, lo que importa.',
     span: 4,
     featured: true,
   },
@@ -29,7 +29,7 @@ const PILLARS = [
   {
     num: '03',
     title: 'Resultados medibles',
-    desc: 'Nos comprometemos con números: tiempo recuperado, costes que bajan e ingresos que dejan de escaparse.',
+    desc: 'Nos comprometemos con números: tiempo recuperado, costes que bajan, ingresos que dejan de escaparse.',
     span: 2,
   },
   {
@@ -40,13 +40,16 @@ const PILLARS = [
   },
 ]
 
-function GrainOverlay() {
+function GrainOverlay({ isMobile }) {
   return (
     <div
       aria-hidden
       style={{
         position: 'absolute',
-        inset: 0,
+        // El grano vive dentro del contenedor de contenido, que está inset por el
+        // padding de la sección. Con inset negativo igual al padding, la textura se
+        // extiende a sangre hasta los bordes de la sección y no deja margen visible.
+        inset: isMobile ? '-5rem -1.25rem' : '-7.5rem -2rem',
         pointerEvents: 'none',
         opacity: 0.06,
         mixBlendMode: 'overlay',
@@ -66,7 +69,7 @@ export default function Enfoque() {
       variant="dark"
       style={{ padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem', position: 'relative' }}
     >
-      <GrainOverlay />
+      <GrainOverlay isMobile={isMobile} />
       <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto' }}>
 
         {/* Header */}
@@ -95,10 +98,9 @@ export default function Enfoque() {
           </h2>
 
           <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.7)', margin: isMobile ? '1.5rem auto 0' : '1.75rem 0 0' }}>
-            Dirigimos negocios reales. Por eso, cuando implementamos tecnología,
-            lo hacemos con criterio: sabemos qué mueve la aguja, qué cuesta dinero
-            y qué solo parece importante. No vendemos IA — resolvemos problemas de
-            negocio con ella.
+            Dirigimos negocios reales. Por eso implementamos tecnología con
+            criterio: sabemos qué mueve resultados, qué cuesta dinero y qué solo
+            lo parece.
           </p>
         </motion.div>
 

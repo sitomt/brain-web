@@ -8,7 +8,7 @@ const ITEMS = [
   { stat: '3',        label: 'empresas en producción' },
   { stat: '<30 días', label: 'de la idea a producción' },
   { stat: '24/7',     label: 'operación continua'      },
-  { stat: '100%',     label: 'soluciones a medida'     },
+  { stat: '100%',     label: 'a medida'                },
 ]
 
 export default function TrustBar() {

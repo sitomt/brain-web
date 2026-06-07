@@ -4,7 +4,6 @@ import { Player } from '@remotion/player'
 import CometCard from './CometCard'
 import CtaButton from './CtaButton'
 import Eyebrow from './Eyebrow'
-import SplitText from './SplitText'
 import RotatingWord from './RotatingWord'
 import useIsMobile from '../hooks/useIsMobile'
 import HeroChatDemo from '../remotion/HeroChatDemo'
@@ -21,9 +20,9 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
 })
 
-const TRUST = ['Baktun 13', 'Clesol', 'Venta Alegría']
+const TRUST = ['Baktun 13', 'Clesol', 'Venta Alegría', 'Foodmatica', 'Playgame Italia']
 
-export default function Hero({ onChatOpen }) {
+export default function Hero({ onChatOpen, introComplete = true }) {
   const isMobile = useIsMobile()
   const reduce = useReducedMotion()
   const sectionRef = useRef(null)
@@ -79,59 +78,33 @@ export default function Hero({ onChatOpen }) {
             <Eyebrow variant="pill" tone="dark">Agencia de IA · Murcia</Eyebrow>
           </motion.div>
 
-          <SplitText
-            as="h1"
-            style={{ ...display, color: '#1A1814' }}
-            delay={0.2}
-            segments={[
-              { text: 'Tecnología con criterio' },
-              { break: true },
-              { text: 'de empresario.', style: { fontStyle: 'italic', ...gradientText } },
-            ]}
-          />
-
-          {/* Rotating sectors (#06) — reinforces "para cualquier negocio" */}
-          <motion.div
-            {...fadeUp(0.28)}
-            style={{
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 8,
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 'clamp(1.15rem, 2.4vw, 1.5rem)',
-              color: 'rgba(26,24,20,0.55)',
-              justifyContent: isMobile ? 'center' : 'flex-start',
-            }}
-          >
-            <span style={{ fontStyle: 'italic' }}>IA para</span>
+          {/* H1 — resultado, con sector rotatorio en gradiente */}
+          <motion.h1 {...fadeUp(0.2)} style={{ ...display, color: '#1A1814' }}>
+            La IA que hace funcionar tu{' '}
             <RotatingWord
-              words={['restaurantes', 'gimnasios', 'despachos', 'ecommerce', 'tu negocio']}
-              style={{ fontStyle: 'italic', ...gradientText }}
+              words={['negocio', 'restaurante', 'clínica', 'despacho', 'tienda', 'gimnasio', 'hotel']}
+              start={introComplete}
+              startDelay={1000}
+              style={{ fontStyle: 'italic', ...gradientText, verticalAlign: 'baseline' }}
             />
-          </motion.div>
+          </motion.h1>
 
           <motion.p {...fadeUp(0.3)} style={{ ...bodyLg, color: '#4A4740' }}>
-            Diseñamos e implementamos sistemas de IA para tu negocio. Con el
-            criterio de quien también dirige empresas, no solo de quien programa.
+            Diseñada con criterio de empresario. Operativa en semanas.
           </motion.p>
 
-          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="lg" magnetic>
-                Hablar con nosotros
-              </CtaButton>
-              <CtaButton
-                onClick={() => document.getElementById('lo-que-hacemos')?.scrollIntoView({ behavior: 'smooth' })}
-                variant="ghost"
-                arrow="down"
-                size="lg"
-              >
-                Ver soluciones
-              </CtaButton>
-            </div>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.88rem', color: 'rgba(26,24,20,0.55)', fontStyle: 'italic', lineHeight: 1.5 }}>
-              Hablas con el mismo tipo de asistente que implementamos en cada proyecto.
-            </span>
+          <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+            <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="lg" magnetic>
+              Habla con nuestra IA
+            </CtaButton>
+            <CtaButton
+              onClick={() => document.getElementById('lo-que-hacemos')?.scrollIntoView({ behavior: 'smooth' })}
+              variant="ghost"
+              arrow="down"
+              size="lg"
+            >
+              Ver soluciones
+            </CtaButton>
           </motion.div>
 
           {/* Trust strip */}
@@ -142,7 +115,7 @@ export default function Hero({ onChatOpen }) {
             <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.45)' }}>
               Ya operan con nosotros
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap', rowGap: '0.5rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
               {TRUST.map((name, i) => (
                 <span key={name} style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
                   {i > 0 && <span style={{ width: 3, height: 3, borderRadius: 999, background: 'rgba(26,24,20,0.2)' }} />}

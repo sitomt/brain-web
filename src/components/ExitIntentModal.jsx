@@ -136,8 +136,8 @@ export default function ExitIntentModal({ onChatOpen }) {
                 marginBottom: '1.75rem',
               }}
             >
-              En una conversación corta te decimos qué podríamos hacer por tu
-              negocio. Con claridad y sin compromiso.
+              En 30 minutos te decimos qué tiene sentido automatizar en tu
+              negocio y cómo lo haríamos. Con claridad y sin compromiso.
             </p>
 
             <div
@@ -154,7 +154,7 @@ export default function ExitIntentModal({ onChatOpen }) {
                 arrow="right"
                 size="md"
               >
-                Hablar con nosotros
+                Habla con nuestra IA
               </CtaButton>
               <button
                 onClick={() => setOpen(false)}

@@ -12,7 +12,14 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Mobile interaction: remove the 300ms tap delay + double-tap zoom on controls,
+   and replace the default gray tap flash with a subtle on-brand highlight. */
+button, a, [role="button"], summary { touch-action: manipulation; }
+button, a, [role="button"], input, textarea, select {
+  -webkit-tap-highlight-color: rgba(67, 97, 238, 0.12);
+}
 
 body {
   font-family: var(--font-sans);

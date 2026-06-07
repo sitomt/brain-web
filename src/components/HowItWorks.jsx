@@ -39,7 +39,21 @@ export default function HowItWorks() {
   const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1])
 
   return (
-    <div style={{ background: '#0D0D10', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem' }}>
+    <div id="proceso" style={{ background: '#0A0A0B', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem', position: 'relative', overflow: 'hidden' }}>
+      {/* Amanecer — luz de marca asomando en el borde inferior, hacia Soluciones */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: isMobile ? 160 : 220,
+          pointerEvents: 'none',
+          background:
+            'linear-gradient(to top, rgba(67,97,238,0.10) 0%, rgba(114,9,183,0.045) 45%, transparent 100%)',
+        }}
+      />
       <div style={{ maxWidth: 880, margin: '0 auto', position: 'relative' }}>
 
         {/* Header */}
@@ -105,7 +119,7 @@ export default function HowItWorks() {
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <div style={{
                     width: isMobile ? 44 : 52, height: isMobile ? 44 : 52, borderRadius: 999,
-                    background: '#0D0D10', border: '1px solid rgba(255,255,255,0.14)',
+                    background: '#0A0A0B', border: '1px solid rgba(255,255,255,0.14)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
                   }}>

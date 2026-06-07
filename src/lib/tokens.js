@@ -25,7 +25,7 @@ export const SURFACE = {
   ink: '#1A1814',
   // Off-black, never pure black. One canonical dark used across dark sections.
   dark: '#0A0A0B',
-  darkAlt: '#0D0D10',
+  darkAlt: '#0A0A0B',
   cardLight: '#FFFFFF',
   cardDark: '#1A1814',
   hairlineLight: 'rgba(26,24,20,0.08)',

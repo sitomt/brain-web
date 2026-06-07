@@ -45,12 +45,10 @@ const PRODUCTS = [
     bullets: [
       'Atiende reservas y pedidos en cualquier canal',
       'Cualifica y registra cada lead automáticamente',
-      'Gestiona varias conversaciones a la vez con un tono coherente',
       'Deriva a una persona del equipo cuando hace falta',
       'Se integra con tu CRM y tus herramientas actuales',
       'Disponible en WhatsApp, Instagram, Telegram y web',
       'Atiende llamadas con voz natural',
-      'Cobertura continua, también fuera de horario',
     ],
     price: { from: '1.200€', maintenance: '97€/mes' },
     ctaLabel: 'Ver cómo atendería a tus clientes',
@@ -80,8 +78,6 @@ const PRODUCTS = [
       'Detecta y avisa cuando algo no cuadra',
       'Resume reuniones y deja las acciones por escrito',
       'Envía recordatorios y seguimientos a tiempo',
-      'Genera documentos a partir de tus plantillas',
-      'Libera al equipo de la carga administrativa repetitiva',
     ],
     price: { from: '2.000€', maintenance: '200€/mes' },
     ctaLabel: 'Ver qué automatizaríamos en tu operación',
@@ -106,9 +102,7 @@ const PRODUCTS = [
       'Conoce ventas, márgenes y costes en tiempo real',
       'Digitaliza albaranes a partir de una foto',
       'Alerta cuando un gasto se desvía de lo normal',
-      'Genera informes bajo demanda',
       'Se conecta a cualquier base de datos del negocio',
-      'Anticipa lo que suele pasar desapercibido',
       'Accesible para todo el equipo, sin conocimientos técnicos',
     ],
     price: { from: '1.500€', maintenance: '150€/mes' },
@@ -1069,10 +1063,26 @@ export default function Products({ onChatOpen }) {
   }
 
   return (
+    // Soluciones full-bleed con "amanecer": la luz emerge en el borde superior
+    // al entrar desde la sección oscura "El proceso".
     <AuroraBackground variant="light">
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: isMobile ? 240 : 380,
+          pointerEvents: 'none',
+          zIndex: 2,
+          background:
+            'radial-gradient(140% 120% at 50% 0%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.45) 28%, rgba(250,248,243,0) 68%)',
+        }}
+      />
       <section
         id="lo-que-hacemos"
-        style={{ padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem' }}
+        style={{ padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem', position: 'relative', zIndex: 3 }}
       >
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
           {/* HEADER */}
@@ -1106,7 +1116,7 @@ export default function Products({ onChatOpen }) {
                   backgroundClip: 'text',
                 }}
               >
-                {' '}que tu negocio funcione mejor.
+                {' '}que tu negocio funcione sin ti encima.
               </em>
             </h2>
             <p

@@ -289,6 +289,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
           border: 'none',
           cursor: 'pointer',
           zIndex: 200,
+          marginBottom: 'env(safe-area-inset-bottom)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -330,11 +331,11 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             style={{
               position: 'fixed',
-              bottom: isMobile ? 84 : 92,
+              bottom: isMobile ? 'calc(84px + env(safe-area-inset-bottom))' : 92,
               right: btnRight,
               left: isMobile ? btnRight : 'auto',
               width: isMobile ? 'auto' : 340,
-              maxHeight: isMobile ? 'calc(100vh - 120px)' : 520,
+              maxHeight: isMobile ? 'calc(100dvh - 140px)' : 520,
               borderRadius: 20,
               background: '#fff',
               boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
@@ -370,7 +371,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                     color: msg.from === 'user' ? '#fff' : '#1A1814',
                     fontFamily: "'DM Sans',sans-serif",
                     fontWeight: 300,
-                    fontSize: '0.82rem',
+                    fontSize: isMobile ? '0.9rem' : '0.82rem',
                     lineHeight: 1.5,
                   }}>
                     {msg.text}
@@ -392,14 +393,15 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                       key={qr}
                       onClick={() => send(qr)}
                       style={{
-                        padding: '6px 12px',
+                        padding: isMobile ? '10px 16px' : '6px 12px',
+                        minHeight: isMobile ? 40 : 'auto',
                         borderRadius: 999,
                         border: '1px solid #4361EE',
                         background: 'transparent',
                         color: '#4361EE',
                         fontFamily: "'DM Sans',sans-serif",
                         fontWeight: 400,
-                        fontSize: '0.75rem',
+                        fontSize: isMobile ? '0.85rem' : '0.75rem',
                         cursor: 'pointer',
                         transition: 'background 0.2s, color 0.2s',
                       }}
@@ -424,12 +426,14 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                 placeholder="Escribe tu mensaje..."
                 style={{
                   flex: 1,
-                  padding: '9px 14px',
+                  minWidth: 0,
+                  padding: isMobile ? '13px 16px' : '9px 14px',
                   borderRadius: 999,
                   border: '1px solid #E8E5DE',
                   fontFamily: "'DM Sans',sans-serif",
                   fontWeight: 300,
-                  fontSize: '0.82rem',
+                  // 16px on mobile prevents iOS Safari from auto-zooming on focus.
+                  fontSize: isMobile ? '16px' : '0.82rem',
                   outline: 'none',
                   background: '#FAFAFA',
                   cursor: 'text',
@@ -438,7 +442,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
               <button
                 onClick={send}
                 aria-label="Enviar"
-                style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', color: '#fff', cursor: 'pointer', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: isMobile ? 44 : 36, height: isMobile ? 44 : 36, borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', color: '#fff', cursor: 'pointer', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <ArrowRight size={14} />
               </button>
