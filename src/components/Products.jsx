@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Player } from '@remotion/player'
 import {
@@ -10,8 +10,6 @@ import {
   FileText,
   ShieldCheck,
   Check,
-  Plus,
-  Minus,
   ArrowClockwise,
 } from '@phosphor-icons/react'
 import useIsMobile from '../hooks/useIsMobile'
@@ -21,9 +19,12 @@ import AgentDemo from '../remotion/AgentDemo'
 import AuroraBackground from './AuroraBackground'
 import CtaButton from './CtaButton'
 import Eyebrow from './Eyebrow'
+import SpotlightCard from './SpotlightCard'
+import { ArrowRight } from './icons/ArrowIcon'
 import baktun13Logo from '../assets/baktun13-logo.png'
 import clesolLogo from '../assets/clesol-logo.png'
 import { ACCENT, gradientText } from '../lib/tokens'
+import { EASE_PREMIUM } from '../lib/motion'
 import { FOUNDERS } from '../lib/founders'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
@@ -319,119 +320,158 @@ function CasesStrip({ cases }) {
   )
 }
 
-/* ──────────────────── PRODUCT CARD ──────────────────── */
+/* ──────────────────── PRICE (con ancla de precio fundador) ──────────────────── */
 
-function ProductCard({ product, isMobile, onChatOpen, highlighted, onFoundersOpen }) {
-  const [expanded, setExpanded] = useState(false)
-  const [hovered, setHovered] = useState(false)
-
+function PriceBlock({ price, onFoundersOpen }) {
   return (
-    <motion.div
-      id={`producto-${product.num}`}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.7, ease: EASE }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: highlighted ? 'rgba(67,97,238,0.06)' : 'rgba(26,24,20,0.025)',
-        border: `1px solid ${highlighted ? 'rgba(67,97,238,0.28)' : 'rgba(26,24,20,0.06)'}`,
-        borderRadius: 30,
-        padding: 5,
-        transform: hovered && !isMobile ? 'translateY(-3px)' : 'translateY(0)',
-        boxShadow: hovered && !isMobile
-          ? '0 1px 2px rgba(26,24,20,0.04), 0 28px 56px -28px rgba(26,24,20,0.18)'
-          : '0 1px 2px rgba(26,24,20,0.03), 0 18px 40px -28px rgba(26,24,20,0.12)',
-        transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.3s',
-        scrollMarginTop: '6rem',
-      }}
-    >
-      <article
-        style={{
-          background: '#FEFCF7',
-          border: `1px solid ${highlighted ? 'rgba(67,97,238,0.22)' : 'rgba(26,24,20,0.05)'}`,
-          borderRadius: 24,
-          padding: isMobile ? '1.75rem' : '2.75rem 2.5rem',
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '0.95fr 1.05fr',
-          gap: isMobile ? '1.5rem' : '3rem',
-          position: 'relative',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85)',
-        }}
-      >
-      {highlighted && (
-        <div
+    <div style={{ borderTop: '1px solid rgba(26,24,20,0.08)', paddingTop: '1.1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+        <span
           style={{
-            position: 'absolute',
-            top: -10,
-            left: isMobile ? '50%' : 24,
-            transform: isMobile ? 'translateX(-50%)' : 'none',
-            background: GRADIENT,
-            color: '#fff',
-            padding: '4px 12px',
-            borderRadius: 999,
             fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.62rem',
+            fontSize: '0.66rem',
+            color: 'rgba(26,24,20,0.5)',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
           }}
         >
-          Recomendado para ti
-        </div>
-      )}
-
-      {/* VIDEO */}
-      <div style={{ order: isMobile ? 1 : 0, alignSelf: 'flex-start' }}>
-        <LazyVideoColumn component={product.component} />
-      </div>
-
-      {/* CONTENT */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.4rem',
-          order: isMobile ? 2 : 0,
-          minWidth: 0,
-        }}
-      >
-        {/* Header: num + name + promise (Option C) */}
-        <header style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+          Desde
+        </span>
+        {FOUNDERS.active && price.normal && (
           <span
             style={{
               fontFamily: "'Syne Mono', monospace",
-              fontSize: 'clamp(2.2rem, 4.5vw, 2.8rem)',
-              color: ACCENT,
-              lineHeight: 0.9,
-              flexShrink: 0,
-              letterSpacing: '0.02em',
+              fontSize: '0.95rem',
+              color: 'rgba(26,24,20,0.4)',
+              textDecoration: 'line-through',
             }}
           >
-            {product.num}
+            {price.normal}
           </span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', paddingTop: 4, minWidth: 0 }}>
-            {product.tag && (
-              <span
-                style={{
-                  fontFamily: "'Syne Mono', monospace",
-                  fontSize: '0.7rem',
-                  color: 'rgba(26,24,20,0.45)',
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {product.tag}
-              </span>
-            )}
+        )}
+        <span
+          style={{
+            fontFamily: "'Instrument Serif', serif",
+            fontSize: 'clamp(1.8rem, 3vw, 2.2rem)',
+            color: '#1A1814',
+            lineHeight: 1,
+          }}
+        >
+          {price.from}
+        </span>
+        <span
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 300,
+            fontSize: '0.85rem',
+            color: 'rgba(26,24,20,0.55)',
+          }}
+        >
+          + {price.maintenance}
+        </span>
+      </div>
+
+      {FOUNDERS.active && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onFoundersOpen?.()
+          }}
+          style={{
+            marginTop: 8,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 7,
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.68rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span style={{ ...gradientText }}>Precio fundador</span>
+          <span style={{ color: 'rgba(26,24,20,0.5)' }}>· quedan {FOUNDERS.spotsLeft}</span>
+        </button>
+      )}
+    </div>
+  )
+}
+
+/* ──────────────────── SELECTOR CARD (tríptico) ──────────────────── */
+
+function ProductSelectorCard({ product, active, onSelect, isMobile, onFoundersOpen }) {
+  return (
+    <motion.div
+      id={`producto-${product.num}`}
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
+      animate={{ y: active && !isMobile ? -3 : 0 }}
+      transition={{ duration: 0.4, ease: EASE }}
+      style={{
+        borderRadius: 32,
+        padding: active ? 1.5 : 0,
+        background: active ? GRADIENT : 'transparent',
+        cursor: 'pointer',
+        opacity: active ? 1 : 0.92,
+        transition: 'opacity 0.3s, background 0.3s',
+        scrollMarginTop: '6rem',
+        outline: 'none',
+      }}
+    >
+      <SpotlightCard
+        tone="light"
+        radius={24}
+        padding={isMobile ? '1.6rem 1.5rem' : '1.85rem 1.75rem'}
+        style={{ cursor: 'pointer' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', height: '100%' }}>
+          {/* Cabecera: num + tag */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span
+              style={{
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '1.35rem',
+                color: ACCENT,
+                lineHeight: 1,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {product.num}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.66rem',
+                color: 'rgba(26,24,20,0.45)',
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {product.tag}
+            </span>
+          </div>
+
+          {/* Nombre + promesa */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             <h3
               style={{
                 fontFamily: "'Instrument Serif', serif",
-                fontSize: 'clamp(1.8rem, 3.4vw, 2.3rem)',
+                fontSize: 'clamp(1.5rem, 2.4vw, 1.85rem)',
                 color: '#1A1814',
                 margin: 0,
-                lineHeight: 1.05,
+                lineHeight: 1.06,
               }}
             >
               {product.name}
@@ -440,7 +480,7 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted, onFoundersOpe
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 400,
-                fontSize: '1.05rem',
+                fontSize: '0.95rem',
                 color: 'rgba(26,24,20,0.62)',
                 margin: 0,
                 letterSpacing: '-0.005em',
@@ -449,276 +489,196 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted, onFoundersOpe
               {product.promise}
             </p>
           </div>
-        </header>
 
-        {/* Beneficios — los tres, siempre visibles (el núcleo de la venta) */}
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.95rem',
-          }}
-        >
-          {product.outcomes.map((o, i) => (
-            <li
-              key={i}
-              style={{
-                display: 'flex',
-                gap: 12,
-                alignItems: 'flex-start',
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 400,
-                fontSize: '1.02rem',
-                color: '#1A1814',
-                lineHeight: 1.55,
-              }}
-            >
-              <Check size={19} weight="bold" style={{ color: ACCENT, flexShrink: 0, marginTop: 3 }} />
-              <span>{o}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Acordeón "ver todo lo que incluye" */}
-        <div>
-          <button
-            type="button"
-            onClick={() => setExpanded((e) => !e)}
+          {/* 3 beneficios (condensados a 2 líneas) */}
+          <ul
             style={{
-              border: 'none',
-              background: 'transparent',
-              color: 'rgba(26,24,20,0.6)',
-              fontFamily: "'Instrument Serif', serif",
-              fontStyle: 'italic',
-              fontSize: '1.1rem',
-              cursor: 'pointer',
+              listStyle: 'none',
               padding: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 9,
-              transition: 'color 0.2s ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(26,24,20,0.9)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(26,24,20,0.6)')}
-          >
-            {expanded ? <Minus size={14} /> : <Plus size={14} />}
-            {expanded ? 'Ocultar detalle' : 'Ver todo lo que incluye'}
-          </button>
-          <AnimatePresence initial={false}>
-            {expanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                style={{ overflow: 'hidden' }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1.75rem',
-                    paddingTop: '1.6rem',
-                    marginTop: '0.5rem',
-                    borderTop: '1px solid rgba(26,24,20,0.08)',
-                  }}
-                >
-                  {/* Qué incluye — checklist concreto, escaneable */}
-                  <div>
-                    <p
-                      style={{
-                        fontFamily: "'Syne Mono', monospace",
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.16em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(26,24,20,0.45)',
-                        margin: '0 0 1rem',
-                      }}
-                    >
-                      Qué incluye
-                    </p>
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-                        gap: '0.8rem 1.75rem',
-                      }}
-                    >
-                      {product.bullets.map((b, i) => (
-                        <div key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
-                          <Check size={15} weight="bold" style={{ color: 'rgba(67,97,238,0.7)', marginTop: 3, flexShrink: 0 }} />
-                          <span
-                            style={{
-                              fontFamily: "'DM Sans', sans-serif",
-                              fontWeight: 300,
-                              fontSize: '0.95rem',
-                              color: 'rgba(26,24,20,0.74)',
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {b}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Garantías */}
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {[
-                      { Icon: ShieldCheck, label: 'RGPD compliant' },
-                      { Icon: FileText,    label: 'NDA disponible' },
-                      { Icon: LockKey,     label: 'Datos en tu infra' },
-                    ].map(({ Icon, label }) => (
-                      <span
-                        key={label}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          background: '#FAF8F3',
-                          border: '1px solid rgba(26,24,20,0.07)',
-                          borderRadius: 999,
-                          padding: '6px 12px',
-                        }}
-                      >
-                        <Icon size={13} weight="regular" style={{ color: '#22C55E', flexShrink: 0 }} />
-                        <span
-                          style={{
-                            fontFamily: "'Syne Mono', monospace",
-                            fontSize: '0.72rem',
-                            color: 'rgba(26,24,20,0.6)',
-                            letterSpacing: '0.04em',
-                          }}
-                        >
-                          {label}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Social proof — rotating for 01, static for 02/03 */}
-                  <CasesStrip cases={product.cases} />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* PRICE — "Desde X€" + mantenimiento, con jerarquía clara.
-            Con FOUNDERS.active: ancla (precio de catálogo tachado) + precio fundador. */}
-        <div
-          style={{
-            borderTop: '1px solid rgba(26,24,20,0.08)',
-            paddingTop: '1.4rem',
-          }}
-        >
-          <div
-            style={{
+              margin: '0.15rem 0 0',
               display: 'flex',
-              alignItems: 'baseline',
-              gap: 14,
-              flexWrap: 'wrap',
+              flexDirection: 'column',
+              gap: '0.6rem',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span
+            {product.outcomes.map((o, i) => (
+              <li
+                key={i}
                 style={{
-                  fontFamily: "'Syne Mono', monospace",
-                  fontSize: '0.7rem',
-                  color: 'rgba(26,24,20,0.5)',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  marginBottom: 4,
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '0.92rem',
+                  color: 'rgba(26,24,20,0.82)',
+                  lineHeight: 1.45,
                 }}
               >
-                Desde
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                {FOUNDERS.active && product.price.normal && (
-                  <span
-                    style={{
-                      fontFamily: "'Syne Mono', monospace",
-                      fontSize: '1.1rem',
-                      color: 'rgba(26,24,20,0.4)',
-                      textDecoration: 'line-through',
-                    }}
-                  >
-                    {product.price.normal}
-                  </span>
-                )}
+                <Check size={16} weight="bold" style={{ color: ACCENT, flexShrink: 0, marginTop: 2 }} />
                 <span
                   style={{
-                    fontFamily: "'Instrument Serif', serif",
-                    fontSize: 'clamp(2.1rem, 3.6vw, 2.7rem)',
-                    color: '#1A1814',
-                    lineHeight: 1,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
                   }}
                 >
-                  {product.price.from}
+                  {o}
                 </span>
-              </span>
-            </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Precio + CTA, anclados abajo */}
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '0.4rem' }}>
+            <PriceBlock price={product.price} onFoundersOpen={onFoundersOpen} />
             <span
               style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: '0.92rem',
-                color: 'rgba(26,24,20,0.55)',
-              }}
-            >
-              + {product.price.maintenance} de mantenimiento
-            </span>
-          </div>
-
-          {FOUNDERS.active && (
-            <button
-              type="button"
-              onClick={onFoundersOpen}
-              style={{
-                marginTop: 10,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                border: 'none',
-                background: 'transparent',
-                padding: 0,
-                cursor: 'pointer',
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.72rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 500,
+                fontSize: '0.9rem',
+                color: active ? ACCENT : '#1A1814',
               }}
             >
-              <span style={{ ...gradientText }}>Precio fundador</span>
-              <span style={{ color: 'rgba(26,24,20,0.5)' }}>
-                · Quedan {FOUNDERS.spotsLeft} plazas
+              {active ? 'Viéndolo en acción' : 'Ver en acción'}
+              <span
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 999,
+                  background: active ? 'rgba(67,97,238,0.1)' : 'rgba(26,24,20,0.05)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.3s',
+                }}
+              >
+                <ArrowRight size={12} />
               </span>
-            </button>
-          )}
+            </span>
+          </div>
         </div>
-
-        {/* CTA */}
-        <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
-          <CtaButton
-            onClick={() => onChatOpen(product.contextId)}
-            variant="solid"
-            arrow="right"
-            size="lg"
-          >
-            {product.ctaLabel}
-          </CtaButton>
-        </div>
-      </div>
-      </article>
+      </SpotlightCard>
     </motion.div>
   )
 }
 
-/* ──────────────────── MICRO-QUIZ (P0.3.B) ──────────────────── */
+/* ──────────────────── DETAIL PANEL (vídeo héroe) ──────────────────── */
+
+function ProductDetail({ product, isMobile, onChatOpen }) {
+  return (
+    <div
+      style={{
+        background: '#FEFCF7',
+        border: '1px solid rgba(26,24,20,0.06)',
+        borderRadius: 28,
+        padding: isMobile ? '1.25rem' : '2rem',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 1px 2px rgba(26,24,20,0.03), 0 24px 56px -32px rgba(26,24,20,0.18)',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '0.95fr 1.05fr',
+        gap: isMobile ? '1.25rem' : '2.5rem',
+        alignItems: 'start',
+      }}
+    >
+      {/* VÍDEO — héroe del producto activo */}
+      <div style={{ alignSelf: 'flex-start' }}>
+        <LazyVideoColumn component={product.component} />
+      </div>
+
+      {/* DETALLE */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minWidth: 0 }}>
+        <div>
+          <p
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.7rem',
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              color: 'rgba(26,24,20,0.45)',
+              margin: '0 0 1rem',
+            }}
+          >
+            Qué incluye
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: '0.8rem 1.75rem',
+            }}
+          >
+            {product.bullets.map((b, i) => (
+              <div key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+                <Check size={15} weight="bold" style={{ color: 'rgba(67,97,238,0.7)', marginTop: 3, flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 300,
+                    fontSize: '0.95rem',
+                    color: 'rgba(26,24,20,0.74)',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {b}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Garantías */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {[
+            { Icon: ShieldCheck, label: 'RGPD compliant' },
+            { Icon: FileText,    label: 'NDA disponible' },
+            { Icon: LockKey,     label: 'Datos en tu infra' },
+          ].map(({ Icon, label }) => (
+            <span
+              key={label}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#FAF8F3',
+                border: '1px solid rgba(26,24,20,0.07)',
+                borderRadius: 999,
+                padding: '6px 12px',
+              }}
+            >
+              <Icon size={13} weight="regular" style={{ color: '#22C55E', flexShrink: 0 }} />
+              <span
+                style={{
+                  fontFamily: "'Syne Mono', monospace",
+                  fontSize: '0.72rem',
+                  color: 'rgba(26,24,20,0.6)',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {label}
+              </span>
+            </span>
+          ))}
+        </div>
+
+        {/* Caso real */}
+        <CasesStrip cases={product.cases} />
+
+        {/* CTA principal */}
+        <div style={{ paddingTop: '0.25rem' }}>
+          <CtaButton onClick={() => onChatOpen(product.contextId)} variant="solid" arrow="right" size="lg">
+            {product.ctaLabel}
+          </CtaButton>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ──────────────────── MICRO-QUIZ → SELECTOR ──────────────────── */
 
 const QUIZ = [
   { q: '¿La atención a clientes (mensajes, llamadas, emails) consume demasiado tiempo a tu equipo?', product: 0 },
@@ -750,11 +710,12 @@ function ProductsQuiz({ onResult, isMobile }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        padding: isMobile ? '1.5rem 1.25rem' : '1.75rem 2rem',
+        maxWidth: 560,
+        margin: '0 auto 3rem',
+        padding: isMobile ? '1.4rem 1.25rem' : '1.6rem 1.85rem',
         background: '#FEFCF7',
         border: '1px solid rgba(26,24,20,0.06)',
         borderRadius: 18,
-        marginBottom: '2.5rem',
         boxShadow:
           'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12), 0 1px 0 rgba(26,24,20,0.02)',
       }}
@@ -804,7 +765,7 @@ function ProductsQuiz({ onResult, isMobile }) {
           <p
             style={{
               fontFamily: "'Instrument Serif', serif",
-              fontSize: 'clamp(1.3rem, 2.5vw, 1.65rem)',
+              fontSize: 'clamp(1.3rem, 2.5vw, 1.55rem)',
               color: '#1A1814',
               margin: '0 0 1.1rem',
               lineHeight: 1.25,
@@ -837,7 +798,7 @@ function ProductsQuiz({ onResult, isMobile }) {
                 }}
                 style={{
                   flex: 1,
-                  height: 54,
+                  height: 50,
                   border: '1px solid rgba(26,24,20,0.12)',
                   background: '#FAF8F3',
                   borderRadius: 12,
@@ -861,7 +822,7 @@ function ProductsQuiz({ onResult, isMobile }) {
   )
 }
 
-function QuizResult({ recommendedIdx, onReset }) {
+function QuizResultChip({ recommendedIdx, onReset }) {
   const rec = recommendedIdx >= 0 ? PRODUCTS[recommendedIdx] : null
 
   return (
@@ -870,46 +831,39 @@ function QuizResult({ recommendedIdx, onReset }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        padding: '1rem 1.5rem',
+        maxWidth: 560,
+        margin: '0 auto 3rem',
+        padding: '0.85rem 1.4rem',
         background: '#FEFCF7',
         border: '1px solid rgba(26,24,20,0.06)',
-        borderRadius: 18,
-        marginBottom: '2.5rem',
+        borderRadius: 999,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         gap: 14,
         flexWrap: 'wrap',
-        boxShadow:
-          'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12), 0 1px 0 rgba(26,24,20,0.02)',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 10px 28px -22px rgba(26,24,20,0.12)',
       }}
     >
       <p
         style={{
           margin: 0,
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.82rem',
+          fontSize: '0.76rem',
           color: 'rgba(26,24,20,0.7)',
-          letterSpacing: '0.1em',
+          letterSpacing: '0.08em',
           textTransform: 'uppercase',
+          textAlign: 'center',
         }}
       >
-        {rec
-          ? <>La solución que mejor encaja →{' '}
-              <a
-                href={`#producto-${rec.num}`}
-                style={{
-                  background: GRADIENT,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textDecoration: 'none',
-                }}
-              >
-                {rec.name}
-              </a>
-            </>
-          : 'Revisa las tres — cualquiera puede encajar.'}
+        {rec ? (
+          <>
+            Te recomendamos →{' '}
+            <span style={{ ...gradientText }}>{rec.name}</span>
+          </>
+        ) : (
+          'Revisa las tres — cualquiera puede encajar.'
+        )}
       </p>
       <button
         type="button"
@@ -1076,36 +1030,35 @@ function Tier2Block({ onChatOpen, isMobile }) {
 
 export default function Products({ onChatOpen, onFoundersOpen }) {
   const isMobile = useIsMobile()
+  const [activeIndex, setActiveIndex] = useState(0)
   // null = quiz pendiente; -1 = sin recomendación; 0/1/2 = índice recomendado
   const [recommendedIdx, setRecommendedIdx] = useState(null)
+
+  // Scroll cinematográfico (ease-in-out-quint) hacia una card concreta.
+  const scrollToProduct = (idx) => {
+    const el = document.getElementById(`producto-${PRODUCTS[idx].num}`)
+    if (!el) return
+    const navOffset = 96
+    const targetY = window.scrollY + el.getBoundingClientRect().top - navOffset
+    const startY = window.scrollY
+    const dist = targetY - startY
+    if (Math.abs(dist) < 2) return
+    const duration = Math.min(2600, Math.max(1400, Math.abs(dist) * 1.6))
+    const t0 = performance.now()
+    const ease = (t) => (t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2)
+    const step = (now) => {
+      const t = Math.min(1, (now - t0) / duration)
+      window.scrollTo(0, startY + dist * ease(t))
+      if (t < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
 
   const handleQuizResult = (idx) => {
     setRecommendedIdx(idx)
     if (idx >= 0) {
-      // Esperar a que el QuizResult reemplace al ProductsQuiz (evita salto
-      // de layout) y luego scroll RAF muy lento y cinematográfico.
-      setTimeout(() => {
-        const el = document.getElementById(`producto-${PRODUCTS[idx].num}`)
-        if (!el) return
-        const navOffset = 96 // ~scrollMarginTop de las cards
-        const targetY = window.scrollY + el.getBoundingClientRect().top - navOffset
-        const startY = window.scrollY
-        const dist = targetY - startY
-        if (Math.abs(dist) < 2) return
-        // Duración proporcional a la distancia, con techo: viajes largos
-        // duran más sin volverse infinitos.
-        const duration = Math.min(2600, Math.max(1400, Math.abs(dist) * 1.6))
-        const t0 = performance.now()
-        // ease-in-out-quint — entrada y salida muy suaves
-        const ease = (t) =>
-          t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2
-        const step = (now) => {
-          const t = Math.min(1, (now - t0) / duration)
-          window.scrollTo(0, startY + dist * ease(t))
-          if (t < 1) requestAnimationFrame(step)
-        }
-        requestAnimationFrame(step)
-      }, 500)
+      setActiveIndex(idx)
+      setTimeout(() => scrollToProduct(idx), 500)
     }
   }
 
@@ -1183,29 +1136,75 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
             </p>
           </div>
 
-          {/* QUIZ */}
+          {/* QUIZ → SELECTOR */}
           {recommendedIdx === null ? (
             <ProductsQuiz onResult={handleQuizResult} isMobile={isMobile} />
           ) : (
-            <QuizResult
+            <QuizResultChip
               recommendedIdx={recommendedIdx}
               onReset={() => setRecommendedIdx(null)}
             />
           )}
 
-          {/* PRODUCT CARDS */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* TRÍPTICO + DETALLE */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: isMobile ? '1.25rem' : '1.25rem',
+              alignItems: 'stretch',
+            }}
+          >
             {PRODUCTS.map((product, i) => (
-              <ProductCard
-                key={product.num}
-                product={product}
-                isMobile={isMobile}
-                onChatOpen={onChatOpen}
-                highlighted={recommendedIdx === i}
-                onFoundersOpen={onFoundersOpen}
-              />
+              <Fragment key={product.num}>
+                <ProductSelectorCard
+                  product={product}
+                  active={activeIndex === i}
+                  onSelect={() => setActiveIndex(i)}
+                  isMobile={isMobile}
+                  onFoundersOpen={onFoundersOpen}
+                />
+                {/* Móvil: el detalle se expande inline bajo la card activa */}
+                {isMobile && activeIndex === i && (
+                  <AnimatePresence initial={false}>
+                    <motion.div
+                      key={`detail-${product.num}`}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.4, ease: EASE_PREMIUM }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{ paddingTop: '1.25rem' }}>
+                        <ProductDetail product={product} isMobile onChatOpen={onChatOpen} />
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                )}
+              </Fragment>
             ))}
           </div>
+
+          {/* Desktop: un único panel de detalle debajo del tríptico */}
+          {!isMobile && (
+            <div style={{ marginTop: '1.75rem' }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.5, ease: EASE_PREMIUM }}
+                >
+                  <ProductDetail
+                    product={PRODUCTS[activeIndex]}
+                    isMobile={false}
+                    onChatOpen={onChatOpen}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          )}
 
           {/* TIER 2 */}
           <Tier2Block onChatOpen={onChatOpen} isMobile={isMobile} />

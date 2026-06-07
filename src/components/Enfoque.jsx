@@ -155,7 +155,7 @@ export default function Enfoque() {
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.32)' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)' }}
           >
-            Conoce al equipo
+            Conoce nuestra historia
             <ArrowRight size={14} />
           </Link>
         </motion.div>
