@@ -5,10 +5,10 @@ import { STAGGER, STAGGER_CHILD } from '../lib/motion'
 import { ACCENT } from '../lib/tokens'
 
 const ITEMS = [
-  { stat: '3',        label: 'empresas en producción' },
-  { stat: '<30 días', label: 'de la idea a producción' },
-  { stat: '24/7',     label: 'operación continua'      },
-  { stat: '100%',     label: 'a medida'                },
+  { stat: '5',        label: 'empresas en producción'        },
+  { stat: '<30 días', label: 'de la idea a producción'       },
+  { stat: '24/7',     label: 'operación, sin descanso'       },
+  { stat: '+40h',     label: 'liberadas al mes, de media'    },
 ]
 
 export default function TrustBar() {
@@ -20,7 +20,7 @@ export default function TrustBar() {
         background: '#0A0A0B',
         borderTop: '1px solid rgba(255,255,255,0.05)',
         borderBottom: '1px solid rgba(255,255,255,0.05)',
-        padding: isMobile ? '2.75rem 1.25rem' : '2.5rem 2rem',
+        padding: isMobile ? '3.25rem 1.25rem' : '3.5rem 2rem',
       }}
     >
       <motion.div
@@ -29,49 +29,61 @@ export default function TrustBar() {
           maxWidth: 1180,
           margin: '0 auto',
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          alignItems: isMobile ? 'flex-start' : 'stretch',
-          gap: isMobile ? '0' : '0',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
-        {/* Leading label */}
+        {/* Centered header — flanked by hairlines so it reads as a section label */}
         <motion.div
           variants={STAGGER_CHILD}
           style={{
             display: 'flex',
-            alignItems: isMobile ? 'flex-start' : 'center',
-            paddingRight: isMobile ? 0 : '2.5rem',
-            marginBottom: isMobile ? '2rem' : 0,
-            borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.08)',
-            flexShrink: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: isMobile ? '0.9rem' : '1.1rem',
+            marginBottom: isMobile ? '2.5rem' : '2.75rem',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.72rem',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.4)',
-              }}
-            >
-              <span style={{ width: 5, height: 5, borderRadius: 999, background: ACCENT, flexShrink: 0 }} />
-              BrAIn en cifras
-            </span>
-          </div>
+          <span
+            style={{
+              height: 1,
+              width: isMobile ? 28 : 56,
+              background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.2))',
+            }}
+          />
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 9,
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: isMobile ? '0.8rem' : '0.85rem',
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.62)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: ACCENT, flexShrink: 0, boxShadow: `0 0 10px ${ACCENT}` }} />
+            BrAIn en cifras
+          </span>
+          <span
+            style={{
+              height: 1,
+              width: isMobile ? 28 : 56,
+              background: 'linear-gradient(to left, transparent, rgba(255,255,255,0.2))',
+            }}
+          />
         </motion.div>
 
-        {/* Metrics */}
+        {/* Metrics — every cell centered, dividers between */}
         <div
           style={{
+            width: '100%',
             display: isMobile ? 'grid' : 'flex',
             gridTemplateColumns: isMobile ? '1fr 1fr' : undefined,
-            flex: 1,
-            gap: isMobile ? '1.75rem 1rem' : 0,
+            justifyContent: 'center',
+            gap: isMobile ? '2.5rem 1rem' : 0,
           }}
         >
           {ITEMS.map((item, i) => (
@@ -82,9 +94,10 @@ export default function TrustBar() {
                 flex: isMobile ? undefined : 1,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
-                gap: '0.3rem',
-                padding: isMobile ? 0 : '0 2rem',
+                alignItems: 'center',
+                textAlign: 'center',
+                gap: '0.45rem',
+                padding: isMobile ? 0 : '0 1.5rem',
                 borderLeft: (!isMobile && i > 0) ? '1px solid rgba(255,255,255,0.08)' : 'none',
               }}
             >
@@ -106,7 +119,7 @@ export default function TrustBar() {
                   fontSize: isMobile ? '0.9rem' : '0.88rem',
                   color: 'rgba(255,255,255,0.55)',
                   lineHeight: 1.35,
-                  maxWidth: '14ch',
+                  maxWidth: '16ch',
                 }}
               >
                 {item.label}

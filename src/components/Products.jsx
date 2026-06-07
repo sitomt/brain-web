@@ -23,7 +23,8 @@ import CtaButton from './CtaButton'
 import Eyebrow from './Eyebrow'
 import baktun13Logo from '../assets/baktun13-logo.png'
 import clesolLogo from '../assets/clesol-logo.png'
-import { ACCENT } from '../lib/tokens'
+import { ACCENT, gradientText } from '../lib/tokens'
+import { FOUNDERS } from '../lib/founders'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 const EASE = [0.22, 1, 0.36, 1]
@@ -50,7 +51,7 @@ const PRODUCTS = [
       'Disponible en WhatsApp, Instagram, Telegram y web',
       'Atiende llamadas con voz natural',
     ],
-    price: { from: '1.200€', maintenance: '97€/mes' },
+    price: { from: '1.200€', normal: '2.400€', maintenance: '97€/mes' },
     ctaLabel: 'Ver cómo atendería a tus clientes',
     // Multi-caso → rotación que comunica "para cualquier sector"
     cases: [
@@ -79,7 +80,7 @@ const PRODUCTS = [
       'Resume reuniones y deja las acciones por escrito',
       'Envía recordatorios y seguimientos a tiempo',
     ],
-    price: { from: '2.000€', maintenance: '200€/mes' },
+    price: { from: '2.000€', normal: '4.000€', maintenance: '200€/mes' },
     ctaLabel: 'Ver qué automatizaríamos en tu operación',
     cases: [
       { logo: 'clesol', tag: 'Clesol', sector: 'Servicios', quote: 'Clasificación automática de leads en dos semanas.' },
@@ -105,7 +106,7 @@ const PRODUCTS = [
       'Se conecta a cualquier base de datos del negocio',
       'Accesible para todo el equipo, sin conocimientos técnicos',
     ],
-    price: { from: '1.500€', maintenance: '150€/mes' },
+    price: { from: '1.500€', normal: '3.000€', maintenance: '150€/mes' },
     ctaLabel: 'Probarlo con datos de un negocio real',
     cases: [
       { logo: 'baktun13', tag: 'Baktun 13', sector: 'Gimnasio', quote: 'App de gestión con IA en tres semanas.' },
@@ -320,7 +321,7 @@ function CasesStrip({ cases }) {
 
 /* ──────────────────── PRODUCT CARD ──────────────────── */
 
-function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
+function ProductCard({ product, isMobile, onChatOpen, highlighted, onFoundersOpen }) {
   const [expanded, setExpanded] = useState(false)
   const [hovered, setHovered] = useState(false)
 
@@ -607,51 +608,97 @@ function ProductCard({ product, isMobile, onChatOpen, highlighted }) {
           </AnimatePresence>
         </div>
 
-        {/* PRICE — "Desde X€" + mantenimiento, con jerarquía clara */}
+        {/* PRICE — "Desde X€" + mantenimiento, con jerarquía clara.
+            Con FOUNDERS.active: ancla (precio de catálogo tachado) + precio fundador. */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: 14,
-            flexWrap: 'wrap',
             borderTop: '1px solid rgba(26,24,20,0.08)',
             paddingTop: '1.4rem',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span
-              style={{
-                fontFamily: "'Syne Mono', monospace",
-                fontSize: '0.7rem',
-                color: 'rgba(26,24,20,0.5)',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                marginBottom: 4,
-              }}
-            >
-              Desde
-            </span>
-            <span
-              style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 'clamp(2.1rem, 3.6vw, 2.7rem)',
-                color: '#1A1814',
-                lineHeight: 1,
-              }}
-            >
-              {product.price.from}
-            </span>
-          </div>
-          <span
+          <div
             style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: '0.92rem',
-              color: 'rgba(26,24,20,0.55)',
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 14,
+              flexWrap: 'wrap',
             }}
           >
-            + {product.price.maintenance} de mantenimiento
-          </span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span
+                style={{
+                  fontFamily: "'Syne Mono', monospace",
+                  fontSize: '0.7rem',
+                  color: 'rgba(26,24,20,0.5)',
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  marginBottom: 4,
+                }}
+              >
+                Desde
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                {FOUNDERS.active && product.price.normal && (
+                  <span
+                    style={{
+                      fontFamily: "'Syne Mono', monospace",
+                      fontSize: '1.1rem',
+                      color: 'rgba(26,24,20,0.4)',
+                      textDecoration: 'line-through',
+                    }}
+                  >
+                    {product.price.normal}
+                  </span>
+                )}
+                <span
+                  style={{
+                    fontFamily: "'Instrument Serif', serif",
+                    fontSize: 'clamp(2.1rem, 3.6vw, 2.7rem)',
+                    color: '#1A1814',
+                    lineHeight: 1,
+                  }}
+                >
+                  {product.price.from}
+                </span>
+              </span>
+            </div>
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
+                fontSize: '0.92rem',
+                color: 'rgba(26,24,20,0.55)',
+              }}
+            >
+              + {product.price.maintenance} de mantenimiento
+            </span>
+          </div>
+
+          {FOUNDERS.active && (
+            <button
+              type="button"
+              onClick={onFoundersOpen}
+              style={{
+                marginTop: 10,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                border: 'none',
+                background: 'transparent',
+                padding: 0,
+                cursor: 'pointer',
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.72rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
+            >
+              <span style={{ ...gradientText }}>Precio fundador</span>
+              <span style={{ color: 'rgba(26,24,20,0.5)' }}>
+                · Quedan {FOUNDERS.spotsLeft} plazas
+              </span>
+            </button>
+          )}
         </div>
 
         {/* CTA */}
@@ -1027,7 +1074,7 @@ function Tier2Block({ onChatOpen, isMobile }) {
 
 /* ──────────────────── MAIN SECTION ──────────────────── */
 
-export default function Products({ onChatOpen }) {
+export default function Products({ onChatOpen, onFoundersOpen }) {
   const isMobile = useIsMobile()
   // null = quiz pendiente; -1 = sin recomendación; 0/1/2 = índice recomendado
   const [recommendedIdx, setRecommendedIdx] = useState(null)
@@ -1155,6 +1202,7 @@ export default function Products({ onChatOpen }) {
                 isMobile={isMobile}
                 onChatOpen={onChatOpen}
                 highlighted={recommendedIdx === i}
+                onFoundersOpen={onFoundersOpen}
               />
             ))}
           </div>

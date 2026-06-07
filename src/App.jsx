@@ -16,8 +16,11 @@ import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
 import ExitIntentModal from './components/ExitIntentModal'
+import FoundersBar from './components/FoundersBar'
+import FoundersModal from './components/FoundersModal'
 import ScrollProgress from './components/ScrollProgress'
 import CursorGlow from './components/CursorGlow'
+import { FOUNDERS, FOUNDERS_BAR_H } from './lib/founders'
 
 // Lazy-loaded route — keeps the /nosotros page out of the initial bundle.
 const Nosotros = lazy(() => import('./pages/Nosotros'))
@@ -29,6 +32,10 @@ function AppContent() {
   const [legalOpen, setLegalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState('privacidad')
   const [cookieBannerKey, setCookieBannerKey] = useState(0)
+  const [foundersBarOpen, setFoundersBarOpen] = useState(
+    () => FOUNDERS.active && localStorage.getItem('brain_founders_bar_dismissed') !== '1'
+  )
+  const [foundersModalOpen, setFoundersModalOpen] = useState(false)
 
   const location = useLocation()
   const isHome = location.pathname === '/'
@@ -39,6 +46,11 @@ function AppContent() {
     localStorage.removeItem('brain_cookie_consent')
     setCookieBannerKey(k => k + 1)
   }
+  const dismissFoundersBar = () => {
+    localStorage.setItem('brain_founders_bar_dismissed', '1')
+    setFoundersBarOpen(false)
+  }
+  const showFoundersBar = FOUNDERS.active && isHome && introComplete && foundersBarOpen
 
   return (
     <>
@@ -53,10 +65,18 @@ function AppContent() {
         <IntroAnimation onComplete={() => setIntroComplete(true)} />
       )}
 
+      {showFoundersBar && (
+        <FoundersBar
+          onOpen={() => setFoundersModalOpen(true)}
+          onDismiss={dismissFoundersBar}
+        />
+      )}
+
       {/* Navigation lives at app level — visible on all routes */}
       <Navigation
         visible={isHome ? introComplete : true}
         onChatOpen={() => openChat('navbar')}
+        topOffset={showFoundersBar ? FOUNDERS_BAR_H : 0}
       />
 
       <Routes>
@@ -83,7 +103,7 @@ function AppContent() {
                 <HowItWorks />
                 {/* Products = panel claro elevado flotando sobre fondo oscuro continuo */}
                 <section id="products">
-                  <Products onChatOpen={openChat} />
+                  <Products onChatOpen={openChat} onFoundersOpen={() => setFoundersModalOpen(true)} />
                 </section>
                 <section id="cases">
                   <Cases />
@@ -117,6 +137,12 @@ function AppContent() {
       {isHome && introComplete && (
         <ExitIntentModal onChatOpen={() => openChat('exit_intent')} />
       )}
+
+      <FoundersModal
+        open={foundersModalOpen}
+        onClose={() => setFoundersModalOpen(false)}
+        onChatOpen={() => openChat(FOUNDERS.chatContext)}
+      />
 
       <CookieBanner key={cookieBannerKey} onOpenLegal={openLegal} />
 

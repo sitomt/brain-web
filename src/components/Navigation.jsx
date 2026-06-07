@@ -38,7 +38,7 @@ function Logo({ color }) {
   )
 }
 
-export default function Navigation({ visible, onChatOpen }) {
+export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
   const [isDark, setIsDark] = useState(false)
   const [btnHovered, setBtnHovered] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -66,7 +66,7 @@ export default function Navigation({ visible, onChatOpen }) {
   useEffect(() => {
     if (!isHome) return
     const DARK_IDS = [...DARK_SECTIONS]
-    const navTop = isMobile ? 12 : 16
+    const navTop = (isMobile ? 12 : 16) + topOffset
     const navBottom = navTop + (isMobile ? 54 : 60)
 
     let rafId = null
@@ -93,7 +93,7 @@ export default function Navigation({ visible, onChatOpen }) {
       window.removeEventListener('resize', check)
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [isHome, isMobile])
+  }, [isHome, isMobile, topOffset])
 
   const theme = isHome ? (isDark ? DARK_THEME : LIGHT_THEME) : DARK_THEME
 
@@ -112,7 +112,7 @@ export default function Navigation({ visible, onChatOpen }) {
         transition={{ duration: 0.6, ease: EASE_PREMIUM }}
         style={{
           position: 'fixed',
-          top: isMobile ? 'calc(12px + env(safe-area-inset-top))' : 16,
+          top: isMobile ? `calc(12px + env(safe-area-inset-top) + ${topOffset}px)` : 16 + topOffset,
           left: isMobile ? 12 : 20,
           right: isMobile ? 12 : 20,
           marginLeft: 'auto',

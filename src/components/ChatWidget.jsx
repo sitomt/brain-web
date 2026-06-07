@@ -95,6 +95,7 @@ const CONTEXT_GREETINGS = {
   tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
   cta_final: '¡Vamos allá! Para preparar la reunión con Sito, ¿en qué sector trabajas?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
+  founders: '¡Genial! El Programa Fundadores es para los primeros negocios que entran con nosotros: precio fundador, acceso directo y prioridad. Quedan pocas plazas. ¿En qué sector trabajas para decirte cómo encajaría?',
 }
 
 const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING

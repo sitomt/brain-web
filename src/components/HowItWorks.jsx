@@ -10,18 +10,18 @@ import { h2, bodyLg } from '../lib/typography'
 const STEPS = [
   {
     num: '01',
-    title: 'Diagnóstico',
-    desc: 'Analizamos tu operación contigo e identificamos dónde la tecnología genera más valor. Sin coste y sin compromiso.',
+    title: 'Habla con nuestra IA',
+    desc: 'Antes de reservar nada, prueba la tecnología que pondríamos en tu negocio. Cuéntale tu caso al asistente: te guía, resuelve tus dudas y te enseña en vivo lo que la IA puede hacer por ti. Sin coste y sin compromiso.',
   },
   {
     num: '02',
-    title: 'Diseño a medida',
-    desc: 'Definimos e implementamos la solución exacta para tu caso. Nada genérico, nada sobredimensionado.',
+    title: 'Nos conocemos en 30 minutos',
+    desc: 'Media hora, cara a cara. Nos cuentas cómo funciona tu empresa por dentro, entramos a fondo en tus procesos y empezamos a perfilar la solución. Si hace falta, nos vemos otra vez — sin prisa por venderte nada.',
   },
   {
     num: '03',
-    title: 'Operativo en 30 días',
-    desc: 'Lo ponemos en producción, lo medimos y lo ajustamos contigo a medida que crece.',
+    title: 'Presupuesto exacto y manos a la obra',
+    desc: 'Te damos un presupuesto cerrado, sin letra pequeña ni costes que aparecen después. Si te encaja, nos ponemos en marcha: en tres o cuatro semanas lo tienes funcionando en tu negocio.',
   },
 ]
 
@@ -74,7 +74,7 @@ export default function HowItWorks() {
             </WipeReveal>
           </h2>
           <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
-            Un método claro, sin sorpresas y con resultados medibles desde el primer mes.
+            Sin formularios eternos ni letra pequeña. Empiezas hablando con la IA y nosotros nos encargamos del resto.
           </p>
         </motion.div>
 
