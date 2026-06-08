@@ -14,6 +14,19 @@ function CornerRightUp({ size = 15 }) {
   )
 }
 
+function MicIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" style={{ display: 'block' }}>
+      <rect x="9" y="2" width="6" height="11" rx="3" />
+      <path d="M5 10v1a7 7 0 0 0 14 0v-1" />
+      <line x1="12" y1="18" x2="12" y2="22" />
+    </svg>
+  )
+}
+
+const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
+
 const responses = [
   {
     keys: ['precio', 'coste', 'cuesta', 'cuánto', 'tarifa', 'presupuesto', 'cuanto'],
@@ -126,6 +139,10 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [showQuickReplies, setShowQuickReplies] = useState(false)
+  // Voice input (Web Speech API) — transcribes speech into the text input.
+  const [isListening, setIsListening] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(true)
+  const recognitionRef = useRef(null)
   // Live count for the "personas hablando ahora" indicator.
   // Starts 2–4, drifts ±1 every 8–15s, clamped to 1–5.
   const [liveCount, setLiveCount] = useState(() => 2 + Math.floor(Math.random() * 3))
@@ -155,6 +172,53 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     timeoutId = setTimeout(tick, 8000 + Math.random() * 7000)
     return () => clearTimeout(timeoutId)
   }, [])
+
+  // Web Speech API setup — voice → text into the input. Graceful if unsupported.
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      setSpeechSupported(false)
+      return
+    }
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'es-ES'
+    recognition.continuous = false
+    recognition.interimResults = true
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((r) => r[0].transcript)
+        .join('')
+      setInput(transcript)
+      adjustHeight()
+    }
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = (e) => {
+      setIsListening(false)
+      console.warn('Speech recognition error:', e.error)
+    }
+
+    recognitionRef.current = recognition
+    return () => recognition.abort()
+  }, [adjustHeight])
+
+  const toggleListening = () => {
+    if (!speechSupported) return
+    if (isListening) {
+      recognitionRef.current?.stop()
+      setIsListening(false)
+    } else {
+      setInput('')
+      adjustHeight(true)
+      try {
+        recognitionRef.current?.start()
+        setIsListening(true)
+      } catch {
+        // start() throws if already running — ignore and resync state.
+        setIsListening(false)
+      }
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -434,7 +498,26 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
             {/* Input — auto-resizing textarea with loading state
                 (adapted from 21st.dev AIInputWithLoading to the project's inline styles) */}
             <div style={{ padding: '0.75rem 0.75rem 0.55rem', borderTop: '1px solid #F0EDE6', background: '#fff' }}>
-              <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {speechSupported && (
+                  <motion.button
+                    onClick={toggleListening}
+                    aria-label={isListening ? 'Detener dictado' : 'Hablar'}
+                    aria-pressed={isListening}
+                    animate={isListening ? { scale: [1, 1.12, 1] } : { scale: 1 }}
+                    transition={{ duration: 1, repeat: isListening ? Infinity : 0, ease: 'easeInOut' }}
+                    style={{
+                      width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer',
+                      flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: isListening ? GRADIENT : 'rgba(26,24,20,0.06)',
+                      color: isListening ? '#fff' : 'rgba(26,24,20,0.55)',
+                      transition: 'background 0.25s ease, color 0.25s ease',
+                    }}
+                  >
+                    <MicIcon size={18} />
+                  </motion.button>
+                )}
+                <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <textarea
                   ref={textareaRef}
                   value={input}
@@ -443,7 +526,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
                   }}
-                  placeholder="Escribe tu mensaje..."
+                  placeholder={isListening ? 'Escuchando... habla ahora' : 'Escribe tu mensaje...'}
                   style={{
                     width: '100%',
                     boxSizing: 'border-box',
@@ -499,13 +582,22 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                     </span>
                   )}
                 </button>
+                </div>
               </div>
               <p style={{
                 margin: '6px 0 0', paddingLeft: 14, height: 14,
                 fontFamily: "'DM Sans',sans-serif", fontSize: '0.68rem',
                 color: 'rgba(26,24,20,0.45)',
               }}>
-                {typing ? 'La IA está escribiendo…' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea'}
+                {isListening ? (
+                  <span style={{
+                    fontFamily: "'Syne Mono',monospace", letterSpacing: '0.04em',
+                    background: GRADIENT, WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  }}>
+                    Escuchando…
+                  </span>
+                ) : typing ? 'La IA está escribiendo…' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea'}
               </p>
             </div>
           </motion.div>

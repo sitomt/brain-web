@@ -17,11 +17,21 @@ function rgba(hex, a) {
   return `rgba(${r},${g},${b},${a})`
 }
 
-export default function AuroraBackground({ children, className = '', intense = false, variant = 'dark', id, style = {} }) {
+export default function AuroraBackground({ children, className = '', intense = false, variant = 'dark', id, style = {}, fadeSides = false }) {
   const isLight = variant === 'light'
   const baseBg = isLight ? '#FAF8F3' : '#0A0A0B'
   // Peak alpha at the center of each blob's radial gradient
   const peakAlpha = isLight ? (intense ? 0.18 : 0.08) : (intense ? 0.28 : 0.1)
+
+  // Vertical mask keeps the top/bottom seams seamless (default). When fadeSides
+  // is on, a second horizontal gradient is intersected so the big blobs also
+  // fade before the left/right clip edge — otherwise overflow:hidden cuts them
+  // mid-luminance on narrow viewports, leaving a hard vertical "box" line.
+  const verticalMask =
+    'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)'
+  const horizontalMask =
+    'linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%)'
+  const maskValue = fadeSides ? `${verticalMask}, ${horizontalMask}` : verticalMask
 
   return (
     <div id={id} className={`relative ${className}`} style={{ background: baseBg, ...style }}>
@@ -35,10 +45,10 @@ export default function AuroraBackground({ children, className = '', intense = f
           inset: 0,
           overflow: 'hidden',
           pointerEvents: 'none',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
-          maskImage:
-            'linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%)',
+          WebkitMaskImage: maskValue,
+          WebkitMaskComposite: fadeSides ? 'source-in' : undefined,
+          maskImage: maskValue,
+          maskComposite: fadeSides ? 'intersect' : undefined,
         }}
       >
         {blobs.map((blob, i) => (

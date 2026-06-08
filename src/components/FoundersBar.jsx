@@ -7,6 +7,11 @@ import { FOUNDERS, FOUNDERS_BAR_H } from '../lib/founders'
 
 // Barra superior fina del Programa Fundadores. No se abre sola: al hacer clic
 // llama onOpen() para mostrar el modal con la historia completa.
+//
+// El wrapper exterior (fijo) aporta el fondo y el padding del notch
+// (safe-area-inset-top). La fila interior tiene altura fija = FOUNDERS_BAR_H,
+// de modo que TODO (texto y botón de cerrar) queda centrado verticalmente
+// con independencia del safe-area del dispositivo.
 export default function FoundersBar({ onOpen, onDismiss }) {
   const isMobile = useIsMobile()
 
@@ -19,34 +24,17 @@ export default function FoundersBar({ onOpen, onDismiss }) {
       initial={{ y: -FOUNDERS_BAR_H, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.55, ease: EASE_SOFT, delay: 0.15 }}
-      role="button"
-      tabIndex={0}
-      onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onOpen()
-        }
-      }}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
-        height: FOUNDERS_BAR_H,
         zIndex: 150,
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: isMobile ? 8 : 14,
-        padding: isMobile ? '0 44px 0 12px' : '0 16px',
         background: 'rgba(13,13,16,0.92)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
         paddingTop: 'env(safe-area-inset-top)',
-        boxSizing: 'content-box',
       }}
     >
       {/* línea de gradiente superior */}
@@ -63,118 +51,142 @@ export default function FoundersBar({ onOpen, onDismiss }) {
         }}
       />
 
-      {/* punto live pulsante */}
-      <span style={{ position: 'relative', width: 7, height: 7, flexShrink: 0 }}>
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: '50%',
-            background: BRAND.colors.magenta,
-            animation: 'brainPulse 2.4s ease-out infinite',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: '50%',
-            background: BRAND.colors.magenta,
-          }}
-        />
-      </span>
-
-      {!isMobile && (
-        <span
-          style={{
-            fontFamily: "'Syne Mono', monospace",
-            fontSize: '0.7rem',
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: '#fff',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Programa Fundadores
-        </span>
-      )}
-
-      {!isMobile && (
-        <span aria-hidden style={{ color: 'rgba(255,255,255,0.3)' }}>
-          ·
-        </span>
-      )}
-
-      <span
-        style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 400,
-          fontSize: isMobile ? '0.82rem' : '0.85rem',
-          color: 'rgba(255,255,255,0.82)',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
+      {/* Fila interior de altura fija — centra todo verticalmente */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onOpen}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onOpen()
+          }
         }}
-      >
-        {counter}
-      </span>
-
-      <span
         style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 5,
-          flexShrink: 0,
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 500,
-          fontSize: isMobile ? '0.82rem' : '0.85rem',
-          background: BRAND.gradient,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}
-      >
-        {isMobile ? '' : 'Saber más'}
-        <ArrowRight size={12} />
-      </span>
-
-      {/* botón cerrar */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation()
-          onDismiss()
-        }}
-        aria-label="Cerrar"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          right: isMobile ? 10 : 14,
-          transform: 'translateY(-50%)',
-          width: 26,
-          height: 26,
-          borderRadius: 999,
-          border: 'none',
-          background: 'transparent',
-          color: 'rgba(255,255,255,0.5)',
-          fontSize: '0.85rem',
-          cursor: 'pointer',
+          position: 'relative',
+          height: FOUNDERS_BAR_H,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'color 0.2s, background 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = '#fff'
-          e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
-          e.currentTarget.style.background = 'transparent'
+          gap: isMobile ? 8 : 14,
+          padding: isMobile ? '0 42px' : '0 16px',
+          cursor: 'pointer',
         }}
       >
-        ✕
-      </button>
+        {/* punto live pulsante */}
+        <span style={{ position: 'relative', width: 7, height: 7, flexShrink: 0 }}>
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              background: BRAND.colors.magenta,
+              animation: 'brainPulse 2.4s ease-out infinite',
+            }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              background: BRAND.colors.magenta,
+            }}
+          />
+        </span>
+
+        {!isMobile && (
+          <span
+            style={{
+              fontFamily: "'Syne Mono', monospace",
+              fontSize: '0.7rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: '#fff',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Programa Fundadores
+          </span>
+        )}
+
+        {!isMobile && (
+          <span aria-hidden style={{ color: 'rgba(255,255,255,0.3)' }}>
+            ·
+          </span>
+        )}
+
+        <span
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 400,
+            fontSize: isMobile ? '0.8rem' : '0.85rem',
+            color: 'rgba(255,255,255,0.82)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            minWidth: 0,
+          }}
+        >
+          {counter}
+        </span>
+
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 5,
+            flexShrink: 0,
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 500,
+            fontSize: isMobile ? '0.8rem' : '0.85rem',
+            background: BRAND.gradient,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
+          Saber más
+          <ArrowRight size={12} />
+        </span>
+
+        {/* botón cerrar */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onDismiss()
+          }}
+          aria-label="Cerrar"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: isMobile ? 8 : 14,
+            transform: 'translateY(-50%)',
+            width: 26,
+            height: 26,
+            borderRadius: 999,
+            border: 'none',
+            background: 'transparent',
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'color 0.2s, background 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#fff'
+            e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+            e.currentTarget.style.background = 'transparent'
+          }}
+        >
+          ✕
+        </button>
+      </div>
     </motion.div>
   )
 }

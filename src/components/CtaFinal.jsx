@@ -28,7 +28,7 @@ export default function CtaFinal({ onChatOpen }) {
   }
 
   return (
-    <AuroraBackground intense style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem', position: 'relative' }}>
+    <AuroraBackground intense fadeSides style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem', position: 'relative' }}>
       <GradientMesh />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 700, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}>
         <motion.div {...REVEAL(0)}>

@@ -717,7 +717,7 @@ function ProductShowcaseCard({ product, isMobile, onChatOpen, onFoundersOpen, hi
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(26,24,20,0.6)')}
               >
                 {expanded ? <Minus size={14} /> : <Plus size={14} />}
-                {expanded ? 'Ocultar detalle' : 'Ver todo lo que incluye'}
+                {expanded ? 'Ocultar opciones' : 'Ver opciones'}
               </button>
               <AnimatePresence initial={false}>
                 {expanded && (
@@ -738,7 +738,7 @@ function ProductShowcaseCard({ product, isMobile, onChatOpen, onFoundersOpen, hi
                         borderTop: '1px solid rgba(26,24,20,0.08)',
                       }}
                     >
-                      {/* Qué incluye */}
+                      {/* Opciones — capacidades que se pueden activar según el caso */}
                       <div>
                         <p
                           style={{
@@ -747,10 +747,23 @@ function ProductShowcaseCard({ product, isMobile, onChatOpen, onFoundersOpen, hi
                             letterSpacing: '0.16em',
                             textTransform: 'uppercase',
                             color: 'rgba(26,24,20,0.45)',
-                            margin: '0 0 0.9rem',
+                            margin: '0 0 0.5rem',
                           }}
                         >
-                          Qué incluye
+                          Opciones disponibles
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontWeight: 300,
+                            fontSize: '0.88rem',
+                            color: 'rgba(26,24,20,0.6)',
+                            lineHeight: 1.5,
+                            margin: '0 0 1rem',
+                          }}
+                        >
+                          Eliges lo que necesitas y lo montamos a tu medida. El alcance y el precio
+                          se ajustan a las opciones que combines.
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
                           {product.bullets.map((b, i) => (

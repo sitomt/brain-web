@@ -24,6 +24,17 @@ export default function GradientMesh({ opacity = 0.22 }) {
         overflow: 'hidden',
         pointerEvents: 'none',
         zIndex: 0,
+        // Fade the blobs to zero before they reach the section's rectangular
+        // clip boundary, so overflow:hidden never produces a hard straight edge
+        // (the "box" seam). Two linear gradients intersected fade all four
+        // edges — a single radial-gradient can't (its % radii are relative to
+        // the full box, pushing the transparent stop off-screen).
+        WebkitMaskImage:
+          'linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent), linear-gradient(to right, transparent, #000 14%, #000 86%, transparent)',
+        WebkitMaskComposite: 'source-in',
+        maskImage:
+          'linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent), linear-gradient(to right, transparent, #000 14%, #000 86%, transparent)',
+        maskComposite: 'intersect',
       }}
     >
       {BLOBS.map((b, i) => (

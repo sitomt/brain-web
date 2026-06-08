@@ -1,6 +1,6 @@
 # BrAIn — Estado del Proyecto
 
-Última actualización: 2026-06-08
+Última actualización: 2026-06-10
 
 ---
 
@@ -21,6 +21,12 @@
 - [x] Cinco casos reales (Baktun 13, Clesol, Venta Alegría, Foodmatica, Playgame Italia)
 - [x] El proceso reescrito en 3 pasos (tono humano, cercano, transparente)
 - [x] Hero con `RotatingWord` + demo de chat
+- [x] Sección de integraciones reenfocada: herramientas del cliente (WhatsApp,
+      Instagram, Telegram, Gmail, Google Calendar, Calendly, Google Sheets, Excel,
+      Notion, Airtable, Shopify, WooCommerce, Prestashop) en vez de stack técnico interno
+- [x] Logos en grayscale con hover a color (multicolor real en Gmail/Google Calendar/
+      Airtable); chip revela el nombre al hover (desktop) y auto-cicla en móvil
+- [x] Mensaje "Se conecta con lo que ya usas" + nota "¿Usas otra herramienta? La integramos."
 
 ### Programa Fundadores
 - [x] Config única en `src/lib/founders.js` (apagable con `active: false`)
@@ -30,6 +36,13 @@
 
 ### Conversión y overlays
 - [x] `ChatWidget` con respuestas por keywords y saludos por contexto
+- [x] ChatWidget: entrada de voz (voice input → text) con Web Speech API nativa,
+      idioma `es-ES` (sin librerías, sin coste)
+- [x] Botón micrófono con animación de grabación (pulso + gradiente de marca) y
+      línea de estado "Escuchando…"; el flujo de envío no cambia (la voz solo
+      rellena el input)
+- [x] Fallback elegante: si el navegador no soporta Speech API, el botón no
+      aparece y el chat funciona igual
 - [x] `ExitIntentModal` (una vez por sesión)
 - [x] `CookieBanner` + `LegalModal` (privacidad / cookies / aviso legal)
 - [x] `ScrollProgress`, `CursorGlow`
