@@ -5,7 +5,7 @@ import { STAGGER, STAGGER_CHILD } from '../lib/motion'
 import { ACCENT } from '../lib/tokens'
 
 const ITEMS = [
-  { stat: '5',        label: 'empresas en producción'        },
+  { stat: '7',        label: 'empresas en producción'        },
   { stat: '<30 días', label: 'de la idea a producción'       },
   { stat: '24/7',     label: 'operación, sin descanso'       },
   { stat: '+40h',     label: 'liberadas al mes, de media'    },

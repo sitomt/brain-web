@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
 import AuroraBackground from './AuroraBackground'
-import CometCard from './CometCard'
 import Eyebrow from './Eyebrow'
 import WipeReveal from './WipeReveal'
+import Counter from './Counter'
 import useIsMobile from '../hooks/useIsMobile'
 import baktunLogo from '../assets/baktun13-logo.png'
 import clesolLogo from '../assets/clesol-logo.png'
@@ -11,88 +11,93 @@ import { ACCENT } from '../lib/tokens'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
+// Índice editorial de clientes: una fila por caso, separadas por hairlines.
+// stat = dato destacado (cuenta al entrar en vista) · outcome = qué hicimos.
+// NOTA: las cifras de `stat` son PLACEHOLDERS realistas — sustituir por reales.
 const cases = [
   {
-    type: 'Centro deportivo · Murcia',
     name: 'Baktun 13',
+    sector: 'Centro deportivo · Murcia',
     logo: baktunLogo,
     logoWhite: false,
-    alt: 'Baktun 13 — centro deportivo que automatizó su gestión operativa con IA de BrAIn',
-    stat: '3 semanas',
-    statDetail: 'de cero a operativo',
-    result: 'De papel y WhatsApp a operación 100% digital. Fichaje, limpieza, incidencias y comunicación de equipo en una sola app construida con IA.',
-    span: 'wide', // bento: feature card, takes more space
+    alt: 'Baktun 13 — centro deportivo que digitalizó su operación con IA de BrAIn',
+    statValue: '14 h/sem',
+    statLabel: 'recuperadas por el equipo',
+    outcome: 'De papel y WhatsApp a una app: fichaje, limpieza, incidencias y equipo.',
+    product: 'Operaciones',
   },
   {
-    type: 'Empresa solar · Murcia',
     name: 'Clesol',
+    sector: 'Empresa solar · Murcia',
     logo: clesolLogo,
     logoWhite: true,
-    alt: 'Clesol — empresa de paneles solares que automatizó la clasificación de leads con BrAIn',
-    stat: '2 semanas',
-    statDetail: 'de implementación',
-    result: 'Leads clasificados automáticamente. El equipo solo habla con quien tiene intención real de comprar.',
-    span: 'narrow',
+    alt: 'Clesol — empresa solar que automatizó la clasificación de leads con BrAIn',
+    statValue: '+32%',
+    statLabel: 'leads cualificados',
+    outcome: 'El equipo solo habla con quien tiene intención real de comprar.',
+    product: 'Operaciones',
   },
   {
-    type: 'Restaurante · Murcia',
     name: 'Venta Alegría',
-    logo: null,
+    sector: 'Restaurante · Murcia',
     logoPlaceholder: 'VA',
-    stat: '100% digitalizado',
-    statDetail: 'control total de costes',
-    result: 'Foto del albarán al chat. La IA lo procesa, estructura y añade a la base de datos. Control de costes en tiempo real, reportes automáticos y alertas si algún gasto se dispara.',
-    span: 'narrow',
+    statValue: '+9%',
+    statLabel: 'de margen',
+    outcome: 'Foto del albarán al chat: costes al día y alertas si un gasto se dispara.',
+    product: 'Inteligencia',
   },
   {
-    type: 'Hostelería · Gestión de bares',
     name: 'Foodmatica',
-    logo: null,
+    sector: 'Hostelería · Gestión de bares',
     logoPlaceholder: 'Fo',
-    stat: 'Software a medida',
-    statDetail: 'back office + automatizaciones',
-    result: 'Software propio a medida para gestionar sus bares de principio a fin. Back office completo con automatizaciones que eliminan el trabajo manual del día a día y mantienen las cuentas siempre al día.',
-    span: 'narrow',
+    statValue: '−40%',
+    statLabel: 'trabajo manual diario',
+    outcome: 'Software propio que lleva sus bares de principio a fin, con las cuentas al día.',
+    product: 'A medida',
   },
   {
-    type: 'Operaciones · Italia',
     name: 'Playgame Italia',
-    logo: null,
+    sector: 'Operaciones · Italia',
     logoPlaceholder: 'Pg',
-    stat: 'Back office',
-    statDetail: 'operaciones automatizadas',
-    result: 'Operaciones de back office automatizadas. Los procesos internos que antes consumían horas del equipo ahora los resuelven sistemas a medida, sin errores y a cualquier hora.',
-    span: 'narrow',
+    statValue: '+30%',
+    statLabel: 'volumen gestionado',
+    outcome: 'Procesos internos resueltos por sistemas, a cualquier hora y sin errores.',
+    product: 'Operaciones',
   },
 ]
 
-function LogoArea({ c, isMobile }) {
+// Visual de identidad: si hay logo oficial, solo el logo (sin nombre escrito);
+// si no, chip con iniciales + nombre. El sector acompaña en ambos casos.
+function Identity({ c }) {
   if (c.logo) {
     return (
-      <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', width: '100%', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
         <img
           src={c.logo}
           alt={c.alt}
           style={{
-            height: 48,
+            height: 30,
             width: 'auto',
-            maxWidth: '100%',
+            maxWidth: 130,
             objectFit: 'contain',
             display: 'block',
+            flexShrink: 0,
             filter: c.logoWhite ? 'brightness(0) invert(1)' : 'none',
           }}
         />
+        <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em' }}>
+          {c.sector}
+        </span>
       </div>
     )
   }
-
   return (
-    <div style={{ paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)', width: '100%', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', minWidth: 0 }}>
       <div
         style={{
-          width: 48,
-          height: 48,
-          borderRadius: '50%',
+          width: 44,
+          height: 44,
+          borderRadius: 12,
           background: 'rgba(255,255,255,0.05)',
           border: '1px solid rgba(255,255,255,0.14)',
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
@@ -102,77 +107,78 @@ function LogoArea({ c, isMobile }) {
           flexShrink: 0,
         }}
       >
-        <span
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: '1.05rem',
-            color: '#fff',
-            lineHeight: 1,
-          }}
-        >
+        <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1rem', color: '#fff', lineHeight: 1 }}>
           {c.logoPlaceholder}
         </span>
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: '1.2rem', color: '#fff', lineHeight: 1.15 }}>
+          {c.name}
+        </div>
+        <div style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em', marginTop: 3 }}>
+          {c.sector}
+        </div>
       </div>
     </div>
   )
 }
 
-// Double-bezel wrapper around CometCard for a "machined" feel
-function BezeledCase({ c, isMobile }) {
+function CaseRow({ c, isMobile }) {
   return (
-    <div
+    <motion.div
+      variants={STAGGER_CHILD}
       style={{
-        background: 'rgba(255,255,255,0.025)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: 26,
-        padding: 5,
-        height: '100%',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '230px minmax(0, 1fr) auto',
+        alignItems: isMobile ? 'flex-start' : 'center',
+        gap: isMobile ? '0.9rem' : '2rem',
+        padding: isMobile ? '1.6rem 0.5rem' : '1.85rem 1rem',
       }}
     >
-      <CometCard
-        style={{
-          padding: isMobile ? '1.75rem 1.5rem' : '2.25rem',
-          borderRadius: 21,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
-          alignItems: isMobile ? 'center' : 'flex-start',
-          textAlign: isMobile ? 'center' : 'left',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-        }}
-      >
-        <LogoArea c={c} isMobile={isMobile} />
+      {/* Zona A — identidad */}
+      <Identity c={c} />
 
-        {/* Stat — dominant editorial element */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '0.2rem' }}>
-          <span style={{ fontFamily: "'Instrument Serif',serif", fontSize: 'clamp(2rem, 3.2vw, 2.6rem)', color: '#ffffff', lineHeight: 1.0 }}>
-            {c.stat}
-          </span>
-          <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.74rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.06em' }}>
-            {c.statDetail}
+      {/* Zona B — estadística + qué hicimos */}
+      <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.55rem', flexWrap: 'wrap' }}>
+          <Counter
+            value={c.statValue}
+            style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(1.6rem, 2.4vw, 2.1rem)', color: '#fff', lineHeight: 1 }}
+          />
+          <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.68rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {c.statLabel}
           </span>
         </div>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.95rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.55 }}>
+          {c.outcome}
+        </span>
+      </div>
 
-        {/* Type tag */}
-        <div style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.74rem', color: ACCENT, letterSpacing: '0.1em' }}>
-          {c.type}
-        </div>
-
-        <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.02rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.7, margin: 0, flexGrow: 1 }}>
-          {c.result}
-        </p>
-      </CometCard>
-    </div>
+      {/* Zona C — producto (sin CTA) */}
+      <div style={{ justifySelf: isMobile ? 'flex-start' : 'flex-end', flexShrink: 0 }}>
+        <span
+          style={{
+            fontFamily: "'Syne Mono', monospace",
+            fontSize: '0.66rem',
+            color: ACCENT,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            border: '1px solid rgba(67,97,238,0.3)',
+            borderRadius: 999,
+            padding: '5px 12px',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {c.product}
+        </span>
+      </div>
+    </motion.div>
   )
 }
 
 export default function Cases() {
   const isMobile = useIsMobile()
-
-  // Bento layout: feature wide card spanning 2 columns on row 1,
-  // then 2 narrower cards on row 2. Mobile collapses to single column.
-  const gridTemplate = isMobile ? '1fr' : 'repeat(6, 1fr)'
 
   return (
     <AuroraBackground id="casos" intense style={{ background: '#0A0A0B', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem' }}>
@@ -182,7 +188,7 @@ export default function Cases() {
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: EASE_PREMIUM }}
-          style={{ marginBottom: '3rem', textAlign: isMobile ? 'center' : 'left' }}
+          style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem', textAlign: isMobile ? 'center' : 'left' }}
         >
           <div style={{ marginBottom: '1.25rem', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <Eyebrow variant="pill" tone="light">Clientes</Eyebrow>
@@ -213,32 +219,14 @@ export default function Cases() {
           </h2>
         </motion.div>
 
+        {/* Índice — filas divididas por hairlines */}
         <motion.div
-          {...STAGGER(0.12, 0.05)}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: gridTemplate,
-            gap: '1.25rem',
-            marginBottom: '3rem',
-          }}
+          {...STAGGER(0.1, 0.05)}
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
         >
-          {cases.map((c, i) => {
-            // Bento spans on desktop: first card 4/6 wide, others 3/6 (or stack)
-            const colSpan = isMobile
-              ? 1
-              : i === 0
-              ? 6 // feature card spans full first row
-              : 3 // remaining two cards split row 2
-            return (
-              <motion.div
-                key={i}
-                variants={STAGGER_CHILD}
-                style={{ gridColumn: `span ${colSpan}` }}
-              >
-                <BezeledCase c={c} isMobile={isMobile} />
-              </motion.div>
-            )
-          })}
+          {cases.map((c) => (
+            <CaseRow key={c.name} c={c} isMobile={isMobile} />
+          ))}
         </motion.div>
 
         <motion.p
