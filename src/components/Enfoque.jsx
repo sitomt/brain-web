@@ -5,39 +5,47 @@ import SpotlightCard from './SpotlightCard'
 import Eyebrow from './Eyebrow'
 import WipeReveal from './WipeReveal'
 import { ArrowRight } from './icons/ArrowIcon'
+import SectorIcon from './icons/SectorIcon'
 import useIsMobile from '../hooks/useIsMobile'
 import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
 import { ACCENT, gradientText } from '../lib/tokens'
 import { h2, h3, bodyLg } from '../lib/typography'
 import { FOUNDERS } from '../lib/founders'
 
-// Cuatro pilares del valor añadido: criterio empresarial por encima de la IA.
-// span define el ancho en la rejilla bento de 6 columnas (escritorio).
-const PILLARS = [
+// "Probado en casa", hecho tangible: los negocios reales que dirige el grupo.
+// No son afirmaciones de marketing — son la prueba de que somos operadores, no
+// un taller de software. Cada sector mapea a un dolor que resolvemos. La
+// diversidad ES la credencial. span = ancho en la rejilla bento de 6 columnas.
+const NEGOCIOS = [
   {
-    num: '01',
-    title: 'Criterio de negocio',
-    desc: 'Decidimos como quien rinde cuentas a final de mes. La tecnología es el medio; el resultado, lo que importa.',
-    span: 4,
-    featured: true,
+    icon: 'juego',
+    label: 'Salones de juego',
+    line: 'Operación 24/7 que no se puede caer: cada turno cubierto, cada incidencia atendida.',
+    span: 3,
   },
   {
-    num: '02',
-    title: 'Probado en casa',
-    desc: 'Cada solución la usamos primero en nuestras propias empresas. Si no nos sirve a nosotros, no te la proponemos.',
+    icon: 'hosteleria',
+    label: 'Hostelería',
+    line: 'Gestionada con sistema, sin nadie clavado a la barra para que todo funcione.',
+    span: 3,
+  },
+  {
+    icon: 'fitness',
+    label: 'Gimnasios',
+    line: 'Altas, bajas y cobros recurrentes que se gestionan solos.',
     span: 2,
   },
   {
-    num: '03',
-    title: 'Resultados medibles',
-    desc: 'Nos comprometemos con números: tiempo recuperado, costes que bajan, ingresos que dejan de escaparse.',
+    icon: 'solar',
+    label: 'Placas solares',
+    line: 'Proyectos por toda España, coordinados sin caos.',
     span: 2,
   },
   {
-    num: '04',
-    title: 'A medida y rápido',
-    desc: 'Diseñamos para tu operativa concreta y la ponemos en marcha en semanas, no en trimestres.',
-    span: 4,
+    icon: 'inversion',
+    label: 'Inversión',
+    line: 'Decisiones con los números delante, no a final de mes.',
+    span: 2,
   },
 ]
 
@@ -114,7 +122,24 @@ export default function Enfoque() {
           )}
         </motion.div>
 
-        {/* Pilares — bento asimétrico */}
+        {/* Lead-in: le da un trabajo claro a las cards — son la PRUEBA del titular */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.7, ease: EASE_PREMIUM }}
+          style={{ marginBottom: isMobile ? '1.75rem' : '2.25rem', maxWidth: 720, textAlign: isMobile ? 'center' : 'left', marginInline: isMobile ? 'auto' : undefined }}
+        >
+          <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.68rem', color: ACCENT, letterSpacing: '0.14em', textTransform: 'uppercase', display: 'block', marginBottom: '0.85rem' }}>
+            — Probado en casa
+          </span>
+          <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: 'clamp(1.35rem, 2.6vw, 1.85rem)', color: 'rgba(255,255,255,0.92)', lineHeight: 1.3, margin: 0 }}>
+            Dirigimos estos negocios cada día. En ellos probamos cada solución
+            antes de proponértela.
+          </p>
+        </motion.div>
+
+        {/* Negocios del grupo — bento asimétrico (2 anchas + 3 medianas) */}
         <motion.div
           {...STAGGER(0.1, 0.05)}
           style={{
@@ -123,22 +148,35 @@ export default function Enfoque() {
             gap: isMobile ? '1rem' : '1.25rem',
           }}
         >
-          {PILLARS.map((pillar) => (
+          {NEGOCIOS.map((n) => (
             <motion.div
-              key={pillar.num}
+              key={n.label}
               variants={STAGGER_CHILD}
-              style={{ gridColumn: isMobile ? 'span 1' : `span ${pillar.span}` }}
+              style={{ gridColumn: isMobile ? 'span 1' : `span ${n.span}` }}
             >
-              <SpotlightCard tone="dark" radius={20} padding={isMobile ? '1.75rem 1.5rem' : '2.25rem'}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', height: '100%' }}>
-                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.78rem', color: ACCENT, letterSpacing: '0.1em' }}>
-                    {pillar.num}
+              <SpotlightCard tone="dark" radius={20} padding={isMobile ? '1.75rem 1.5rem' : '2.1rem 2.25rem'}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', height: '100%' }}>
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 46,
+                      height: 46,
+                      borderRadius: 13,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(67,97,238,0.12)',
+                      border: '1px solid rgba(67,97,238,0.22)',
+                      color: ACCENT,
+                    }}
+                  >
+                    <SectorIcon name={n.icon} size={23} />
                   </span>
-                  <h3 style={{ ...h3, color: '#fff', fontSize: pillar.featured ? 'clamp(1.7rem, 3vw, 2.2rem)' : 'clamp(1.4rem, 2.6vw, 1.7rem)' }}>
-                    {pillar.title}
+                  <h3 style={{ ...h3, color: '#fff', fontSize: 'clamp(1.3rem, 2.4vw, 1.6rem)' }}>
+                    {n.label}
                   </h3>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: pillar.featured ? '1rem' : '0.92rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.7, margin: 0 }}>
-                    {pillar.desc}
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.94rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, margin: 0 }}>
+                    {n.line}
                   </p>
                 </div>
               </SpotlightCard>
