@@ -1224,6 +1224,17 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
     }
   }
 
+  // El chatbot ha identificado el producto que encaja: reutiliza el mismo flujo
+  // de recomendación (resaltado + scroll) que el quiz.
+  useEffect(() => {
+    const handler = (e) => {
+      const idx = e.detail?.idx
+      if (typeof idx === 'number') handleQuizResult(idx)
+    }
+    window.addEventListener('chat:recommend-product', handler)
+    return () => window.removeEventListener('chat:recommend-product', handler)
+  }, [])
+
   return (
     <AuroraBackground variant="light">
       <div

@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
@@ -13,7 +13,7 @@ import HowItWorks from './components/HowItWorks'
 import CtaFinal from './components/CtaFinal'
 import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
-import CookieBanner from './components/CookieBanner'
+import CookieBanner, { STORAGE_KEY as COOKIE_STORAGE_KEY } from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
 import ExitIntentModal from './components/ExitIntentModal'
 import FoundersBar from './components/FoundersBar'
@@ -24,6 +24,9 @@ import { FOUNDERS, FOUNDERS_BAR_H } from './lib/founders'
 
 // Lazy-loaded route — keeps the /nosotros page out of the initial bundle.
 const Nosotros = lazy(() => import('./pages/Nosotros'))
+
+// contextId del bot → índice de PRODUCTS (orden: Atención al Cliente, Operaciones, Inteligencia de Negocio).
+const PRODUCT_INDEX = { contact_center: 0, back_office: 1, asistente: 2 }
 
 function AppContent() {
   const [introComplete, setIntroComplete] = useState(false)
@@ -38,12 +41,23 @@ function AppContent() {
   const [foundersModalOpen, setFoundersModalOpen] = useState(false)
 
   const location = useLocation()
+  const navigate = useNavigate()
   const isHome = location.pathname === '/'
 
   const openChat = (context = null) => { setChatContext(context); setChatOpen(true) }
+  // El bot ha identificado el producto que encaja: llevamos al visitante a esa
+  // sección (reutiliza el resaltado + scroll de Products vía evento de ventana).
+  // Si no estamos en home, navegamos primero y damos tiempo a que monte Products.
+  const recommendProduct = (productId) => {
+    const idx = PRODUCT_INDEX[productId]
+    if (idx == null) return
+    const fire = () => window.dispatchEvent(new CustomEvent('chat:recommend-product', { detail: { idx } }))
+    if (isHome) fire()
+    else { navigate('/'); setTimeout(fire, 600) }
+  }
   const openLegal = (tab) => { setLegalTab(tab); setLegalOpen(true) }
   const reopenCookies = () => {
-    localStorage.removeItem('brain_cookie_consent')
+    localStorage.removeItem(COOKIE_STORAGE_KEY)
     setCookieBannerKey(k => k + 1)
   }
   const dismissFoundersBar = () => {
@@ -132,6 +146,7 @@ function AppContent() {
         context={chatContext}
         onOpen={() => openChat(null)}
         onClose={() => setChatOpen(false)}
+        onRecommendProduct={recommendProduct}
       />
 
       {isHome && introComplete && (

@@ -50,11 +50,43 @@ const CONTEXT_GREETINGS = {
 
 const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
 
+// Nombre de cara al cliente de cada solución (para la frase de recomendación).
+const PRODUCT_NAMES = {
+  contact_center: 'Atención al Cliente',
+  back_office: 'Operaciones',
+  asistente: 'Inteligencia de Negocio',
+}
+// Frase que el bot "dice" en el instante en que abre el producto en pantalla.
+// Se inyecta desde el cliente para garantizar que aparece SIEMPRE que hay recomendación.
+const recommendPhrase = (productId) =>
+  `Por lo que me cuentas, lo que mejor se ajusta a lo que necesitas es ${PRODUCT_NAMES[productId] || 'esta solución'}. Te lo acabo de abrir en pantalla para que puedas echarle un vistazo.`
 
-export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
-  const [messages, setMessages] = useState([
-    { from: 'bot', text: DEFAULT_GREETING },
-  ])
+// Persistencia de la conversación durante la sesión (sessionStorage): sobrevive a
+// minimizar, navegar entre rutas y recargar; se borra al cerrar la pestaña.
+const MSG_STORAGE_KEY = 'brain_chat_messages'
+const LEAD_STORAGE_KEY = 'brain_chat_lead'
+const DEFAULT_MESSAGES = [{ from: 'bot', text: DEFAULT_GREETING }]
+
+function loadStored(key, fallback) {
+  try {
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return fallback
+    const parsed = JSON.parse(raw)
+    return parsed ?? fallback
+  } catch {
+    return fallback
+  }
+}
+
+// Hay conversación en curso si el visitante ya escribió algún mensaje.
+const hasUserTurn = (msgs) => Array.isArray(msgs) && msgs.some((m) => m.from === 'user')
+
+
+export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecommendProduct }) {
+  const [messages, setMessages] = useState(() => {
+    const stored = loadStored(MSG_STORAGE_KEY, null)
+    return Array.isArray(stored) && stored.length ? stored : DEFAULT_MESSAGES
+  })
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [showQuickReplies, setShowQuickReplies] = useState(false)
@@ -71,10 +103,16 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const wasOpenRef = useRef(false)
   const lastContextRef = useRef(null)
   // Mirror de los mensajes para construir el historial al llamar a la API sin esperar al re-render.
+  // Además persiste la conversación en sessionStorage en cada cambio.
   const messagesRef = useRef(messages)
-  useEffect(() => { messagesRef.current = messages }, [messages])
+  useEffect(() => {
+    messagesRef.current = messages
+    try { sessionStorage.setItem(MSG_STORAGE_KEY, JSON.stringify(messages)) } catch { /* incógnito/cuota: seguimos en memoria */ }
+  }, [messages])
   // Datos del lead que la API va capturando; se reenvían en cada petición para no repetir preguntas.
-  const leadRef = useRef({})
+  const leadRef = useRef(loadStored(LEAD_STORAGE_KEY, {}) || {})
+  // Último producto recomendado por el bot, para no re-navegar en bucle.
+  const lastRecommendedRef = useRef(null)
   const langRef = useRef(typeof navigator !== 'undefined' && navigator.language?.startsWith('en') ? 'en' : 'es')
   const endRef = useRef(null)
   const isMobile = useIsMobile()
@@ -152,15 +190,18 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
-      // Reset on fresh open OR when re-invoked from a different section.
+      // Sólo sembramos el saludo de contexto si NO hay conversación en curso
+      // (el visitante aún no ha escrito nada). Si ya está hablando, conservamos
+      // el historial y sólo actualizamos el contexto para la próxima llamada a la API.
+      const conversationActive = hasUserTurn(messagesRef.current)
       const freshOpen = !wasOpenRef.current
       const contextChanged = context && context !== lastContextRef.current
-      if (freshOpen || contextChanged) {
+      if ((freshOpen || contextChanged) && !conversationActive) {
         setMessages([{ from: 'bot', text: greetingFor(context) }])
         setShowQuickReplies(false)
         setTyping(false)
-        lastContextRef.current = context
       }
+      if (context) lastContextRef.current = context
       wasOpenRef.current = true
       setTimeout(() => textareaRef.current?.focus(), 350)
     } else {
@@ -187,11 +228,28 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       })
       if (!r.ok) throw new Error('http ' + r.status)
       const data = await r.json()
-      if (data.lead) leadRef.current = data.lead
+      if (data.lead) {
+        leadRef.current = data.lead
+        try { sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(data.lead)) } catch { /* noop */ }
+      }
       const reply = (data.reply || '').trim()
-      if (!reply) throw new Error('empty')
+      // El bot ha identificado el producto que encaja (una sola vez por producto).
+      const newRecommend = data.recommendedProduct && data.recommendedProduct !== lastRecommendedRef.current
+      if (!reply && !newRecommend) throw new Error('empty')
       setTyping(false)
-      setMessages((m) => [...m, { from: 'bot', text: reply }])
+      // Cuando hay recomendación inyectamos NOSOTROS la frase ("te lo acabo de abrir
+      // en pantalla…") para garantizar que aparece siempre, seguida de la respuesta del modelo.
+      const bubbles = []
+      if (newRecommend) bubbles.push({ from: 'bot', text: recommendPhrase(data.recommendedProduct) })
+      if (reply) bubbles.push({ from: 'bot', text: reply })
+      setMessages((m) => [...m, ...bubbles])
+      if (newRecommend) {
+        lastRecommendedRef.current = data.recommendedProduct
+        onRecommendProduct?.(data.recommendedProduct) // abre/scrollea a la sección del producto
+        // En móvil minimizamos el chat para que vea el producto a pantalla completa
+        // (la conversación queda guardada y puede reabrirla). En escritorio sigue abierto.
+        if (isMobile) setTimeout(() => onClose?.(), 900)
+      }
     } catch {
       setTyping(false)
       setMessages((m) => [
@@ -199,7 +257,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
         { from: 'bot', text: 'Uy, se me ha cruzado un cable un momento. ¿Me lo repites? Y si prefieres, déjame tu email o WhatsApp y te escribimos enseguida.' },
       ])
     }
-  }, [])
+  }, [onRecommendProduct, onClose, isMobile])
 
   // Mensaje precargado desde un CTA (evento chat:send): se trata como si el visitante lo escribiera.
   useEffect(() => {

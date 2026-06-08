@@ -93,6 +93,12 @@ Si el primer mensaje del visitante parece "precargado" por un botón, respóndel
 - En cuanto sepas su sector/actividad, explícale en 2-3 líneas las opciones MÁS EFECTIVAS para ese tipo de negocio en concreto (elige las que de verdad encajan, no las tres siempre), con un ejemplo cercano si ayuda. Habla de resultados, no de features.
 - Pase lo que pase, el objetivo es el mismo: recoger sus datos de contacto y agendar la reunión. Ilumina y orienta, pero no te enredes: en cuanto vea el valor, ve a por sus datos.
 
+# ABRIR EL PRODUCTO EN PANTALLA — recommend_product (OBLIGATORIO)
+La ÚNICA forma de que el visitante VEA la solución en la web es que TÚ llames a la herramienta recommend_product. No se abre sola: si no la llamas, no se abre nada.
+REGLA DURA: la PRIMERA vez que te decantes por una de las TRES soluciones para este visitante —el mismo turno en que la nombras, das su precio o se la propones— DEBES llamar a recommend_product con ese producto, ANTES o a la vez que pidas el primer dato de contacto. NO esperes a tener su nombre, su email ni nada: primero abre el producto, luego sigues. Si en tu mensaje mencionas una de las tres soluciones y NO has llamado a la herramienta, lo estás haciendo MAL.
+Productos válidos: contact_center (Atención al Cliente), back_office (Operaciones), asistente (Inteligencia de Negocio). NUNCA la llames para trabajo a medida, ni cuando aún dudes entre dos: en ese caso espera a tenerlo claro.
+Llámala UNA sola vez por producto. NO digas en tu texto que lo abres ("te lo abro en pantalla"): de eso se encarga la interfaz automáticamente DESPUÉS de tu llamada. En tu texto solo aporta un detalle útil de esa solución y continúa hacia el siguiente dato.
+
 # CAPTURA DE LEAD (prioridad alta)
 Tu objetivo nº1, por encima de explicar productos, es montar una ficha de cliente COMPLETA llamando a la herramienta capture_lead. Esa ficha le sirve al equipo para investigar el negocio ANTES de la reunión, por eso el nombre del negocio y a qué se dedica son imprescindibles.
 
@@ -128,6 +134,24 @@ No digas que eres una IA salvo que te lo pregunten directamente. Si lo preguntan
 - Si pide hablar con una persona, captura contacto y llama a capture_lead con wants_human=true; dile que el equipo le escribe enseguida.
 
 ${KNOWLEDGE}${known}`
+}
+
+// Herramienta para dirigir al visitante a la sección del producto que encaja.
+// El frontend hace scroll/resalta esa solución cuando se llama.
+export const RECOMMEND_PRODUCT_TOOL = {
+  name: 'recommend_product',
+  description: 'Lleva al visitante a la sección de la web de la solución que mejor le encaja. Llama a esta herramienta EN CUANTO tengas claro, por lo que te ha contado de su negocio, cuál de las TRES soluciones es la suya. No esperes a tener su contacto. Úsala solo para las tres soluciones con página propia; NO la uses para trabajo a medida ni cuando el visitante aún está indeciso.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      product: {
+        type: 'string',
+        enum: ['contact_center', 'back_office', 'asistente'],
+        description: 'contact_center = Atención al Cliente · back_office = Operaciones · asistente = Inteligencia de Negocio',
+      },
+    },
+    required: ['product'],
+  },
 }
 
 // Definición de la herramienta de captura (function calling).

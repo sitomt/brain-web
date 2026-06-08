@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
-const STORAGE_KEY = 'brain_cookie_consent'
+// Versionada: al subir la versión el banner reaparece una vez para todos
+// (incluidos quienes ya aceptaron una versión anterior).
+export const STORAGE_KEY = 'brain_cookie_consent_v2'
 
 export default function CookieBanner({ onOpenLegal }) {
   const [visible, setVisible] = useState(false)
@@ -13,7 +15,7 @@ export default function CookieBanner({ onOpenLegal }) {
 
   useEffect(() => {
     if (!localStorage.getItem(STORAGE_KEY)) {
-      const t = setTimeout(() => setVisible(true), 10000)
+      const t = setTimeout(() => setVisible(true), 2500)
       return () => clearTimeout(t)
     }
   }, [])
