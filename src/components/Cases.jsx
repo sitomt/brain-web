@@ -34,7 +34,7 @@ const cases = [
     alt: 'Clesol — empresa solar que automatizó la clasificación de leads con BrAIn',
     statValue: '+32%',
     statLabel: 'leads cualificados',
-    outcome: 'El equipo solo habla con quien tiene intención real de comprar.',
+    outcome: 'Calificación y seguimiento de leads + atención al cliente completa: el sistema detecta quién tiene más intención de comprar y el equipo llama primero a esos. Vender deja de ser cuestión de suerte.',
     product: 'Operaciones',
   },
   {
@@ -43,7 +43,7 @@ const cases = [
     logoPlaceholder: 'VA',
     statValue: '+9%',
     statLabel: 'de margen',
-    outcome: 'Foto del albarán al chat: costes al día y alertas si un gasto se dispara.',
+    outcome: 'Fotos de tus gastos al chat: se guardan solos y puedes hablar con tus costes, sacar reportes, poner alertas y convertirlos en gráficos al instante.',
     product: 'Inteligencia',
   },
   {

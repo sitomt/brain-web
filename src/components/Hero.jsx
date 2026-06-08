@@ -32,7 +32,7 @@ export default function Hero({ onChatOpen, introComplete = true }) {
     target: sectionRef,
     offset: ['start start', 'end start'],
   })
-  const demoY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 80])
+  const demoY = useTransform(scrollYProgress, [0, 1], [0, reduce || isMobile ? 0 : 80])
 
   return (
     <section
@@ -134,7 +134,7 @@ export default function Hero({ onChatOpen, introComplete = true }) {
           style={{ display: 'flex', justifyContent: 'center', y: demoY }}
         >
           <motion.div
-            animate={reduce ? undefined : { y: [0, -10, 0] }}
+            animate={reduce || isMobile ? undefined : { y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             style={{ width: '100%', maxWidth: 420 }}
           >

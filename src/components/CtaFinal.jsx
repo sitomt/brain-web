@@ -74,29 +74,6 @@ export default function CtaFinal({ onChatOpen }) {
         >
           Te respondemos en el mismo chat, al momento.
         </motion.p>
-
-        <motion.div
-          {...REVEAL(0.4)}
-          style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}
-        >
-          {['Sin permanencia', 'Operativo en semanas', 'Sin compromiso'].map((item) => (
-            <span
-              key={item}
-              style={{
-                fontFamily: "'Syne Mono',monospace",
-                fontSize: '0.74rem',
-                color: 'rgba(255,255,255,0.45)',
-                letterSpacing: '0.05em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-              }}
-            >
-              <span style={{ width: 4, height: 4, borderRadius: 999, background: 'rgba(255,255,255,0.25)', display: 'inline-block', flexShrink: 0 }} />
-              {item}
-            </span>
-          ))}
-        </motion.div>
       </div>
     </AuroraBackground>
   )

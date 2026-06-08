@@ -50,18 +50,22 @@ export default function FoundersOffer({ onChatOpen }) {
         scrollMarginTop: '6rem',
       }}
     >
-      {/* aura cálida muy sutil */}
+      {/* Aurora de marca — toques de color sobre la base crema, en multiply para
+          que tiñan sin ensuciar (azul, púrpura, magenta y naranja). Sutil pero
+          perceptible, en la misma intensidad que las secciones claras del sitio. */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
-          top: '-25%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 760,
-          height: 760,
-          background: 'radial-gradient(circle at center, rgba(247,37,133,0.05), transparent 62%)',
+          inset: 0,
           pointerEvents: 'none',
+          mixBlendMode: 'multiply',
+          background: [
+            'radial-gradient(760px 760px at 8% -12%, rgba(67,97,238,0.20), transparent 62%)',
+            'radial-gradient(820px 820px at 92% -4%, rgba(114,9,183,0.17), transparent 64%)',
+            'radial-gradient(880px 880px at 82% 112%, rgba(247,37,133,0.16), transparent 62%)',
+            'radial-gradient(680px 680px at 4% 118%, rgba(251,86,7,0.13), transparent 64%)',
+          ].join(','),
         }}
       />
 

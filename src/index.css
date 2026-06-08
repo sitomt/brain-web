@@ -56,6 +56,10 @@ body {
 
 .gradient-bg { background: var(--brain-gradient); }
 
+/* Horizontal scrollers (e.g. mobile integration rows) — swipeable, no visible bar */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
 /* Neutral, discreet scrollbar — the gradient bar was an "AI template" tell */
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

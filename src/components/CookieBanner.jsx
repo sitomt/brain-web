@@ -72,7 +72,7 @@ export default function CookieBanner({ onOpenLegal }) {
                       Las esenciales son necesarias para el funcionamiento de la web. Las analíticas nos ayudan a mejorar.{' '}
                       <button
                         onClick={() => onOpenLegal('cookies')}
-                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontSize: '0.82rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                        style={{ border: 'none', padding: 0, cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontSize: '0.82rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
                       >
                         Política de cookies
                       </button>
@@ -80,14 +80,15 @@ export default function CookieBanner({ onOpenLegal }) {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'center' : 'flex-end' }}>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column-reverse' : 'row', gap: 8, flexWrap: 'wrap', alignItems: 'stretch', justifyContent: isMobile ? 'stretch' : 'flex-end' }}>
                   <button
                     onClick={() => setManaging(true)}
                     style={{
+                      width: isMobile ? '100%' : 'auto',
                       background: 'none',
                       border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: 999,
-                      padding: '8px 16px',
+                      padding: isMobile ? '11px 16px' : '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',
@@ -104,10 +105,11 @@ export default function CookieBanner({ onOpenLegal }) {
                   <button
                     onClick={() => accept('essential')}
                     style={{
+                      width: isMobile ? '100%' : 'auto',
                       background: 'none',
                       border: '1px solid rgba(255,255,255,0.18)',
                       borderRadius: 999,
-                      padding: '8px 16px',
+                      padding: isMobile ? '11px 16px' : '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',
@@ -124,10 +126,11 @@ export default function CookieBanner({ onOpenLegal }) {
                   <button
                     onClick={() => accept('all')}
                     style={{
+                      width: isMobile ? '100%' : 'auto',
                       background: GRADIENT,
                       border: 'none',
                       borderRadius: 999,
-                      padding: '9px 20px',
+                      padding: isMobile ? '12px 20px' : '9px 20px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',

@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
 import { BRAND, ACCENT } from '../lib/tokens'
 
 const GRADIENT = BRAND.gradient
 const EMAIL = 'ginesmunuera@gmail.com'
 
-// Same-page section anchors (footer only renders on the home route).
+// Section anchors live on the home route.
 const NAV_LINKS = [
   { label: 'Enfoque',       id: 'enfoque' },
   { label: 'Proceso',       id: 'proceso' },
@@ -14,7 +14,6 @@ const NAV_LINKS = [
   { label: 'Clientes',      id: 'clientes' },
 ]
 
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 const toTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
 const linkBase = {
@@ -43,7 +42,21 @@ function BrandMark({ size = '1.15rem' }) {
 
 export default function Footer({ onOpenLegal, onOpenCookies }) {
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
+  const location = useLocation()
   const year = new Date().getFullYear()
+
+  // The section anchors only exist on the home route. From any other route we
+  // navigate home first and then scroll once it has mounted, so the footer nav
+  // behaves identically everywhere on the site.
+  const goToSection = (id) => {
+    if (location.pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      navigate('/')
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 350)
+    }
+  }
 
   const legalLinks = [
     { label: 'Aviso legal',       action: () => onOpenLegal('aviso') },
@@ -91,7 +104,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
             <span style={colTitle}>Navega</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
               {NAV_LINKS.map(({ label, id }) => (
-                <button key={id} onClick={() => scrollTo(id)} style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                <button key={id} onClick={() => goToSection(id)} style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
                   {label}
                 </button>
               ))}

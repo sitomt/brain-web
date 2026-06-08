@@ -148,7 +148,11 @@ function AppContent() {
           path="/nosotros"
           element={
             <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#0A0A0B' }} />}>
-              <Nosotros onChatOpen={() => openChat('nosotros')} />
+              <Nosotros
+                onChatOpen={() => openChat('nosotros')}
+                onOpenLegal={openLegal}
+                onOpenCookies={reopenCookies}
+              />
             </Suspense>
           }
         />

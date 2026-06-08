@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import CtaFinal from '../components/CtaFinal'
+import Footer from '../components/Footer'
 import AuroraBackground from '../components/AuroraBackground'
 import SpotlightCard from '../components/SpotlightCard'
 import WipeReveal from '../components/WipeReveal'
@@ -169,7 +170,7 @@ const NOSOTROS_SCHEMA = {
   ],
 }
 
-export default function Nosotros({ onChatOpen }) {
+export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
   const isMobile = useIsMobile()
   const navigate = useNavigate()
   const location = useLocation()
@@ -574,12 +575,8 @@ export default function Nosotros({ onChatOpen }) {
         </button>
       </div>
 
-      {/* ── Footer simple ── */}
-      <footer style={{ background: '#0A0A0C', padding: '2rem', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
-          br<span style={G_TEXT}>[AI]</span>n · Murcia, España · {new Date().getFullYear()}
-        </span>
-      </footer>
+      {/* ── Footer — idéntico al de la home ── */}
+      <Footer onOpenLegal={onOpenLegal} onOpenCookies={onOpenCookies} />
 
     </div>
   )

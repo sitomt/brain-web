@@ -1,17 +1,24 @@
-// Integraciones — "se conecta con lo que ya usas". Muestra solo herramientas del
-// mundo del cliente (no el stack técnico interno), agrupadas por categoría.
+// Integraciones — "se conecta con lo que ya usas". Lista plana de herramientas
+// del mundo del cliente (no el stack técnico interno) con el efecto "hover-brand".
 //
-// Se conserva la mecánica de chips del componente original:
-//   Desktop: hover sobre una chip → se ilumina y revela el nombre; el resto se atenúan.
-//   Móvil / sin hover: el resaltado auto-cicla de una en una a través de TODAS las chips.
-//   Reduced motion: todos los nombres visibles, sin movimiento.
+// El sistema es el mismo a cualquier tamaño: SIEMPRE dos líneas, y ninguna chip
+// cambia nunca de línea (las filas son arrays fijos con flex-wrap:nowrap).
+//
+//   Escritorio (motion, ≥960px): las dos filas se centran en un bloque más ancho
+//     que las chips; hover sobre una → se ilumina y revela su nombre, el resto se
+//     atenúan. La holgura centrada (margen a ambos lados) absorbe la expansión sin
+//     que ninguna chip desborde ni cambie de fila.
+//   Móvil / tablet (<960px): las dos filas se vuelven carruseles que se deslizan
+//     en horizontal (swipe). Cada chip muestra ya su nombre; no hay movimiento
+//     automático ni reflujo, solo dos líneas que el dedo recorre.
+//   Reduced motion: todos los nombres visibles, rejilla estática.
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion'
 import Eyebrow from './Eyebrow'
 import WipeReveal from './WipeReveal'
 import useIsMobile from '../hooks/useIsMobile'
-import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
+import { EASE_PREMIUM } from '../lib/motion'
 import { SURFACE, gradientText } from '../lib/tokens'
 import { h2 } from '../lib/typography'
 import {
@@ -21,67 +28,52 @@ import {
   Shopify, WooCommerce, Prestashop, Amazon, Etsy,
 } from './icons/brands'
 
-const GROUPS = [
-  {
-    label: 'Mensajería y atención',
-    tools: [
-      { name: 'WhatsApp',  Icon: WhatsApp },
-      { name: 'Instagram', Icon: Instagram },
-      { name: 'Telegram',  Icon: Telegram },
-      { name: 'Messenger', Icon: Messenger },
-      { name: 'Gmail',     Icon: Gmail },
-    ],
-  },
-  {
-    label: 'Calendario y reuniones',
-    tools: [
-      { name: 'Google Calendar', Icon: GoogleCalendar },
-      { name: 'Calendly',        Icon: Calendly },
-      { name: 'Google Meet',     Icon: GoogleMeet },
-      { name: 'Zoom',            Icon: Zoom },
-    ],
-  },
-  {
-    label: 'Datos y gestión',
-    tools: [
-      { name: 'Google Sheets', Icon: GoogleSheets },
-      { name: 'Excel',         Icon: Excel },
-      { name: 'Notion',        Icon: Notion },
-      { name: 'Airtable',      Icon: Airtable },
-      { name: 'HubSpot',       Icon: HubSpot },
-      { name: 'Trello',        Icon: Trello },
-      { name: 'Google Drive',  Icon: GoogleDrive },
-    ],
-  },
-  {
-    label: 'E-commerce',
-    tools: [
-      { name: 'Shopify',     Icon: Shopify },
-      { name: 'WooCommerce', Icon: WooCommerce },
-      { name: 'Prestashop',  Icon: Prestashop },
-      { name: 'Amazon',      Icon: Amazon },
-      { name: 'Etsy',        Icon: Etsy },
-    ],
-  },
-]
+// Lista plana, en orden temático (mensajería → agenda → datos → e-commerce).
+const TOOLS = [
+  { name: 'WhatsApp',        Icon: WhatsApp },
+  { name: 'Instagram',       Icon: Instagram },
+  { name: 'Telegram',        Icon: Telegram },
+  { name: 'Messenger',       Icon: Messenger },
+  { name: 'Gmail',           Icon: Gmail },
+  { name: 'Google Calendar', Icon: GoogleCalendar },
+  { name: 'Calendly',        Icon: Calendly },
+  { name: 'Google Meet',     Icon: GoogleMeet },
+  { name: 'Zoom',            Icon: Zoom },
+  { name: 'Google Sheets',   Icon: GoogleSheets },
+  { name: 'Excel',           Icon: Excel },
+  { name: 'Notion',          Icon: Notion },
+  { name: 'Airtable',        Icon: Airtable },
+  { name: 'HubSpot',         Icon: HubSpot },
+  { name: 'Trello',          Icon: Trello },
+  { name: 'Google Drive',    Icon: GoogleDrive },
+  { name: 'Shopify',         Icon: Shopify },
+  { name: 'WooCommerce',     Icon: WooCommerce },
+  { name: 'Prestashop',      Icon: Prestashop },
+  { name: 'Amazon',          Icon: Amazon },
+  { name: 'Etsy',            Icon: Etsy },
+].map((t, i) => ({ ...t, gi: i }))
 
-// Índice global (plano) por chip → permite que el auto-cycle recorra todas las
-// herramientas de todos los grupos, una a una.
-let _gi = 0
-const GROUPS_IDX = GROUPS.map((g) => ({
-  ...g,
-  tools: g.tools.map((t) => ({ ...t, gi: _gi++ })),
-}))
-const TOTAL = _gi
+// Dos filas fijas: la primera lleva la mitad (redondeando hacia arriba) y la
+// segunda el resto. Al ser arrays fijos, ninguna chip puede cambiar de fila.
+const SPLIT = Math.ceil(TOOLS.length / 2)
+const ROWS = [TOOLS.slice(0, SPLIT), TOOLS.slice(SPLIT)]
 
-const CYCLE_MS = 1800
+// Ancho del bloque de cada fila en escritorio. Deliberadamente más ancho que las
+// chips colapsadas: esa holgura centrada es el margen izq/dcha que absorbe la
+// expansión de cualquier chip sin que la fila desborde ni envuelva.
+const ROW_BLOCK = 'min(980px, 100%)'
+
+// Máscara de desvanecido en los bordes de los carruseles móviles: insinúa que
+// hay más contenido para deslizar y evita el corte seco.
+const EDGE_FADE = 'linear-gradient(to right, transparent, #000 22px, #000 calc(100% - 22px), transparent)'
+
 const CHIP_TRANSITION = { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
 
 function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
   const { name, Icon } = tool
   return (
     <motion.div
-      layout
+      layout={interactive}
       transition={CHIP_TRANSITION}
       onMouseEnter={interactive ? onActivate : undefined}
       onMouseLeave={interactive ? onDeactivate : undefined}
@@ -91,16 +83,16 @@ function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
         gap: 8,
         padding: '12px 14px',
         borderRadius: 999,
+        flexShrink: 0,
         border: `1px solid ${active ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)'}`,
         background: active ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.02)',
         opacity: active ? 1 : 0.5,
         filter: active ? 'grayscale(0)' : 'grayscale(1)',
-        transition: active
-          ? 'opacity 0.3s ease, filter 0.3s ease, background 0.3s ease, border-color 0.3s ease'
-          : 'opacity 0.3s ease, filter 0.3s ease, background 0.3s ease, border-color 0.3s ease',
+        transition:
+          'opacity 0.3s ease, filter 0.3s ease, background 0.3s ease, border-color 0.3s ease',
       }}
     >
-      <motion.span layout="position" style={{ display: 'flex', flexShrink: 0 }}>
+      <motion.span layout={interactive ? 'position' : false} style={{ display: 'flex', flexShrink: 0 }}>
         <Icon size={26} />
       </motion.span>
       <AnimatePresence initial={false}>
@@ -127,67 +119,15 @@ function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
   )
 }
 
-function CategoryRow({ group, isActive, interactive, isMobile, onActivate, onDeactivate }) {
-  return (
-    <motion.div
-      {...STAGGER(0.06, 0.04)}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.9rem' }}
-    >
-      <motion.span
-        variants={STAGGER_CHILD}
-        style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.68rem',
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.4)',
-        }}
-      >
-        {group.label}
-      </motion.span>
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: interactive ? 'nowrap' : 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: isMobile ? 10 : 12,
-        }}
-      >
-        {group.tools.map((tool) => (
-          <motion.div key={tool.name} variants={STAGGER_CHILD}>
-            <ToolChip
-              tool={tool}
-              active={isActive(tool.gi)}
-              interactive={interactive}
-              onActivate={() => onActivate(tool.gi)}
-              onDeactivate={onDeactivate}
-            />
-          </motion.div>
-        ))}
-      </div>
-    </motion.div>
-  )
-}
-
 export default function Herramientas() {
   const isMobile = useIsMobile()
-  // Las chips solo caben "nowrap" cómodamente en pantallas anchas. Por debajo de
-  // 960px usamos el modo auto-cycle (como el original) y flex-wrap.
+  // El layout de dos filas centradas con hover-expand solo cabe con holgura en
+  // pantallas anchas. Por debajo de 960px, las dos filas se vuelven carruseles.
   const compact = useIsMobile(960)
   const reduce = useReducedMotion()
 
-  const autoplay = compact && !reduce
   const interactive = !compact && !reduce
-  const [active, setActive] = useState(autoplay ? 0 : null)
-
-  useEffect(() => {
-    if (!autoplay) return
-    const t = setInterval(() => setActive((i) => ((i ?? -1) + 1) % TOTAL), CYCLE_MS)
-    return () => clearInterval(t)
-  }, [autoplay])
-
-  const isActive = (gi) => reduce || active === gi
+  const [active, setActive] = useState(null)
 
   return (
     <section
@@ -230,22 +170,63 @@ export default function Herramientas() {
           </p>
         </motion.div>
 
-        {/* Cuadrícula por categorías */}
-        <LayoutGroup id="tools">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '2.25rem' : '2.75rem' }}>
-            {GROUPS_IDX.map((group) => (
-              <CategoryRow
-                key={group.label}
-                group={group}
-                isActive={isActive}
-                interactive={interactive}
-                isMobile={isMobile}
-                onActivate={setActive}
-                onDeactivate={() => setActive(null)}
-              />
-            ))}
-          </div>
-        </LayoutGroup>
+        {/* Chips — siempre dos filas */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: 0.1 }}
+        >
+          {interactive ? (
+            // Escritorio: dos filas fijas centradas con holgura → hover-expand.
+            <LayoutGroup id="tools">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+                {ROWS.map((row, ri) => (
+                  <div key={ri} style={{ width: ROW_BLOCK, margin: '0 auto' }}>
+                    <div style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+                      {row.map((tool) => (
+                        <ToolChip
+                          key={tool.name}
+                          tool={tool}
+                          active={active === tool.gi}
+                          interactive
+                          onActivate={() => setActive(tool.gi)}
+                          onDeactivate={() => setActive(null)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </LayoutGroup>
+          ) : (
+            // Compacto / reduced motion: dos filas en carrusel horizontal (swipe).
+            // Cada chip muestra ya su nombre; sin movimiento automático ni reflujo.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {ROWS.map((row, ri) => (
+                <div
+                  key={ri}
+                  className="hide-scrollbar"
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                    gap: 10,
+                    overflowX: 'auto',
+                    padding: '2px 0',
+                    WebkitOverflowScrolling: 'touch',
+                    WebkitMaskImage: EDGE_FADE,
+                    maskImage: EDGE_FADE,
+                  }}
+                >
+                  {row.map((tool) => (
+                    <ToolChip key={tool.name} tool={tool} active interactive={false} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
 
         {/* Nota de pie */}
         <motion.p
