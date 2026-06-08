@@ -8,10 +8,10 @@
 //     que las chips; hover sobre una → se ilumina y revela su nombre, el resto se
 //     atenúan. La holgura centrada (margen a ambos lados) absorbe la expansión sin
 //     que ninguna chip desborde ni cambie de fila.
-//   Móvil / tablet (<960px): las dos filas se vuelven carruseles que se deslizan
-//     en horizontal (swipe). Cada chip muestra ya su nombre; no hay movimiento
-//     automático ni reflujo, solo dos líneas que el dedo recorre.
-//   Reduced motion: todos los nombres visibles, rejilla estática.
+//   Móvil / tablet (<960px): las dos filas se vuelven cintas en marcha continua
+//     y lenta, en direcciones opuestas (arriba → izquierda, abajo → derecha),
+//     en bucle infinito. Cada chip muestra ya su nombre.
+//   Reduced motion: dos filas deslizables a dedo, sin auto-scroll.
 
 import { useState } from 'react'
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion'
@@ -69,6 +69,17 @@ const EDGE_FADE = 'linear-gradient(to right, transparent, #000 22px, #000 calc(1
 
 const CHIP_TRANSITION = { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
 
+// Velocidad de las cintas en móvil: segundos por chip (más alto = más lento).
+// La duración por fila se escala con su nº de chips → misma velocidad px/s en
+// ambas, aunque tengan distinto recuento.
+const SECONDS_PER_CHIP = 3.5
+
+// Separación entre chips dentro de la cinta. Se aplica como marginRight en CADA
+// chip (incluido el último) para que las dos copias midan exactamente lo mismo:
+// así un desplazamiento de -50% equivale a una copia completa y el bucle es
+// perfectamente continuo, sin saltos de medio hueco.
+const MARQUEE_GAP = 10
+
 function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
   const { name, Icon } = tool
   return (
@@ -116,6 +127,33 @@ function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
         )}
       </AnimatePresence>
     </motion.div>
+  )
+}
+
+// Cinta de logos en marcha continua. Duplica la fila y traslada exactamente una
+// copia (-50%); como ambas copias miden lo mismo, el reinicio del bucle es
+// invisible. direction "left" → entra contenido por la derecha; "right" → por la
+// izquierda. ease lineal + repeat Infinity = movimiento constante.
+function MarqueeRow({ row, direction, duration }) {
+  const items = [...row, ...row]
+  return (
+    <div style={{ overflow: 'hidden', WebkitMaskImage: EDGE_FADE, maskImage: EDGE_FADE }}>
+      <motion.div
+        style={{ display: 'flex', width: 'max-content', willChange: 'transform' }}
+        animate={{ x: direction === 'left' ? ['0%', '-50%'] : ['-50%', '0%'] }}
+        transition={{ duration, ease: 'linear', repeat: Infinity }}
+      >
+        {items.map((tool, i) => (
+          <div
+            key={`${tool.name}-${i}`}
+            aria-hidden={i >= row.length}
+            style={{ marginRight: MARQUEE_GAP, flexShrink: 0 }}
+          >
+            <ToolChip tool={tool} active interactive={false} />
+          </div>
+        ))}
+      </motion.div>
+    </div>
   )
 }
 
@@ -199,9 +237,8 @@ export default function Herramientas() {
                 ))}
               </div>
             </LayoutGroup>
-          ) : (
-            // Compacto / reduced motion: dos filas en carrusel horizontal (swipe).
-            // Cada chip muestra ya su nombre; sin movimiento automático ni reflujo.
+          ) : reduce ? (
+            // Reduced motion: dos filas deslizables a dedo, sin auto-scroll.
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {ROWS.map((row, ri) => (
                 <div
@@ -224,6 +261,13 @@ export default function Herramientas() {
                   ))}
                 </div>
               ))}
+            </div>
+          ) : (
+            // Móvil: dos cintas en marcha continua y lenta, en direcciones opuestas.
+            // Arriba se desliza hacia la izquierda; abajo, hacia la derecha.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <MarqueeRow row={ROWS[0]} direction="left" duration={ROWS[0].length * SECONDS_PER_CHIP} />
+              <MarqueeRow row={ROWS[1]} direction="right" duration={ROWS[1].length * SECONDS_PER_CHIP} />
             </div>
           )}
         </motion.div>

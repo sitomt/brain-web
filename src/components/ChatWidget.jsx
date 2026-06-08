@@ -92,7 +92,11 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
   const [showQuickReplies, setShowQuickReplies] = useState(false)
   // Voice input (Web Speech API) — transcribes speech into the text input.
   const [isListening, setIsListening] = useState(false)
-  const [speechSupported, setSpeechSupported] = useState(true)
+  // Feature-detect once at mount (sync, no effect) so the first render is correct
+  // and we avoid a cascading re-render from setting state inside an effect.
+  const [speechSupported] = useState(
+    () => typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+  )
   const recognitionRef = useRef(null)
   // Ignora resultados de voz que lleguen DESPUÉS de pulsar enviar (evita que la
   // transcripción reaparezca en la cajita tras mandar el mensaje).
@@ -142,10 +146,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
   // Web Speech API setup — voice → text into the input. Graceful if unsupported.
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      setSpeechSupported(false)
-      return
-    }
+    if (!SpeechRecognition) return
     const recognition = new SpeechRecognition()
     recognition.lang = 'es-ES'
     recognition.continuous = false
@@ -207,7 +208,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
     } else {
       wasOpenRef.current = false
     }
-  }, [isOpen, context])
+  }, [isOpen, context, textareaRef])
 
   // Llama al endpoint /api/chat (Claude Sonnet) con todo el historial + contexto de sección.
   // Si la API falla, muestra un mensaje honesto (sin fingir que funciona) e invita a dejar contacto.

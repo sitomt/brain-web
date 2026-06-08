@@ -8,13 +8,67 @@ import { buildSystemPrompt, CAPTURE_LEAD_TOOL, RECOMMEND_PRODUCT_TOOL } from './
 const MODEL = 'claude-sonnet-4-6'
 const MAX_TOKENS = 1024
 const MAX_TURNS = 6 // tope de mensajes de usuario por petición (anti-abuso básico)
+const MAX_BODY_BYTES = 64 * 1024 // 64 KB: una conversación de chat nunca pesa más
+
+// Rate limit en memoria por IP: ventana deslizante. En serverless es por instancia
+// (no global), pero frena ráfagas desde una misma IP en una instancia caliente.
+const RATE_LIMIT_MAX = 20 // peticiones…
+const RATE_LIMIT_WINDOW_MS = 60 * 1000 // …por minuto y por IP
+const rateHits = new Map() // ip -> number[] (timestamps)
+
+function clientIp(req) {
+  const xff = req.headers['x-forwarded-for']
+  if (typeof xff === 'string' && xff) return xff.split(',')[0].trim()
+  return req.socket?.remoteAddress || 'unknown'
+}
+
+// Devuelve true si la IP ha superado el límite (y registra el hit si no).
+function isRateLimited(ip) {
+  const now = Date.now()
+  const hits = (rateHits.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS)
+  if (hits.length >= RATE_LIMIT_MAX) {
+    rateHits.set(ip, hits)
+    return true
+  }
+  hits.push(now)
+  rateHits.set(ip, hits)
+  // Poda perezosa para que el Map no crezca sin fin en una instancia de larga vida.
+  if (rateHits.size > 5000) {
+    for (const [k, v] of rateHits) {
+      if (!v.some((t) => now - t < RATE_LIMIT_WINDOW_MS)) rateHits.delete(k)
+    }
+  }
+  return false
+}
+
+// Solo aceptamos peticiones del propio sitio. Una petición same-origin del navegador
+// manda Origin con el mismo host que la cabecera Host; comparamos eso (sin fijar el
+// dominio, así sirve en prod, previews y dominio propio). Sin Origin (curl/SSR) se deja
+// pasar: el rate limit y la API key cubren ese flanco.
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin
+  if (!origin) return true
+  try {
+    return new URL(origin).host === req.headers.host
+  } catch {
+    return false
+  }
+}
 
 // Lee y parsea el body JSON tanto en Vercel (req.body ya parseado) como en Vite (stream).
 async function readJson(req) {
   if (req.body && typeof req.body === 'object') return req.body
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}')
+  if (typeof req.body === 'string') {
+    if (Buffer.byteLength(req.body) > MAX_BODY_BYTES) throw new Error('payload_too_large')
+    return JSON.parse(req.body || '{}')
+  }
   const chunks = []
-  for await (const chunk of req) chunks.push(chunk)
+  let size = 0
+  for await (const chunk of req) {
+    size += chunk.length
+    if (size > MAX_BODY_BYTES) throw new Error('payload_too_large')
+    chunks.push(chunk)
+  }
   const raw = Buffer.concat(chunks).toString('utf8')
   return raw ? JSON.parse(raw) : {}
 }
@@ -72,6 +126,10 @@ async function notifyLead(lead, { context, transcript }) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'method_not_allowed' })
 
+  if (!isAllowedOrigin(req)) return sendJson(res, 403, { error: 'forbidden_origin' })
+
+  if (isRateLimited(clientIp(req))) return sendJson(res, 429, { error: 'rate_limited', reply: null })
+
   if (!process.env.ANTHROPIC_API_KEY) {
     return sendJson(res, 500, { error: 'missing_api_key', reply: null })
   }
@@ -79,7 +137,8 @@ export default async function handler(req, res) {
   let payload
   try {
     payload = await readJson(req)
-  } catch {
+  } catch (err) {
+    if (err?.message === 'payload_too_large') return sendJson(res, 413, { error: 'payload_too_large' })
     return sendJson(res, 400, { error: 'bad_json' })
   }
 

@@ -196,7 +196,7 @@ function BrainSplash({ onComplete }) {
     // 6. Period drop — conic-gradient circle from above with bounce
     const DROP_START = 105
     const FALL_END = 125
-    let dotY, dotOpacity = 0
+    let dotY, dotOpacity
     if (frame < DROP_START){
       dotY = -fall
       dotOpacity = 0
@@ -268,6 +268,8 @@ function BrainSplash({ onComplete }) {
       cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', onResize)
     }
+    // La animación (render) se monta una sola vez; re-ejecutar reiniciaría el RAF.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onComplete])
 
   // Styles

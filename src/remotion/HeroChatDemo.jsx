@@ -28,12 +28,6 @@ const blinkOn = (frame) => Math.floor(frame / 15) % 2 === 0
 const dotPulse = (frame) =>
   ci((frame % 45) / 45, [0, 0.5, 1], [1, 0.25, 1])
 
-// opacity envelope for each scene — crossfades overlap at boundaries
-function sceneOp(frame, start) {
-  const end = start + 300
-  return ci(frame, [start - XF, start, end - XF, end], [0, 1, 1, 0])
-}
-
 // ── Shared UI ─────────────────────────────────────────────────────────────
 
 function Header({ clock, subtitle, frame }) {
@@ -265,109 +259,6 @@ function WhatsAppBadge({ lf, from, text = 'Confirmación enviada por WhatsApp' }
       >
         {text}
       </span>
-    </div>
-  )
-}
-
-// ── Scene 2 — MetricCard ───────────────────────────────────────────────────
-
-function MetricCard({ lf, from }) {
-  const op = fadeIn(lf, from, 12)
-  // missed calls count-up: 0 → 73
-  const calls = Math.round(ci(lf, [from, from + 22], [0, 73], Easing.bezier(0.22, 1, 0.36, 1)))
-  // euro loss count-up: 0 → 2190
-  const euros = Math.round(ci(lf, [from + 6, from + 28], [0, 2190], Easing.bezier(0.22, 1, 0.36, 1)))
-  // gradient bar fill
-  const barW = ci(lf, [from + 8, from + 32], [0, 72])
-
-  return (
-    <div
-      style={{
-        opacity: op,
-        background: 'rgba(247,37,133,0.07)',
-        border: '1px solid rgba(247,37,133,0.2)',
-        borderRadius: 12,
-        padding: '11px 14px',
-        marginBottom: 7,
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: 9,
-          color: 'rgba(255,255,255,0.35)',
-          letterSpacing: '0.08em',
-          marginBottom: 8,
-        }}
-      >
-        📊 MAYO — LLAMADAS SIN ATENDER
-      </div>
-
-      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', marginBottom: 8 }}>
-        <div>
-          <div
-            style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 28,
-              color: '#fff',
-              lineHeight: 1,
-            }}
-          >
-            {calls}
-          </div>
-          <div
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 10,
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}
-          >
-            llamadas perdidas
-          </div>
-        </div>
-        <div>
-          <div
-            style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontStyle: 'italic',
-              fontSize: 18,
-              color: '#F72585',
-              lineHeight: 1,
-            }}
-          >
-            {euros.toLocaleString('es-ES')} €
-          </div>
-          <div
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 10,
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}
-          >
-            ingreso estimado perdido
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          height: 3,
-          background: 'rgba(255,255,255,0.07)',
-          borderRadius: 99,
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            width: `${barW}%`,
-            height: '100%',
-            background: GRADIENT,
-            borderRadius: 99,
-          }}
-        />
-      </div>
     </div>
   )
 }

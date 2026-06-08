@@ -1,0 +1,30 @@
+# BrAIn — Agencia de IA en Murcia
+
+> BrAIn es una agencia de Inteligencia Artificial en Murcia (España), fundada por empresarios. Implementa IA que da resultados de negocio: atención al cliente automatizada, automatización de operaciones e inteligencia de negocio. Primera reunión gratuita; soluciones en producción en 2-3 semanas; datos del cliente en su propia infraestructura (RGPD, NDA disponible).
+
+## Qué hacemos
+- **Atención al Cliente (Contact Center IA)**: responde al instante en WhatsApp, web, email, Instagram y teléfono, conectado a tu CRM y a tu sistema de reservas. Desde 1.200€ + 97€/mes.
+- **Operaciones (Back Office IA)**: automatiza emails, facturas, informes y recordatorios. Desde 2.000€ + 200€/mes.
+- **Inteligencia de Negocio (Asistente IA)**: pregunta a tus datos en lenguaje natural (ventas, costes, stock, reservas, albaranes). Desde 1.500€ + 150€/mes.
+- **A medida**: software y automatizaciones específicas; alcance y precio se concretan en la reunión.
+
+## Cómo trabajamos
+- Fundada por empresarios que automatizan primero sus propios negocios (salones de juego, gimnasios, hostelería, placas solares, inversión).
+- En producción en 2-3 semanas.
+- Primera reunión: gratuita, 30 minutos, sin compromiso ni permanencia. De ella sale un diagnóstico y un plan con precio.
+- Datos: RGPD, NDA disponible, alojados en la infraestructura del propio cliente.
+- Para empresas de cualquier sector, normalmente equipos de 3 a 50 personas.
+
+## Clientes
+- Baktun 13 — centro deportivo (Murcia).
+- Clesol — empresa solar (Murcia).
+- Venta Alegría — restaurante (Murcia).
+- Foodmatica — gestión de bares (hostelería).
+- Playgame Italia — operaciones (Italia).
+
+## Enlaces
+- Inicio: https://agenciabrain.example/
+- Nosotros: https://agenciabrain.example/nosotros
+- Contacto: ginesmunuera@gmail.com
+
+<!-- NOTA: sustituir "agenciabrain.example" por el dominio real al publicar. -->

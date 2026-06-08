@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { EASE_SOFT } from '../lib/motion'
 
@@ -31,11 +31,9 @@ export default function RotatingWord({
 
   // The first word (index 0) mounts statically — no entrance animation — so on
   // page load it's crisp and fully visible for its entire turn. Every word after
-  // that animates normally. Flips off the moment the rotation first advances.
-  const firstRef = useRef(true)
-  useEffect(() => {
-    if (idx !== 0) firstRef.current = false
-  }, [idx])
+  // that animates normally. Flipped on by the timer the moment the rotation first
+  // advances (state, not a ref, so it's safe to read during render).
+  const [hasAdvanced, setHasAdvanced] = useState(false)
 
   // The timer only begins once `start` is true (e.g. after the intro splash),
   // so the first word isn't consumed while the hero is still hidden. startDelay
@@ -44,7 +42,10 @@ export default function RotatingWord({
   useEffect(() => {
     if (reduce || words.length < 2 || !start) return
     let intervalId
-    const advance = () => setIdx((i) => (i + 1) % words.length)
+    const advance = () => {
+      setHasAdvanced(true)
+      setIdx((i) => (i + 1) % words.length)
+    }
     const startId = setTimeout(() => {
       advance()
       intervalId = setInterval(advance, interval)
@@ -70,7 +71,7 @@ export default function RotatingWord({
       <AnimatePresence mode="wait">
         <motion.span
           key={idx}
-          initial={firstRef.current ? false : { opacity: 0, y: '0.4em', filter: 'blur(5px)' }}
+          initial={hasAdvanced ? { opacity: 0, y: '0.4em', filter: 'blur(5px)' } : false}
           animate={{ opacity: 1, y: '0em', filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: '-0.4em', filter: 'blur(5px)' }}
           transition={{ duration: 0.4, ease: EASE_SOFT }}

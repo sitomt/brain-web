@@ -108,11 +108,17 @@ home; al terminar, fade-in del contenido.
    (se desplaza hacia abajo cuando la barra de Fundadores está visible)
 3. `Hero` (#hero) — headline con `RotatingWord` + demo de chat (`HeroChatDemo`)
 4. `TrustBar` — métricas con `Counter`
-5. `Enfoque` (#enfoque, eyebrow "Enfoque") — quiénes somos + historia + 4 pilares
+5. `Enfoque` (#enfoque, eyebrow "Enfoque") — quiénes somos + historia + bento de
+   los negocios reales del grupo ("probado en casa": salones de juego, hostelería,
+   gimnasios, placas solares, inversión). Iconos en `components/icons/SectorIcon.jsx`
+   (compartidos con /nosotros)
 6. `HowItWorks` (#proceso, eyebrow "Proceso") — el proceso en 3 pasos
 7. `Products` (#soluciones, eyebrow "Soluciones") — 3 tarjetas + micro-quiz + Tier 2
 8. `Herramientas` (#integraciones, eyebrow "Integraciones") — stack integrado
-9. `Cases` (#clientes, eyebrow "Clientes") — 5 casos en bento grid
+9. `Cases` (#clientes, eyebrow "Clientes") — 5 casos en índice editorial (filas
+   separadas por hairlines: logo/nombre + sector, estadística animada con `Counter`
+   + frase de resultado, y etiqueta de producto; sin CTA por fila). Baktun 13 y
+   Clesol solo logo; el resto chip de iniciales. NOTA: las stats son PLACEHOLDER
 10. `FoundersOffer` (#fundadores) — oferta fundador, banda crema (solo si `FOUNDERS.active`)
 11. `CtaFinal` (#cta) — reunión gratuita, fondo `GradientMesh`
 12. `Footer`
@@ -187,6 +193,21 @@ markdown), cambia de idioma sin avisar.
 - **Cierre delicado:** al recibir el 4º dato de contacto, se despide cálido y cortés
   (agradece, confirma el siguiente paso, frase de bienvenida), sin más preguntas.
 
+### Persistencia y navegación guiada (sesión 2026-06-08)
+- **Conversación persistente:** mensajes y lead se guardan en `sessionStorage`
+  (`brain_chat_messages`, `brain_chat_lead`): sobreviven a minimizar, navegar y
+  recargar; se borran al cerrar pestaña. Al reabrir desde otra sección NO se borra
+  la charla en curso (solo se siembra el saludo de contexto si aún no hay turnos).
+- **El bot dirige al producto:** nueva herramienta `recommend_product`
+  (`api/_prompt.js` + `api/chat.js`) que, en cuanto el bot identifica la solución
+  que encaja, devuelve `recommendedProduct`. El frontend inyecta una frase fija
+  ("…te lo acabo de abrir en pantalla…") y dispara `chat:recommend-product`; `App.jsx`
+  mapea producto→índice y `Products` reutiliza `handleQuizResult` (resalta + scroll).
+  En móvil el chat se minimiza; en escritorio sigue abierto. Red de seguridad: si no
+  llamó a la herramienta pero captura `product_interest` de las 3 soluciones, también
+  abre el producto. El bucle de tool-use acumula el texto de todos los turnos para no
+  perder el mensaje de continuación.
+
 ### Email / CRM → APAGADO a propósito (no hay CRM conectado aún)
 Hoy el lead capturado solo se **registra en el log** del servidor (`[lead] ...`):
 no se envía ningún email ni se escribe en ningún CRM. Para activar el aviso por
@@ -196,13 +217,60 @@ email cuando haya CRM: rellenar `RESEND_API_KEY` + `LEAD_FROM_EMAIL`
 
 ## SEO e infraestructura (estado actual)
 - `index.html`: title, description, Open Graph, Twitter Card, theme-color, `lang="es"`.
-- `public/`: `favicon.svg`, `icons.svg`, `robots.txt`, `sitemap.xml`, `sito.jpeg`.
+  H1 de la home en `Hero` (`motion.h1`, "La IA que hace funcionar tu negocio…");
+  `/nosotros` tiene su propio H1 y schema (inyectados por JS en `useEffect`).
+- `public/`: `favicon.svg`, `icons.svg`, `robots.txt`, `sitemap.xml`, `llms.txt`,
+  `og-image.png`, `sito.jpeg`, `sito2.jpg`.
 - Dominio: placeholder `agenciabrain.example` (en `src/lib/site.js`, `index.html`,
-  `public/robots.txt`, `public/sitemap.xml`). Pendiente dominio real.
-- `og:image` apunta a `og-image.png` (aún no existe el archivo).
+  `public/robots.txt`, `public/sitemap.xml`, `public/llms.txt`). Pendiente dominio real.
+
+### Auditoría SEO + GEO (2026-06-08) y trabajo aplicado
+Objetivo del encargo: SEO clásico + **GEO** (salir en búsquedas de agentes/IA:
+ChatGPT, Claude, Perplexity, Gemini/AI Overviews).
+
+**Hecho (aplicado y verificado):**
+- **Prerender en build** — `scripts/prerender.mjs` (Puppeteer) sirve `dist`, renderiza
+  `/` y `/nosotros` con Chromium y guarda el HTML ya pintado (con contenido, meta por
+  ruta y JSON-LD). `build` = `vite build && node scripts/prerender.mjs`. Verificado:
+  home ~12,5k chars de texto en HTML estático; /nosotros con su `<title>` propio y su
+  schema horneados. Esto es lo que hace visible la web a los crawlers de IA sin JS.
+  - `main.jsx` usa `createRoot` (no hidrata): el HTML prerenderizado es para los
+    crawlers; el usuario recibe el render fresco, sin warnings de hidratación.
+  - `build:spa` = solo Vite (sin prerender) por si se necesita.
+- **og-image** — `scripts/og-image.mjs` genera `public/og-image.png` (1200×630,
+  on-brand). Comando puntual `npm run og` (el PNG se commitea).
+- **Schema enriquecido** (`index.html`, JSON-LD estático): `Organization/LocalBusiness`
+  con `email`, `telephone`, `priceRange`, `logo`, `image`, `geo`, `address` completa,
+  `openingHoursSpecification`, `contactPoint`, `sameAs` (LinkedIn/Instagram/Facebook/X)
+  y `founder` (→ Ginés, `@id` enlazado con el `Person` de /nosotros). Validado: parsea OK.
+  > Los datos de contacto/redes son PLACEHOLDERS plausibles (tel `+34 968…`, handles
+  > `/agenciabrain`, dirección) para que el schema parezca completo — SUSTITUIR por reales.
+- **`FAQPage` nuevo** (7 Q&A: qué es BrAIn, precios, plazos 2-3 sem, reunión gratuita,
+  RGPD/datos, tipo de empresa, soluciones). Señal fuerte para motores de respuesta.
+- **`robots.txt`**: `Allow` explícito a crawlers de IA (GPTBot, OAI-SearchBot,
+  ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, Amazonbot…).
+- **`public/llms.txt` nuevo**: resumen markdown de BrAIn para agentes de IA.
+- Dependencia nueva: `puppeteer` (devDependency; trae su Chromium).
+
+**Pendiente:**
+- **P0 · Dominio real** → reemplazo global de `agenciabrain.example` (incluye `llms.txt`).
+  Bloqueador de indexación (canonical apunta a TLD reservado `.example`).
+- **Vercel + Puppeteer:** el build de producción ejecuta el prerender, que necesita
+  Chromium en el entorno de build de Vercel. `npm install` lo descarga; si falla por
+  caché, fijar `PUPPETEER_CACHE_DIR` o usar `@sparticuz/chromium`. Alternativa: correr
+  el prerender en CI. VERIFICAR en el primer deploy.
+- **P1 · Datos reales** en el schema (tel, redes, dirección) y en las stats de `Cases`.
+- **P2 · FAQ visible** en la web que respalde el `FAQPage` (coherencia con Google).
+- **P2 · GBP**: crear Google Business Profile (Murcia) y añadirlo a `sameAs`.
+- Falso positivo descartado: la home SÍ tiene H1 (estaba como `motion.h1`).
+
+Nota: para estrategia GEO/AEO pura (cómo lograr citación en ChatGPT/Perplexity)
+existe la skill `ai-seo`; esta auditoría cubre el plano técnico + entidad.
 
 ## Consentimiento y legal
-- `CookieBanner` — consentimiento en `localStorage` (`brain_cookie_consent`).
+- `CookieBanner` — consentimiento en `localStorage` (`brain_cookie_consent_v2`;
+  clave versionada para que el banner reaparezca al subir versión). Aparece a ~2.5s.
+  `STORAGE_KEY` se exporta y la reusa `App.jsx` (botón "Gestionar cookies").
 - `LegalModal` — pestañas Privacidad / Cookies / Aviso Legal.
 - `ExitIntentModal` — una vez por sesión (`sessionStorage`).
 - Barra de Fundadores — descartable, persistida en `localStorage`

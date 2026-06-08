@@ -49,7 +49,6 @@ export default function CtaButton({
   }
 
   const isDark = variant === 'solid' // solid dark CTA over light bg
-  const isGhost = variant === 'ghost'
   const isLight = variant === 'light' // light CTA over dark bg
 
   const heightPx = size === 'lg' ? 56 : 48

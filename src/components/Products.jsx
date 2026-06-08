@@ -1233,6 +1233,8 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
     }
     window.addEventListener('chat:recommend-product', handler)
     return () => window.removeEventListener('chat:recommend-product', handler)
+    // Suscripción única al montar: handleQuizResult solo dispara setters estables.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
