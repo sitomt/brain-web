@@ -10,8 +10,8 @@
 
 export const FOUNDERS = {
   active: true,
-  spotsTotal: 10,
-  spotsLeft: 7, // editar a mano según se vayan cerrando plazas
+  spotsTotal: 15,
+  spotsLeft: 8, // editar a mano según se vayan cerrando plazas
   discountLabel: '50%', // ahorro máximo sobre catálogo, solo texto
   chatContext: 'founders',
   // mensaje precargado que se envía al chat al pulsar el CTA del modal

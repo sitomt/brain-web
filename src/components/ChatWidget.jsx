@@ -1,7 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
-import { ArrowRight } from './icons/ArrowIcon'
+import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
+
+// CornerRightUp (lucide) inlined — keeps the project free of an icon dependency.
+function CornerRightUp({ size = 15 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+      <polyline points="10 9 15 4 20 9" />
+      <path d="M4 20h7a4 4 0 0 0 4-4V4" />
+    </svg>
+  )
+}
 
 const responses = [
   {
@@ -121,8 +132,8 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const wasOpenRef = useRef(false)
   const lastContextRef = useRef(null)
   const endRef = useRef(null)
-  const inputRef = useRef(null)
   const isMobile = useIsMobile()
+  const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: isMobile ? 48 : 44, maxHeight: 120 })
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -157,7 +168,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
         lastContextRef.current = context
       }
       wasOpenRef.current = true
-      setTimeout(() => inputRef.current?.focus(), 350)
+      setTimeout(() => textareaRef.current?.focus(), 350)
     } else {
       wasOpenRef.current = false
     }
@@ -197,11 +208,14 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   }, [])
 
   const send = (textOverride) => {
+    // Block submits while the bot is "thinking" (matches the loading state).
+    if (typing && !textOverride) return
     const text = (textOverride || input).trim()
     if (!text) return
     setShowQuickReplies(false)
     setMessages((m) => [...m, { from: 'user', text }])
     setInput('')
+    adjustHeight(true)
     setTyping(true)
     setTimeout(() => {
       setTyping(false)
@@ -417,36 +431,82 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
               <div ref={endRef} />
             </div>
 
-            {/* Input */}
-            <div style={{ padding: '0.75rem', borderTop: '1px solid #F0EDE6', display: 'flex', gap: 8, background: '#fff' }}>
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && send()}
-                placeholder="Escribe tu mensaje..."
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  padding: isMobile ? '13px 16px' : '9px 14px',
-                  borderRadius: 999,
-                  border: '1px solid #E8E5DE',
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontWeight: 300,
-                  // 16px on mobile prevents iOS Safari from auto-zooming on focus.
-                  fontSize: isMobile ? '16px' : '0.82rem',
-                  outline: 'none',
-                  background: '#FAFAFA',
-                  cursor: 'text',
-                }}
-              />
-              <button
-                onClick={send}
-                aria-label="Enviar"
-                style={{ width: isMobile ? 44 : 36, height: isMobile ? 44 : 36, borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', color: '#fff', cursor: 'pointer', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <ArrowRight size={14} />
-              </button>
+            {/* Input — auto-resizing textarea with loading state
+                (adapted from 21st.dev AIInputWithLoading to the project's inline styles) */}
+            <div style={{ padding: '0.75rem 0.75rem 0.55rem', borderTop: '1px solid #F0EDE6', background: '#fff' }}>
+              <div style={{ position: 'relative' }}>
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  rows={1}
+                  onChange={(e) => { setInput(e.target.value); adjustHeight() }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
+                  }}
+                  placeholder="Escribe tu mensaje..."
+                  style={{
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    resize: 'none',
+                    minHeight: isMobile ? 48 : 44,
+                    maxHeight: 120,
+                    padding: isMobile ? '13px 50px 13px 16px' : '11px 46px 11px 16px',
+                    borderRadius: 18,
+                    border: '1px solid #E8E5DE',
+                    fontFamily: "'DM Sans',sans-serif",
+                    fontWeight: 300,
+                    // 16px on mobile prevents iOS Safari from auto-zooming on focus.
+                    fontSize: isMobile ? '16px' : '0.82rem',
+                    lineHeight: 1.4,
+                    outline: 'none',
+                    background: '#FAFAFA',
+                    color: '#1A1814',
+                    overflowY: 'auto',
+                  }}
+                />
+                <button
+                  onClick={() => send()}
+                  aria-label="Enviar"
+                  disabled={typing}
+                  style={{
+                    position: 'absolute',
+                    right: 7,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: isMobile ? 36 : 32,
+                    height: isMobile ? 36 : 32,
+                    borderRadius: 12,
+                    border: 'none',
+                    cursor: typing ? 'default' : 'pointer',
+                    background: typing ? 'transparent' : 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)',
+                    color: '#fff',
+                    flexShrink: 0,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background 0.3s',
+                  }}
+                >
+                  {typing ? (
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                      style={{ width: 14, height: 14, borderRadius: 3, background: '#1A1814' }}
+                    />
+                  ) : (
+                    <span style={{ display: 'inline-flex', opacity: input.trim() ? 1 : 0.4, transition: 'opacity 0.2s' }}>
+                      <CornerRightUp size={15} />
+                    </span>
+                  )}
+                </button>
+              </div>
+              <p style={{
+                margin: '6px 0 0', paddingLeft: 14, height: 14,
+                fontFamily: "'DM Sans',sans-serif", fontSize: '0.68rem',
+                color: 'rgba(26,24,20,0.45)',
+              }}>
+                {typing ? 'La IA está escribiendo…' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea'}
+              </p>
             </div>
           </motion.div>
         )}

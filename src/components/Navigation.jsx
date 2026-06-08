@@ -209,12 +209,12 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
             }}
           >
             <motion.span
-              animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+              animate={menuOpen ? { rotate: 45, y: 3.25 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.3, ease: EASE_PREMIUM }}
               style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block', transition: 'background 0.08s' }}
             />
             <motion.span
-              animate={menuOpen ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
+              animate={menuOpen ? { rotate: -45, y: -3.25 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.3, ease: EASE_PREMIUM }}
               style={{ width: 17, height: 1.5, background: menuOpen ? '#fff' : theme.text, borderRadius: 2, display: 'block', transition: 'background 0.08s' }}
             />

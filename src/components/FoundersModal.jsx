@@ -207,7 +207,7 @@ export default function FoundersModal({ open, onClose, onChatOpen }) {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {FOUNDERS.spotsLeft} de {FOUNDERS.spotsTotal} plazas
+                  Quedan {FOUNDERS.spotsLeft} de {FOUNDERS.spotsTotal} plazas
                 </span>
               </div>
               <div
