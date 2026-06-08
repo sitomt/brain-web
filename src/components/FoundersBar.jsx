@@ -17,7 +17,7 @@ export default function FoundersBar({ onOpen, onDismiss }) {
 
   const counter = isMobile
     ? `${FOUNDERS.spotsLeft}/${FOUNDERS.spotsTotal} plazas`
-    : `Quedan ${FOUNDERS.spotsLeft} de ${FOUNDERS.spotsTotal} plazas con precio fundador`
+    : `Las ${FOUNDERS.spotsTotal} primeras plazas, a precio fundador · quedan ${FOUNDERS.spotsLeft}`
 
   return (
     <motion.div

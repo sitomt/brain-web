@@ -7,10 +7,11 @@ const EMAIL = 'ginesmunuera@gmail.com'
 
 // Same-page section anchors (footer only renders on the home route).
 const NAV_LINKS = [
-  { label: 'Enfoque',    id: 'enfoque' },
-  { label: 'Soluciones', id: 'products' },
-  { label: 'Proceso',    id: 'proceso' },
-  { label: 'Casos',      id: 'cases' },
+  { label: 'Enfoque',       id: 'enfoque' },
+  { label: 'Proceso',       id: 'proceso' },
+  { label: 'Soluciones',    id: 'soluciones' },
+  { label: 'Integraciones', id: 'integraciones' },
+  { label: 'Clientes',      id: 'clientes' },
 ]
 
 const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })

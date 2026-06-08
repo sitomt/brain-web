@@ -128,7 +128,7 @@ export default function FoundersModal({ open, onClose, onChatOpen }) {
                 margin: '0 0 1.1rem',
               }}
             >
-              Llevamos años usándolo en casa. Ahora abrimos
+              Llevamos meses puliéndolo en casa. Ahora abrimos
               <em style={{ ...gradientText, fontStyle: 'italic' }}>
                 {' '}las {FOUNDERS.spotsTotal} primeras plazas.
               </em>

@@ -98,7 +98,7 @@ export default function Hero({ onChatOpen, introComplete = true }) {
               Habla con nuestra IA
             </CtaButton>
             <CtaButton
-              onClick={() => document.getElementById('lo-que-hacemos')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('soluciones')?.scrollIntoView({ behavior: 'smooth' })}
               variant="ghost"
               arrow="down"
               size="lg"

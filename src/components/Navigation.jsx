@@ -8,12 +8,12 @@ import { EASE_PREMIUM } from '../lib/motion'
 
 const SCROLL_LINKS = [
   { label: 'Enfoque', target: 'enfoque' },
-  { label: 'Soluciones', target: 'products' },
-  { label: 'Casos', target: 'cases' },
+  { label: 'Soluciones', target: 'soluciones' },
+  { label: 'Clientes', target: 'clientes' },
 ]
 
 // Sections are either light (cream) or dark — the floating pill adapts contrast.
-const DARK_SECTIONS = new Set(['enfoque', 'herramientas', 'proceso', 'cases', 'cta'])
+const DARK_SECTIONS = new Set(['enfoque', 'proceso', 'integraciones', 'clientes', 'cta'])
 
 const LIGHT_THEME = {
   pillBg: 'rgba(250,248,243,0.72)',
@@ -47,12 +47,23 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
   const location = useLocation()
   const isHome = location.pathname === '/'
 
+  // Espera (vía rAF) a que la sección destino exista en el DOM y entonces hace
+  // scroll. Tras navegar a la home con React Router, el contenido monta en el
+  // siguiente frame; sondeamos unos pocos frames por si tarda algo más.
+  const scrollToSection = (target, attempts = 0) => {
+    const el = document.getElementById(target)
+    if (el) { el.scrollIntoView({ behavior: 'smooth' }); return }
+    if (attempts < 30) requestAnimationFrame(() => scrollToSection(target, attempts + 1))
+  }
+
   const handleScrollLink = (target) => {
     setMenuOpen(false)
     if (isHome) {
       document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
     } else {
-      window.location.assign(`/#${target}`)
+      // Navegación SPA (sin recarga → no se reinicia la intro), luego scroll.
+      navigate('/')
+      scrollToSection(target)
     }
   }
 
@@ -101,7 +112,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
     e.preventDefault()
     setMenuOpen(false)
     if (window.location.pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' })
-    else window.location.assign('/')
+    else { navigate('/'); window.scrollTo({ top: 0 }) }
   }
 
   return (

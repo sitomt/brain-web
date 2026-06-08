@@ -11,6 +11,7 @@ import Cases from './components/Cases'
 import TrustBar from './components/TrustBar'
 import HowItWorks from './components/HowItWorks'
 import CtaFinal from './components/CtaFinal'
+import FoundersOffer from './components/FoundersOffer'
 import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner, { STORAGE_KEY as COOKIE_STORAGE_KEY } from './components/CookieBanner'
@@ -64,7 +65,11 @@ function AppContent() {
     localStorage.setItem('brain_founders_bar_dismissed', '1')
     setFoundersBarOpen(false)
   }
-  const showFoundersBar = FOUNDERS.active && isHome && introComplete && foundersBarOpen
+  // La barra de fundadores (y el topOffset que empuja el navbar) deben ser
+  // idénticos en toda la web. Solo esperamos a que acabe la intro EN HOME;
+  // en el resto de rutas (no hay splash) aparece directamente.
+  const introReady = isHome ? introComplete : true
+  const showFoundersBar = FOUNDERS.active && introReady && foundersBarOpen
 
   return (
     <>
@@ -98,7 +103,10 @@ function AppContent() {
           path="/"
           element={
             <motion.div
-              initial={{ opacity: 0 }}
+              // Solo hacemos el fade de revelado la PRIMERA vez (tras la intro).
+              // Al volver desde otra ruta la home ya está revelada: initial=false
+              // la monta directamente a opacidad plena y evita el parpadeo en blanco.
+              initial={introComplete ? false : { opacity: 0 }}
               animate={{ opacity: introComplete ? 1 : 0 }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               style={{ position: 'relative', zIndex: 1 }}
@@ -108,20 +116,25 @@ function AppContent() {
                   <Hero onChatOpen={() => openChat('hero')} introComplete={introComplete} />
                 </section>
                 <TrustBar />
+                {/* Enfoque = quiénes somos + historia (empresarios, probado en casa, fundadores) */}
                 <section id="enfoque">
                   <Enfoque />
                 </section>
-                <section id="herramientas">
-                  <Herramientas />
-                </section>
                 <HowItWorks />
                 {/* Products = panel claro elevado flotando sobre fondo oscuro continuo */}
-                <section id="products">
+                <section id="soluciones">
                   <Products onChatOpen={openChat} onFoundersOpen={() => setFoundersModalOpen(true)} />
                 </section>
-                <section id="cases">
+                <section id="integraciones">
+                  <Herramientas />
+                </section>
+                <section id="clientes">
                   <Cases />
                 </section>
+                {/* Oferta fundador — la llamada a la acción, cerca de la conversión */}
+                {FOUNDERS.active && (
+                  <FoundersOffer onChatOpen={() => openChat(FOUNDERS.chatContext)} />
+                )}
                 <section id="cta">
                   <CtaFinal onChatOpen={() => openChat('cta_final')} />
                 </section>

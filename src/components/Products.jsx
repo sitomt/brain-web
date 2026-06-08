@@ -389,7 +389,7 @@ function PriceBlock({ price, onFoundersOpen }) {
           }}
         >
           <span style={{ ...gradientText }}>Precio fundador</span>
-          <span style={{ color: 'rgba(26,24,20,0.5)' }}>· quedan {FOUNDERS.spotsLeft}</span>
+          <span style={{ color: 'rgba(26,24,20,0.5)' }}>· de las {FOUNDERS.spotsTotal} primeras · quedan {FOUNDERS.spotsLeft}</span>
         </button>
       )}
     </div>

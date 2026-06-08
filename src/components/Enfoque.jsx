@@ -9,6 +9,7 @@ import useIsMobile from '../hooks/useIsMobile'
 import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
 import { ACCENT, gradientText } from '../lib/tokens'
 import { h2, h3, bodyLg } from '../lib/typography'
+import { FOUNDERS } from '../lib/founders'
 
 // Cuatro pilares del valor añadido: criterio empresarial por encima de la IA.
 // span define el ancho en la rejilla bento de 6 columnas (escritorio).
@@ -87,7 +88,7 @@ export default function Enfoque() {
           }}
         >
           <div style={{ marginBottom: '1.5rem' }}>
-            <Eyebrow variant="pill" tone="light">Nuestro enfoque</Eyebrow>
+            <Eyebrow variant="pill" tone="light">Enfoque</Eyebrow>
           </div>
 
           <h2 style={{ ...h2 }}>
@@ -102,6 +103,15 @@ export default function Enfoque() {
             criterio: sabemos qué mueve resultados, qué cuesta dinero y qué solo
             lo parece.
           </p>
+
+          {FOUNDERS.active && (
+            <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.7)', margin: '1rem 0 0' }}>
+              Llevamos meses puliendo esta IA en nuestros propios negocios. Ahora
+              abrimos las primeras {FOUNDERS.spotsTotal} plazas a clientes externos
+              — y con ellos crecemos, paso a paso, hasta llevar cada negocio a su
+              máximo potencial.
+            </p>
+          )}
         </motion.div>
 
         {/* Pilares — bento asimétrico */}

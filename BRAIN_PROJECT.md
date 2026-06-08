@@ -44,9 +44,20 @@ directo y prioridad. Cuando se cierra el cupo, el precio sube.
   `discountLabel`, `chatContext`, `chatPrefill`). `active: false` apaga toda la
   campaña (barra, modal y anclas de precio).
 - Estado actual: 10 plazas, 7 libres, hasta 50% sobre precio de catálogo.
-- Superficies: barra superior fina (`FoundersBar`) + modal con la historia
-  (`FoundersModal`); ancla de precio (catálogo tachado + precio fundador) en
-  las tarjetas de `Products`.
+- Superficies del storytelling (historia arriba, oferta al final — sin saturar):
+  - `FoundersBar` — barra superior fina; copy "Las {total} primeras plazas, a
+    precio fundador · quedan {N}" → abre el modal.
+  - `Enfoque` — la HISTORIA vive aquí (merge): párrafo de origen "llevamos meses
+    puliéndola en casa → abrimos {total} plazas → crecemos juntos" (condicionado a
+    `FOUNDERS.active`, SIN precio). Conexión temprana.
+  - `FoundersOffer` (#fundadores) — la OFERTA, banda crema **antes del CTA final**:
+    precio fundador, las 3 ventajas (precio/trato directo/prioridad), contador/barra
+    y CTA al chat de fundadores. Cerca de la conversión.
+  - `Products` — ancla de precio reetiquetada "Precio fundador · de las {total}
+    primeras · quedan {N}" (clic → modal con la historia).
+  - `Products` — ancla de precio reetiquetada "Precio fundador · de las {total}
+    primeras · quedan {N}" (clic → modal con la historia).
+  - `FoundersModal` — historia completa + oferta + contador (desde barra/precio).
 - Precio de catálogo por producto: 01 → 2.400€ · 02 → 4.000€ · 03 → 3.000€.
 
 ## Casos reales (cinco)
@@ -97,13 +108,17 @@ home; al terminar, fade-in del contenido.
    (se desplaza hacia abajo cuando la barra de Fundadores está visible)
 3. `Hero` (#hero) — headline con `RotatingWord` + demo de chat (`HeroChatDemo`)
 4. `TrustBar` — métricas con `Counter`
-5. `Enfoque` (#enfoque) — 4 pilares en `SpotlightCard`
-6. `Herramientas` (#herramientas) — stack de herramientas integradas
-7. `HowItWorks` (#proceso) — el proceso en 3 pasos
-8. `Products` (#products) — 3 tarjetas + micro-quiz + Tier 2 + precio fundador
-9. `Cases` (#cases) — 5 casos en bento grid
-10. `CtaFinal` (#cta) — reunión gratuita, fondo `GradientMesh`
-11. `Footer`
+5. `Enfoque` (#enfoque, eyebrow "Enfoque") — quiénes somos + historia + 4 pilares
+6. `HowItWorks` (#proceso, eyebrow "Proceso") — el proceso en 3 pasos
+7. `Products` (#soluciones, eyebrow "Soluciones") — 3 tarjetas + micro-quiz + Tier 2
+8. `Herramientas` (#integraciones, eyebrow "Integraciones") — stack integrado
+9. `Cases` (#clientes, eyebrow "Clientes") — 5 casos en bento grid
+10. `FoundersOffer` (#fundadores) — oferta fundador, banda crema (solo si `FOUNDERS.active`)
+11. `CtaFinal` (#cta) — reunión gratuita, fondo `GradientMesh`
+12. `Footer`
+
+Etiquetas = navbar = ancla (cortas y coincidentes): Enfoque · Proceso · Soluciones
+· Integraciones · Clientes. Navbar lean (Enfoque · Soluciones · Clientes + Nosotros).
 
 Overlays a nivel de app: `ChatWidget`, `ExitIntentModal`, `FoundersBar`,
 `FoundersModal`, `CookieBanner`, `LegalModal`, `ScrollProgress`, `CursorGlow`.

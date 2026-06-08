@@ -65,7 +65,7 @@ export default function HowItWorks() {
           style={{ marginBottom: isMobile ? '3rem' : '4rem', textAlign: isMobile ? 'center' : 'left' }}
         >
           <div style={{ marginBottom: '1.25rem', display: 'inline-flex' }}>
-            <Eyebrow variant="pill" tone="light">El proceso</Eyebrow>
+            <Eyebrow variant="pill" tone="light">Proceso</Eyebrow>
           </div>
           <h2 style={{ ...h2 }}>
             <span style={{ color: '#fff' }}>De la idea a producción, </span>
