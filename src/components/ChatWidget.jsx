@@ -27,80 +27,6 @@ function MicIcon({ size = 18 }) {
 
 const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
-const responses = [
-  {
-    keys: ['precio', 'coste', 'cuesta', 'cuánto', 'tarifa', 'presupuesto', 'cuanto'],
-    reply: 'La primera reunión es gratuita y te damos presupuesto exacto. Sin compromiso. ¿Quieres reservarla?',
-  },
-  {
-    keys: ['chatbot', 'bot', 'whatsapp', 'instagram', 'telegram'],
-    reply: 'Implementamos chatbots en WhatsApp, Instagram, Telegram, web y voz. Operativo en menos de 2 semanas.',
-  },
-  {
-    keys: ['voz', 'teléfono', 'llamada', 'telefono'],
-    reply: 'Nuestro voicebot atiende llamadas 24/7. Tu cliente habla, la IA entiende y responde.',
-  },
-  {
-    keys: ['tiempo', 'cuándo', 'cuanto', 'semanas', 'rápido', 'rapido', 'plazo'],
-    reply: 'La mayoría de soluciones están operativas en 1-2 semanas desde el primer día.',
-  },
-  {
-    keys: ['restaurante', 'bar', 'hostelería', 'hosteleria', 'comida', 'carta'],
-    reply: 'Para hostelería automatizamos reservas, consultas de carta y atención al cliente 24/7. ¿Quieres que te lo expliquemos?',
-  },
-  {
-    keys: ['hotel', 'apartamento', 'turismo', 'alojamiento'],
-    reply: 'Nuestros bots gestionan reservas, preguntas frecuentes y check-in para hoteles y alojamientos. ¿Te explicamos cómo?',
-  },
-  {
-    keys: ['clínica', 'clinica', 'médico', 'medico', 'salud', 'dental', 'veterinaria', 'veterinario', 'fisio'],
-    reply: 'En clínicas automatizamos citas, recordatorios y consultas de horarios. Tu equipo se centra en los pacientes. ¿Hablamos?',
-  },
-  {
-    keys: ['gimnasio', 'deporte', 'entrenamiento', 'fitness', 'crossfit', 'pilates', 'yoga'],
-    reply: 'Para centros deportivos gestionamos bajas, fichajes, comunicación de equipo e incidencias. Como lo hacemos para Baktun 13. ¿Te contamos?',
-  },
-  {
-    keys: ['solar', 'energía', 'energia', 'instalación', 'instalacion', 'mantenimiento', 'leads', 'crm'],
-    reply: 'Automatizamos la clasificación de leads y el CRM para que tu equipo solo cierre ventas. Como hacemos para Clesol. ¿Te explicamos?',
-  },
-  {
-    keys: ['inmobiliaria', 'inmueble', 'piso', 'alquiler', 'compraventa'],
-    reply: 'Para inmobiliarias clasificamos leads, respondemos consultas 24/7 y automatizamos el seguimiento. ¿Quieres una reunión gratuita?',
-  },
-  {
-    keys: ['logística', 'logistica', 'transporte', 'almacén', 'almacen', 'distribución', 'distribucion'],
-    reply: 'En logística automatizamos seguimiento de pedidos, incidencias y comunicación con clientes. ¿Te lo explicamos?',
-  },
-  {
-    keys: ['tienda', 'ecommerce', 'e-commerce', 'online', 'shop', 'comercio'],
-    reply: 'Para tiendas online automatizamos atención al cliente, seguimiento de pedidos y recuperación de carritos. ¿Hablamos?',
-  },
-  {
-    keys: ['academia', 'escuela', 'formación', 'formacion', 'clases', 'cursos', 'idiomas'],
-    reply: 'En academias y centros de formación automatizamos matrículas, consultas de horarios y seguimiento de alumnos. ¿Te explicamos cómo?',
-  },
-  {
-    keys: ['franquicia', 'cadena', 'multitienda'],
-    reply: 'Para franquicias y cadenas implementamos soluciones escalables que funcionan igual en todos los puntos de venta. ¿Hablamos?',
-  },
-  {
-    keys: ['peluquería', 'peluqueria', 'estetica', 'estética', 'spa', 'belleza', 'salón', 'salon'],
-    reply: 'Para salones y centros de estética automatizamos citas, recordatorios y respuestas 24/7. Tu cliente reserva aunque estés ocupado. ¿Te lo mostramos?',
-  },
-  {
-    keys: ['agente', 'persona', 'humano', 'hablar', 'directo', 'email', 'contacto'],
-    reply: 'Te leemos nosotros directamente. Déjame tu email o un WhatsApp y te contactamos enseguida.',
-  },
-  {
-    keys: ['seguridad', 'datos', 'rgpd', 'gdpr', 'privacidad', 'confidencial', 'nda'],
-    reply: 'Trabajamos bajo RGPD. Tus datos son confidenciales y firmamos NDA si lo necesitas. Sin excepciones.',
-  },
-  {
-    keys: ['agendar', 'reunión', 'reunion', 'cita', 'gratuita', 'diagnóstico', 'diagnostico'],
-    reply: 'Perfecto. Te contactamos en menos de 24 horas. ¿Cuál es tu email?',
-  },
-]
 
 const QUICK_REPLIES = [
   '¿Cuánto cuesta?',
@@ -124,13 +50,6 @@ const CONTEXT_GREETINGS = {
 
 const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
 
-function getReply(input) {
-  const lower = input.toLowerCase()
-  for (const r of responses) {
-    if (r.keys.some((k) => lower.includes(k))) return r.reply
-  }
-  return 'Apuntado. Revisamos tu mensaje y te contactamos en menos de 24h. ¿Me dices a qué sector pertenece tu negocio? Así llegamos preparados a la reunión.'
-}
 
 export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [messages, setMessages] = useState([
@@ -143,6 +62,9 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(true)
   const recognitionRef = useRef(null)
+  // Ignora resultados de voz que lleguen DESPUÉS de pulsar enviar (evita que la
+  // transcripción reaparezca en la cajita tras mandar el mensaje).
+  const ignoreSpeechRef = useRef(false)
   // Live count for the "personas hablando ahora" indicator.
   // Starts 2–4, drifts ±1 every 8–15s, clamped to 1–5.
   const [liveCount, setLiveCount] = useState(() => 2 + Math.floor(Math.random() * 3))
@@ -192,6 +114,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     recognition.interimResults = true
 
     recognition.onresult = (event) => {
+      if (ignoreSpeechRef.current) return // se envió mientras dictaba: no repuebles la cajita
       const transcript = Array.from(event.results)
         .map((r) => r[0].transcript)
         .join('')
@@ -214,6 +137,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       recognitionRef.current?.stop()
       setIsListening(false)
     } else {
+      ignoreSpeechRef.current = false // nueva dictación: vuelve a aceptar resultados
       setInput('')
       adjustHeight(true)
       try {
@@ -245,9 +169,8 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   }, [isOpen, context])
 
   // Llama al endpoint /api/chat (Claude Sonnet) con todo el historial + contexto de sección.
-  // Si la API falla, cae al mock por palabras clave para que el chat nunca se quede mudo.
+  // Si la API falla, muestra un mensaje honesto (sin fingir que funciona) e invita a dejar contacto.
   const respond = useCallback(async (allMsgs) => {
-    const lastUser = allMsgs[allMsgs.length - 1]?.text || ''
     try {
       const apiMessages = allMsgs
         .filter((m) => m.text)
@@ -271,7 +194,10 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       setMessages((m) => [...m, { from: 'bot', text: reply }])
     } catch {
       setTyping(false)
-      setMessages((m) => [...m, { from: 'bot', text: getReply(lastUser) }])
+      setMessages((m) => [
+        ...m,
+        { from: 'bot', text: 'Uy, se me ha cruzado un cable un momento. ¿Me lo repites? Y si prefieres, déjame tu email o WhatsApp y te escribimos enseguida.' },
+      ])
     }
   }, [])
 
@@ -295,6 +221,11 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     if (typing && !textOverride) return
     const text = (textOverride || input).trim()
     if (!text) return
+    // Corta el dictado de voz y descarta transcripciones tardías para que no
+    // reaparezcan en la cajita tras enviar.
+    ignoreSpeechRef.current = true
+    recognitionRef.current?.abort?.()
+    setIsListening(false)
     setShowQuickReplies(false)
     const userMsg = { from: 'user', text }
     setMessages((m) => [...m, userMsg])

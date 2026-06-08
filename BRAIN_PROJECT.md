@@ -131,8 +131,12 @@ Widget flotante conectado a un LLM real. **Modelo: Claude Sonnet 4.6**
 - **Dev local:** middleware en `vite.config.js` sirve `/api/chat` con el mismo
   handler que Vercel; carga las claves de `.env` a `process.env` server-side.
 - **Frontend:** `src/components/ChatWidget.jsx` envía todo el historial + el
-  `context` de la sección. Si la API falla, cae a un **mock por keywords** de
-  reserva (responses/getReply) para no quedarse mudo.
+  `context` de la sección. Si la API falla, NO finge funcionar: muestra un único
+  mensaje honesto ("se me ha cruzado un cable… déjame tu email o WhatsApp") en vez
+  del antiguo mock por keywords (eliminado).
+- **Voz (Web Speech API):** al enviar se aborta el dictado y se descartan
+  transcripciones tardías (`ignoreSpeechRef`) para que el texto no reaparezca en
+  la cajita tras mandar el mensaje.
 
 ### Claves y entorno (NUNCA en el bundle ni en git)
 - `ANTHROPIC_API_KEY` → en `.env` (local, gitignored) y en Variables de Entorno
@@ -157,11 +161,16 @@ consejo legal/fiscal/médico; admite ser IA solo si lo preguntan. Tono sin "¡Cl
 breve (2-4 líneas), una pregunta por turno, texto plano (el widget no renderiza
 markdown), cambia de idioma sin avisar.
 
-### Captura de lead (4 datos obligatorios)
-Herramienta `capture_lead` (function calling). El bot persigue, de uno en uno:
-1) nombre, 2) **nombre del negocio + a qué se dedica** (para investigar antes de la
-reunión), 3) email, 4) **teléfono pedido como WhatsApp**. Llama a la herramienta en
-cuanto tiene un contacto válido y la reactualiza al conseguir más datos.
+### Conversación y captura de lead (4 datos obligatorios)
+- Si el visitante no sabe qué puede hacer la IA por él, el bot lo **ilumina** con
+  una idea simple y potente y pregunta a qué se dedica; al saber el sector, explica
+  las opciones más efectivas para ESE negocio. Objetivo siempre: datos + reunión.
+- Herramienta `capture_lead` (function calling). El bot persigue, de uno en uno:
+  1) nombre, 2) **nombre del negocio + a qué se dedica** (para investigar antes de la
+  reunión), 3) email, 4) **teléfono pedido como WhatsApp**. Llama a la herramienta en
+  cuanto tiene un contacto válido y la reactualiza al conseguir más datos.
+- **Cierre delicado:** al recibir el 4º dato de contacto, se despide cálido y cortés
+  (agradece, confirma el siguiente paso, frase de bienvenida), sin más preguntas.
 
 ### Email / CRM → APAGADO a propósito (no hay CRM conectado aún)
 Hoy el lead capturado solo se **registra en el log** del servidor (`[lead] ...`):
