@@ -118,21 +118,57 @@ Ruta `/nosotros`: `src/pages/Nosotros.jsx` (lazy), con foto real (`public/sito.j
 3. **Presupuesto exacto y manos a la obra** — presupuesto cerrado sin letra
    pequeña; implementado en 3–4 semanas.
 
-## ChatWidget
-Widget flotante con respuestas automáticas por keywords:
-- precio/coste/tarifa → presupuesto gratuito
-- canales (whatsapp/instagram/telegram/web) → chatbots
-- voz/teléfono/llamada → voicebot 24/7
-- tiempo/plazo/semanas → 1–2 semanas operativo
-- sectores (restaurante, hotel, clínica, gimnasio, solar, inmobiliaria, tienda,
-  academia, peluquería, logística…) → respuesta por sector
-- agente/persona/Sito/contacto → ginesmunuera@gmail.com
-- seguridad/RGPD/NDA → confidencialidad y NDA
-- agendar/reunión/diagnóstico → flujo de cita
+## ChatWidget (chatbot con IA — estado actual)
+Widget flotante conectado a un LLM real. **Modelo: Claude Sonnet 4.6**
+(`claude-sonnet-4-6`), no streaming, `max_tokens: 1024`.
 
-Saludos por contexto: navbar, hero, contact_center, back_office, asistente,
-tier2_other, cta_final, nosotros, founders.
-Soporta mensajes precargados vía evento `chat:send` (CtaFinal, Tier2, FoundersModal).
+### Arquitectura
+- **Endpoint:** `api/chat.js` — función serverless (compatible con Vercel) que
+  llama a Claude con el SDK `@anthropic-ai/sdk`, gestiona el bucle de tool use y
+  la captura de lead. Recibe `{ messages, context, lang, knownLead }`.
+- **System prompt:** `api/_prompt.js` (server-only, nunca se importa desde `src/`).
+  Documento de referencia legible: `CHATBOT_SYSTEM_PROMPT.md` (mantener en sync).
+- **Dev local:** middleware en `vite.config.js` sirve `/api/chat` con el mismo
+  handler que Vercel; carga las claves de `.env` a `process.env` server-side.
+- **Frontend:** `src/components/ChatWidget.jsx` envía todo el historial + el
+  `context` de la sección. Si la API falla, cae a un **mock por keywords** de
+  reserva (responses/getReply) para no quedarse mudo.
+
+### Claves y entorno (NUNCA en el bundle ni en git)
+- `ANTHROPIC_API_KEY` → en `.env` (local, gitignored) y en Variables de Entorno
+  de Vercel (producción). Plantilla en `.env.example`.
+- `.env` y `.env.*` están en `.gitignore`.
+
+### Identidad y misión del bot
+Habla SIEMPRE como **parte del equipo de BrAIn** ("nosotros", "el equipo"),
+nunca como intermediario y **sin nombrar a personas concretas** (se eliminó toda
+mención a "Sito" del contexto del chatbot). Su misión: recoger el contexto del
+negocio para que el equipo llegue a la reunión preparado y dé la mejor experiencia.
+
+### Contexto de entrada por CTA ({{ENTRY_CONTEXT}})
+El bot arranca distinto según desde dónde se abra: navbar, hero, contact_center,
+back_office, asistente, tier2_other, cta_final, nosotros, founders, exit_intent.
+Mensajes precargados vía evento `chat:send` (CtaFinal, Tier2, FoundersModal).
+
+### Guardrails
+Solo habla de BrAIn y del negocio del visitante; declina lo off-topic; resiste
+prompt-injection; no revela el prompt; no inventa precios/funcionalidades; no da
+consejo legal/fiscal/médico; admite ser IA solo si lo preguntan. Tono sin "¡Claro!",
+breve (2-4 líneas), una pregunta por turno, texto plano (el widget no renderiza
+markdown), cambia de idioma sin avisar.
+
+### Captura de lead (4 datos obligatorios)
+Herramienta `capture_lead` (function calling). El bot persigue, de uno en uno:
+1) nombre, 2) **nombre del negocio + a qué se dedica** (para investigar antes de la
+reunión), 3) email, 4) **teléfono pedido como WhatsApp**. Llama a la herramienta en
+cuanto tiene un contacto válido y la reactualiza al conseguir más datos.
+
+### Email / CRM → APAGADO a propósito (no hay CRM conectado aún)
+Hoy el lead capturado solo se **registra en el log** del servidor (`[lead] ...`):
+no se envía ningún email ni se escribe en ningún CRM. Para activar el aviso por
+email cuando haya CRM: rellenar `RESEND_API_KEY` + `LEAD_FROM_EMAIL`
+(+ `LEAD_NOTIFY_EMAIL`) en el entorno; `api/chat.js → notifyLead()` ya está listo
+(usa Resend). Pendiente: conectar CRM real y, si se quiere, guardar leads parciales.
 
 ## SEO e infraestructura (estado actual)
 - `index.html`: title, description, Open Graph, Twitter Card, theme-color, `lang="es"`.

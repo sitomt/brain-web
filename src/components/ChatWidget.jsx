@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
@@ -89,8 +89,8 @@ const responses = [
     reply: 'Para salones y centros de estética automatizamos citas, recordatorios y respuestas 24/7. Tu cliente reserva aunque estés ocupado. ¿Te lo mostramos?',
   },
   {
-    keys: ['agente', 'persona', 'humano', 'hablar', 'sito', 'directo', 'email', 'contacto'],
-    reply: 'Claro. Escríbele directamente a Sito: ginesmunuera@gmail.com — o deja tu email aquí y te llama él.',
+    keys: ['agente', 'persona', 'humano', 'hablar', 'directo', 'email', 'contacto'],
+    reply: 'Te leemos nosotros directamente. Déjame tu email o un WhatsApp y te contactamos enseguida.',
   },
   {
     keys: ['seguridad', 'datos', 'rgpd', 'gdpr', 'privacidad', 'confidencial', 'nda'],
@@ -98,7 +98,7 @@ const responses = [
   },
   {
     keys: ['agendar', 'reunión', 'reunion', 'cita', 'gratuita', 'diagnóstico', 'diagnostico'],
-    reply: 'Perfecto. Sito se pondrá en contacto contigo en menos de 24 horas. ¿Cuál es tu email?',
+    reply: 'Perfecto. Te contactamos en menos de 24 horas. ¿Cuál es tu email?',
   },
 ]
 
@@ -117,7 +117,7 @@ const CONTEXT_GREETINGS = {
   back_office: 'Te interesa Operaciones: automatizar las tareas administrativas que se repiten. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
   asistente: 'Te interesa Inteligencia de Negocio: preguntar a tus datos y obtener la respuesta al instante. ¿Qué dato te gustaría poder consultar?',
   tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
-  cta_final: '¡Vamos allá! Para preparar la reunión con Sito, ¿en qué sector trabajas?',
+  cta_final: 'Para preparar bien la reunión y llegar con los deberes hechos, cuéntame: ¿en qué sector trabajas?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
   founders: '¡Genial! El Programa Fundadores es para los primeros negocios que entran con nosotros: precio fundador, acceso directo y prioridad. Quedan pocas plazas. ¿En qué sector trabajas para decirte cómo encajaría?',
 }
@@ -129,7 +129,7 @@ function getReply(input) {
   for (const r of responses) {
     if (r.keys.some((k) => lower.includes(k))) return r.reply
   }
-  return '¡Apuntado! Sito revisará tu mensaje y te contactará en menos de 24h. ¿Me dices a qué sector pertenece tu negocio? Así puede preparar la reunión.'
+  return 'Apuntado. Revisamos tu mensaje y te contactamos en menos de 24h. ¿Me dices a qué sector pertenece tu negocio? Así llegamos preparados a la reunión.'
 }
 
 export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
@@ -148,6 +148,12 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [liveCount, setLiveCount] = useState(() => 2 + Math.floor(Math.random() * 3))
   const wasOpenRef = useRef(false)
   const lastContextRef = useRef(null)
+  // Mirror de los mensajes para construir el historial al llamar a la API sin esperar al re-render.
+  const messagesRef = useRef(messages)
+  useEffect(() => { messagesRef.current = messages }, [messages])
+  // Datos del lead que la API va capturando; se reenvían en cada petición para no repetir preguntas.
+  const leadRef = useRef({})
+  const langRef = useRef(typeof navigator !== 'undefined' && navigator.language?.startsWith('en') ? 'en' : 'es')
   const endRef = useRef(null)
   const isMobile = useIsMobile()
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: isMobile ? 48 : 44, maxHeight: 120 })
@@ -238,38 +244,51 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     }
   }, [isOpen, context])
 
+  // Llama al endpoint /api/chat (Claude Sonnet) con todo el historial + contexto de sección.
+  // Si la API falla, cae al mock por palabras clave para que el chat nunca se quede mudo.
+  const respond = useCallback(async (allMsgs) => {
+    const lastUser = allMsgs[allMsgs.length - 1]?.text || ''
+    try {
+      const apiMessages = allMsgs
+        .filter((m) => m.text)
+        .map((m) => ({ role: m.from === 'user' ? 'user' : 'assistant', content: m.text }))
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: apiMessages,
+          context: lastContextRef.current,
+          lang: langRef.current,
+          knownLead: leadRef.current,
+        }),
+      })
+      if (!r.ok) throw new Error('http ' + r.status)
+      const data = await r.json()
+      if (data.lead) leadRef.current = data.lead
+      const reply = (data.reply || '').trim()
+      if (!reply) throw new Error('empty')
+      setTyping(false)
+      setMessages((m) => [...m, { from: 'bot', text: reply }])
+    } catch {
+      setTyping(false)
+      setMessages((m) => [...m, { from: 'bot', text: getReply(lastUser) }])
+    }
+  }, [])
+
+  // Mensaje precargado desde un CTA (evento chat:send): se trata como si el visitante lo escribiera.
   useEffect(() => {
     const handler = (e) => {
       const text = e.detail?.message
       if (!text) return
       setShowQuickReplies(false)
-      setMessages((m) => [...m, { from: 'user', text }])
+      const userMsg = { from: 'user', text }
+      setMessages((m) => [...m, userMsg])
       setTyping(true)
-      setTimeout(() => {
-        setTyping(false)
-        setMessages((m) => [
-          ...m,
-          {
-            from: 'bot',
-            text: 'Perfecto. Sito se pondrá en contacto contigo en menos de 24 horas. ¿Cuál es tu email?',
-          },
-        ])
-        setShowQuickReplies(true)
-        setTimeout(() => {
-          setTyping(true)
-          setTimeout(() => {
-            setTyping(false)
-            setMessages((m) => [
-              ...m,
-              { from: 'bot', text: '¿Me dices a qué sector pertenece tu negocio? Así Sito puede preparar la reunión.' },
-            ])
-          }, 1000)
-        }, 3000)
-      }, 1200)
+      respond([...messagesRef.current, userMsg])
     }
     window.addEventListener('chat:send', handler)
     return () => window.removeEventListener('chat:send', handler)
-  }, [])
+  }, [respond])
 
   const send = (textOverride) => {
     // Block submits while the bot is "thinking" (matches the loading state).
@@ -277,14 +296,12 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     const text = (textOverride || input).trim()
     if (!text) return
     setShowQuickReplies(false)
-    setMessages((m) => [...m, { from: 'user', text }])
+    const userMsg = { from: 'user', text }
+    setMessages((m) => [...m, userMsg])
     setInput('')
     adjustHeight(true)
     setTyping(true)
-    setTimeout(() => {
-      setTyping(false)
-      setMessages((m) => [...m, { from: 'bot', text: getReply(text) }])
-    }, 1000 + Math.random() * 600)
+    respond([...messagesRef.current, userMsg])
   }
 
   const btnRight = isMobile ? 16 : 28
