@@ -1,20 +1,13 @@
 // Integraciones — "se conecta con lo que ya usas". Lista plana de herramientas
-// del mundo del cliente (no el stack técnico interno) con el efecto "hover-brand".
+// del mundo del cliente (no el stack técnico interno).
 //
-// El sistema es el mismo a cualquier tamaño: SIEMPRE dos líneas, y ninguna chip
-// cambia nunca de línea (las filas son arrays fijos con flex-wrap:nowrap).
-//
-//   Escritorio (motion, ≥960px): las dos filas se centran en un bloque más ancho
-//     que las chips; hover sobre una → se ilumina y revela su nombre, el resto se
-//     atenúan. La holgura centrada (margen a ambos lados) absorbe la expansión sin
-//     que ninguna chip desborde ni cambie de fila.
-//   Móvil / tablet (<960px): las dos filas se vuelven cintas en marcha continua
-//     y lenta, en direcciones opuestas (arriba → izquierda, abajo → derecha),
-//     en bucle infinito. Cada chip muestra ya su nombre.
+// Efecto unificado en TODOS los tamaños: dos cintas (filas fijas) en marcha
+// continua y lenta, en direcciones opuestas — arriba se desliza hacia la
+// izquierda, abajo hacia la derecha — en bucle infinito. Cada chip muestra ya su
+// logo y su nombre. La animación es CSS (keyframes en index.css).
 //   Reduced motion: dos filas deslizables a dedo, sin auto-scroll.
 
-import { useState } from 'react'
-import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Eyebrow from './Eyebrow'
 import WipeReveal from './WipeReveal'
 import useIsMobile from '../hooks/useIsMobile'
@@ -58,13 +51,8 @@ const TOOLS = [
 const SPLIT = Math.ceil(TOOLS.length / 2)
 const ROWS = [TOOLS.slice(0, SPLIT), TOOLS.slice(SPLIT)]
 
-// Ancho del bloque de cada fila en escritorio. Deliberadamente más ancho que las
-// chips colapsadas: esa holgura centrada es el margen izq/dcha que absorbe la
-// expansión de cualquier chip sin que la fila desborde ni envuelva.
-const ROW_BLOCK = 'min(980px, 100%)'
-
-// Máscara de desvanecido en los bordes de los carruseles móviles: insinúa que
-// hay más contenido para deslizar y evita el corte seco.
+// Máscara de desvanecido en los bordes de las cintas: insinúa que hay más
+// contenido y evita el corte seco al entrar/salir los logos.
 const EDGE_FADE = 'linear-gradient(to right, transparent, #000 22px, #000 calc(100% - 22px), transparent)'
 
 const CHIP_TRANSITION = { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
@@ -130,18 +118,21 @@ function ToolChip({ tool, active, interactive, onActivate, onDeactivate }) {
   )
 }
 
-// Cinta de logos en marcha continua. Duplica la fila y traslada exactamente una
-// copia (-50%); como ambas copias miden lo mismo, el reinicio del bucle es
-// invisible. direction "left" → entra contenido por la derecha; "right" → por la
-// izquierda. ease lineal + repeat Infinity = movimiento constante.
+// Cinta de logos en marcha continua (animación CSS — fiable y barata). Duplica la
+// fila y traslada exactamente una copia (-50%); como ambas copias miden lo mismo,
+// el reinicio del bucle es invisible. direction "left" → entra contenido por la
+// derecha; "right" → por la izquierda.
 function MarqueeRow({ row, direction, duration }) {
   const items = [...row, ...row]
   return (
     <div style={{ overflow: 'hidden', WebkitMaskImage: EDGE_FADE, maskImage: EDGE_FADE }}>
-      <motion.div
-        style={{ display: 'flex', width: 'max-content', willChange: 'transform' }}
-        animate={{ x: direction === 'left' ? ['0%', '-50%'] : ['-50%', '0%'] }}
-        transition={{ duration, ease: 'linear', repeat: Infinity }}
+      <div
+        style={{
+          display: 'flex',
+          width: 'max-content',
+          willChange: 'transform',
+          animation: `${direction === 'left' ? 'marqueeLeft' : 'marqueeRight'} ${duration}s linear infinite`,
+        }}
       >
         {items.map((tool, i) => (
           <div
@@ -152,20 +143,14 @@ function MarqueeRow({ row, direction, duration }) {
             <ToolChip tool={tool} active interactive={false} />
           </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   )
 }
 
 export default function Herramientas() {
   const isMobile = useIsMobile()
-  // El layout de dos filas centradas con hover-expand solo cabe con holgura en
-  // pantallas anchas. Por debajo de 960px, las dos filas se vuelven carruseles.
-  const compact = useIsMobile(960)
   const reduce = useReducedMotion()
-
-  const interactive = !compact && !reduce
-  const [active, setActive] = useState(null)
 
   return (
     <section
@@ -215,29 +200,7 @@ export default function Herramientas() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7, ease: EASE_PREMIUM, delay: 0.1 }}
         >
-          {interactive ? (
-            // Escritorio: dos filas fijas centradas con holgura → hover-expand.
-            <LayoutGroup id="tools">
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-                {ROWS.map((row, ri) => (
-                  <div key={ri} style={{ width: ROW_BLOCK, margin: '0 auto' }}>
-                    <div style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
-                      {row.map((tool) => (
-                        <ToolChip
-                          key={tool.name}
-                          tool={tool}
-                          active={active === tool.gi}
-                          interactive
-                          onActivate={() => setActive(tool.gi)}
-                          onDeactivate={() => setActive(null)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </LayoutGroup>
-          ) : reduce ? (
+          {reduce ? (
             // Reduced motion: dos filas deslizables a dedo, sin auto-scroll.
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {ROWS.map((row, ri) => (
@@ -263,9 +226,9 @@ export default function Herramientas() {
               ))}
             </div>
           ) : (
-            // Móvil: dos cintas en marcha continua y lenta, en direcciones opuestas.
-            // Arriba se desliza hacia la izquierda; abajo, hacia la derecha.
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            // Todos los tamaños: dos cintas en marcha continua y lenta, en
+            // direcciones opuestas. Arriba → izquierda; abajo → derecha.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 10 : 14 }}>
               <MarqueeRow row={ROWS[0]} direction="left" duration={ROWS[0].length * SECONDS_PER_CHIP} />
               <MarqueeRow row={ROWS[1]} direction="right" duration={ROWS[1].length * SECONDS_PER_CHIP} />
             </div>

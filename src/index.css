@@ -79,6 +79,11 @@ html { scrollbar-width: thin; scrollbar-color: rgba(26,24,20,0.22) transparent; 
   100% { transform: scale(2.4); opacity: 0;   }
 }
 
+/* Marquee de logos (sección Integraciones en móvil). La pista lleva la fila
+   duplicada; trasladar -50% = una copia exacta → bucle continuo sin saltos. */
+@keyframes marqueeLeft  { from { transform: translateX(0); }      to { transform: translateX(-50%); } }
+@keyframes marqueeRight { from { transform: translateX(-50%); }   to { transform: translateX(0); } }
+
 /* Aurora blob float — used by IntroAnimation */
 @keyframes floatBlob {
   0%,  100% { transform: translate(0, 0) scale(1); }
