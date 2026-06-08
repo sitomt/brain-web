@@ -57,22 +57,24 @@ function Divider() {
   )
 }
 
-/* Syne Mono label — h2 semántico con estilo de label, con número opcional (espina narrativa) */
+/* Título de sección — serif legible, con número de acento (espina narrativa).
+   Alineado con la jerarquía de la home: número mono pequeño + título serif grande.
+   (Antes era un mono de 0.62rem a opacidad 0.3 — apenas legible.) */
 function Label({ children, num }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', margin: '0 0 1.25rem' }}>
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.85rem', margin: '0 0 1.4rem' }}>
       {num && (
-        <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.72rem', color: ACCENT, letterSpacing: '0.1em' }}>
+        <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.85rem', color: ACCENT, letterSpacing: '0.08em', flexShrink: 0 }}>
           {num}
         </span>
       )}
       <h2
         style={{
-          fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.62rem',
-          color: 'rgba(255,255,255,0.3)',
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
+          fontFamily: "'Instrument Serif', serif",
+          fontSize: 'clamp(1.6rem, 3vw, 2.1rem)',
+          color: '#fff',
+          lineHeight: 1.15,
+          letterSpacing: '-0.01em',
           margin: 0,
           fontWeight: 400,
         }}
