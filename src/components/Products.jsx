@@ -36,18 +36,18 @@ const PRODUCTS = [
   {
     num: '01',
     contextId: 'contact_center',
-    name: 'Atención al Cliente',
-    tag: 'Contact Center IA',
-    promise: 'Cada conversación, atendida al instante',
+    name: 'Tu Recepcionista',
+    tag: 'Atención al cliente, 24/7',
+    promise: 'Ni un cliente sin atender, a cualquier hora',
     outcomes: [
-      'Responde al instante en WhatsApp, web, email, Instagram y teléfono.',
-      'Conectado a tu CRM y reservas: cada chat acaba en cita, pedido o lead.',
-      'Disponible 24/7 y deriva a tu equipo cuando hace falta.',
+      'Te contesta a los clientes al instante en WhatsApp, web, email, Instagram y teléfono.',
+      'Cada conversación acaba en cita, pedido o lead, y la registra en tu CRM.',
+      'No descansa: atiende 24/7 y avisa a tu equipo cuando hace falta una persona.',
     ],
     bullets: [
       'Atiende reservas y pedidos en cualquier canal',
       'Cualifica y registra cada lead automáticamente',
-      'Deriva a una persona del equipo cuando hace falta',
+      'Avisa a una persona del equipo cuando hace falta',
       'Se integra con tu CRM y tus herramientas actuales',
       'Disponible en WhatsApp, Instagram, Telegram y web',
       'Atiende llamadas con voz natural',
@@ -64,12 +64,12 @@ const PRODUCTS = [
   {
     num: '02',
     contextId: 'back_office',
-    name: 'Operaciones',
-    tag: 'Back Office IA',
-    promise: 'El trabajo repetitivo, resuelto',
+    name: 'Tu Administrativo',
+    tag: 'El papeleo, resuelto solo',
+    promise: 'El trabajo que odias, hecho sin que lo pidas',
     outcomes: [
-      'Recupera horas automatizando las tareas que se repiten cada día.',
-      'Emails, facturas, informes y recordatorios, sin que nadie los pida.',
+      'Se encarga del papeleo que te roba horas: emails, facturas, informes y recordatorios.',
+      'Lo hace cada día sin que nadie se lo pida, con el tono y los criterios de tu empresa.',
       'Te avisa solo cuando algo se sale de lo previsto.',
     ],
     bullets: [
@@ -90,12 +90,12 @@ const PRODUCTS = [
   {
     num: '03',
     contextId: 'asistente',
-    name: 'Inteligencia de Negocio',
-    tag: 'Asistente IA',
-    promise: 'Tus datos, listos para decidir',
+    name: 'Tu Analista',
+    tag: 'Tus datos, en lenguaje claro',
+    promise: 'Pregúntale cómo va el negocio y te responde',
     outcomes: [
-      'Pregunta a tus datos en lenguaje natural y responde en segundos.',
-      'Ventas, costes, stock, reservas y albaranes en un único lugar.',
+      'Le preguntas en español cómo va el negocio y te contesta en segundos.',
+      'Tiene a mano ventas, costes, stock, reservas y albaranes, todo en un sitio.',
       'Detecta desviaciones antes de que se conviertan en un problema.',
     ],
     bullets: [
@@ -847,87 +847,24 @@ function ProductShowcaseCard({ product, isMobile, onChatOpen, onFoundersOpen, hi
   )
 }
 
-/* ──────────────────── MICRO-QUIZ → RESALTADO ──────────────────── */
+/* ──────────────────── AUDITORÍA IA → PUERTA DE ENTRADA ──────────────────── */
 
-const QUIZ = [
-  { q: '¿La atención a clientes (mensajes, llamadas, emails) consume demasiado tiempo a tu equipo?', product: 0 },
-  { q: '¿Hay tareas administrativas repetitivas (emails, facturas, informes) que ralentizan el día a día?', product: 1 },
-  { q: '¿Te cuesta saber qué pasa en tu negocio sin pedir informes a alguien?', product: 2 },
-]
-
-// Botón Sí/No — píldora con barrido de gradiente al hover (mismo lenguaje que la nav).
-function QuizOption({ label, onClick }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: 'relative',
-        flex: 1,
-        height: 52,
-        borderRadius: 999,
-        overflow: 'hidden',
-        border: `1.5px solid ${hovered ? 'transparent' : 'rgba(26,24,20,0.14)'}`,
-        background: 'transparent',
-        cursor: 'pointer',
-        fontFamily: "'DM Sans', sans-serif",
-        fontWeight: 500,
-        fontSize: '1.05rem',
-        color: hovered ? '#fff' : '#1A1814',
-        transition: 'color 0.3s, border-color 0.3s, box-shadow 0.3s',
-        boxShadow: hovered
-          ? '0 10px 24px -14px rgba(67,97,238,0.55)'
-          : 'inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 0 rgba(26,24,20,0.02)',
-      }}
-    >
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: 999,
-          background: GRADIENT,
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)',
-          zIndex: 0,
-        }}
-      />
-      <span style={{ position: 'relative', zIndex: 1 }}>{label}</span>
-    </button>
-  )
-}
-
-function ProductsQuiz({ onResult, isMobile }) {
-  const [step, setStep] = useState(0)
-  const [scores, setScores] = useState([0, 0, 0])
-
-  const answer = (yes) => {
-    const nextScores = [...scores]
-    if (yes) nextScores[QUIZ[step].product] += 1
-    setScores(nextScores)
-
-    if (step < QUIZ.length - 1) {
-      setTimeout(() => setStep(step + 1), 220)
-    } else {
-      const max = Math.max(...nextScores)
-      const winner = max === 0 ? -1 : nextScores.indexOf(max)
-      setTimeout(() => onResult(winner), 320)
-    }
-  }
-
+// Bloque destacado encima de las tres cards. Sustituye al antiguo quiz "¿por
+// dónde empezar?": en vez de obligar a elegir, regala un diagnóstico. Una sola
+// promesa, un solo CTA → abre el chat en modo auditoría (contexto 'audit'), que
+// recomienda qué "empleado" fichar primero y resalta su card.
+function AuditEntryBlock({ onChatOpen, isMobile }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ maxWidth: 560, margin: '0 auto 3rem' }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: EASE }}
+      style={{ maxWidth: 720, margin: '0 auto 3.25rem' }}
     >
-      <SpotlightCard tone="light" radius={20} padding={isMobile ? '1.5rem 1.35rem' : '1.75rem 1.95rem'}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.15rem', gap: 12 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+      <SpotlightCard tone="light" radius={20} padding={isMobile ? '1.75rem 1.5rem' : '2.25rem 2.5rem'}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', gap: '1.1rem', textAlign: isMobile ? 'center' : 'left' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9 }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: GRADIENT, flexShrink: 0 }} />
             <span
               style={{
@@ -936,60 +873,69 @@ function ProductsQuiz({ onResult, isMobile }) {
                 color: 'rgba(26,24,20,0.55)',
                 letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                whiteSpace: 'nowrap',
               }}
             >
-              ¿Por dónde empezar? · {step + 1}/{QUIZ.length}
+              Auditoría IA gratuita
             </span>
           </span>
-          <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
-            {QUIZ.map((_, i) => (
-              <span
-                key={i}
-                style={{
-                  width: 24,
-                  height: 3,
-                  borderRadius: 999,
-                  background: i <= step ? ACCENT : 'rgba(26,24,20,0.12)',
-                  transition: 'background 0.35s ease',
-                }}
-              />
-            ))}
-          </div>
-        </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.3, ease: EASE }}
+          <h3
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(1.65rem, 3.2vw, 2.3rem)',
+              color: '#1A1814',
+              margin: 0,
+              lineHeight: 1.16,
+            }}
           >
+            ¿No sabes por dónde empezar?{' '}
+            <em style={{ fontStyle: 'italic', ...gradientText }}>Nosotros sí.</em>
+          </h3>
+
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 300,
+              fontSize: '1.08rem',
+              color: 'rgba(26,24,20,0.65)',
+              lineHeight: 1.6,
+              margin: 0,
+              maxWidth: 560,
+            }}
+          >
+            Analizamos tu negocio y te decimos las 3 cosas que puedes automatizar ya — y cuál de tus
+            empleados de IA te conviene fichar primero. Sin coste y sin compromiso.
+          </p>
+
+          <div style={{ marginTop: '0.35rem' }}>
+            <CtaButton onClick={() => onChatOpen('audit')}>
+              Pedir mi auditoría gratis
+            </CtaButton>
+          </div>
+
+          {FOUNDERS.active && (
             <p
               style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 'clamp(1.35rem, 2.6vw, 1.65rem)',
-                color: '#1A1814',
-                margin: '0 0 1.3rem',
-                lineHeight: 1.28,
-                minHeight: '3.84em', // reserva ~3 líneas → la card no salta entre preguntas
+                fontFamily: "'Syne Mono', monospace",
+                fontSize: '0.66rem',
+                color: 'rgba(26,24,20,0.5)',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                margin: 0,
               }}
             >
-              {QUIZ[step].q}
+              Gratis para los primeros negocios del Programa Fundadores
             </p>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <QuizOption label="Sí" onClick={() => answer(true)} />
-              <QuizOption label="No" onClick={() => answer(false)} />
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          )}
+        </div>
       </SpotlightCard>
     </motion.div>
   )
 }
 
-function QuizResultChip({ recommendedIdx, onReset }) {
+// Chip de recomendación: aparece cuando el chat (auditoría) ha identificado el
+// "empleado" que encaja. Resalta cuál y deja quitar el resaltado.
+function RecommendationChip({ recommendedIdx, onReset }) {
   const rec = recommendedIdx >= 0 ? PRODUCTS[recommendedIdx] : null
 
   return (
@@ -1029,7 +975,7 @@ function QuizResultChip({ recommendedIdx, onReset }) {
             <span style={{ ...gradientText }}>{rec.name}</span>
           </>
         ) : (
-          'Revisa las tres — cualquiera puede encajar.'
+          'Revisa los tres — cualquiera puede encajar.'
         )}
       </p>
       <button
@@ -1051,7 +997,7 @@ function QuizResultChip({ recommendedIdx, onReset }) {
         }}
       >
         <ArrowClockwise size={11} />
-        Repetir
+        Quitar
       </button>
     </motion.div>
   )
@@ -1113,7 +1059,7 @@ function Tier2Block({ onChatOpen, isMobile }) {
               margin: '0 0 0.65rem',
             }}
           >
-            ¿Tu caso no encaja en los tres?
+            ¿Tu caso necesita algo a medida?
           </p>
           <h3
             style={{
@@ -1124,7 +1070,7 @@ function Tier2Block({ onChatOpen, isMobile }) {
               lineHeight: 1.18,
             }}
           >
-            Lo vemos juntos en una llamada.
+            La auditoría también lo cubre.
           </h3>
           <p
             style={{
@@ -1139,7 +1085,7 @@ function Tier2Block({ onChatOpen, isMobile }) {
               marginRight: isMobile ? 'auto' : 0,
             }}
           >
-            Empieza por el chat; si tu caso necesita algo a medida, lo concretamos en la misma llamada y te decimos si podemos construirlo.
+            Si lo tuyo va más allá de los tres empleados, cuéntanoslo en la auditoría: lo concretamos y te decimos con sinceridad si podemos construirlo.
           </p>
         </div>
 
@@ -1190,8 +1136,8 @@ function Tier2Block({ onChatOpen, isMobile }) {
 
 export default function Products({ onChatOpen, onFoundersOpen }) {
   const isMobile = useIsMobile()
-  // null = quiz pendiente; -1 = sin recomendación; 0/1/2 = índice recomendado
-  const [recommendedIdx, setRecommendedIdx] = useState(null)
+  // -1 = sin recomendación (estado inicial); 0/1/2 = índice recomendado por el chat
+  const [recommendedIdx, setRecommendedIdx] = useState(-1)
   // Acordeón móvil: fila abierta (-1 = ninguna). Default: la primera.
   const [mobileOpenIdx, setMobileOpenIdx] = useState(0)
   // Desktop: card con el detalle desplegado (null = ninguna, solo una a la vez).
@@ -1216,7 +1162,7 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
     requestAnimationFrame(step)
   }
 
-  const handleQuizResult = (idx) => {
+  const handleRecommendation = (idx) => {
     setRecommendedIdx(idx)
     if (idx >= 0) {
       setMobileOpenIdx(idx) // abre la fila recomendada en el acordeón móvil
@@ -1224,16 +1170,16 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
     }
   }
 
-  // El chatbot ha identificado el producto que encaja: reutiliza el mismo flujo
-  // de recomendación (resaltado + scroll) que el quiz.
+  // El chatbot (auditoría) ha identificado el empleado que encaja: resaltamos su
+  // card y hacemos scroll hasta ella.
   useEffect(() => {
     const handler = (e) => {
       const idx = e.detail?.idx
-      if (typeof idx === 'number') handleQuizResult(idx)
+      if (typeof idx === 'number') handleRecommendation(idx)
     }
     window.addEventListener('chat:recommend-product', handler)
     return () => window.removeEventListener('chat:recommend-product', handler)
-    // Suscripción única al montar: handleQuizResult solo dispara setters estables.
+    // Suscripción única al montar: handleRecommendation solo dispara setters estables.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -1269,7 +1215,7 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
                 margin: '0 0 0.85rem',
               }}
             >
-              Tres soluciones. Un objetivo:
+              Tres empleados que no se van.
               <em
                 style={{
                   fontStyle: 'italic',
@@ -1279,7 +1225,7 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
                   backgroundClip: 'text',
                 }}
               >
-                {' '}que tu negocio funcione sin ti encima.
+                {' '}Trabajan a todas horas y no cobran nómina.
               </em>
             </h2>
             <p
@@ -1295,15 +1241,16 @@ export default function Products({ onChatOpen, onFoundersOpen }) {
                 marginRight: isMobile ? 'auto' : 0,
               }}
             >
-              Empieza por donde más lo necesitas. En producción en dos o tres semanas.
+              ¿No sabes a cuál fichar primero? Empieza por la auditoría gratuita y te lo decimos. En producción en dos o tres semanas.
             </p>
           </div>
 
-          {/* QUIZ → RESALTADO */}
-          {recommendedIdx === null ? (
-            <ProductsQuiz onResult={handleQuizResult} isMobile={isMobile} />
-          ) : (
-            <QuizResultChip recommendedIdx={recommendedIdx} onReset={() => setRecommendedIdx(null)} />
+          {/* PUERTA DE ENTRADA: auditoría gratuita (sustituye al quiz) */}
+          <AuditEntryBlock onChatOpen={onChatOpen} isMobile={isMobile} />
+
+          {/* Cuando el chat (auditoría) recomienda un empleado, lo resaltamos */}
+          {recommendedIdx >= 0 && (
+            <RecommendationChip recommendedIdx={recommendedIdx} onReset={() => setRecommendedIdx(-1)} />
           )}
 
           {/* MÓVIL: acordeón vertical · DESKTOP: tríptico de cards-vitrina */}

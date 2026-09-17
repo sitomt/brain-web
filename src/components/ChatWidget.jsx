@@ -39,10 +39,12 @@ const DEFAULT_GREETING = '¡Hola! Soy el asistente de BrAIn. ¿En qué puedo ayu
 const CONTEXT_GREETINGS = {
   navbar: DEFAULT_GREETING,
   hero: '¡Hola! Soy el asistente de BrAIn. ¿Qué parte de tu negocio te gustaría mejorar?',
-  contact_center: 'Te interesa Atención al Cliente: atender cada conversación al instante, en cualquier canal. ¿Por dónde te entran hoy más consultas — WhatsApp, teléfono o web?',
-  back_office: 'Te interesa Operaciones: automatizar las tareas administrativas que se repiten. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
-  asistente: 'Te interesa Inteligencia de Negocio: preguntar a tus datos y obtener la respuesta al instante. ¿Qué dato te gustaría poder consultar?',
+  audit: 'Perfecto, te hago la auditoría gratis. Cuéntame a qué se dedica tu negocio y cómo trabajáis por dentro, y te digo las 3 cosas que podrías automatizar ya — y por cuál de tus empleados de IA te conviene empezar.',
+  contact_center: 'Te interesa tu Recepcionista: atender cada conversación al instante, en cualquier canal y a cualquier hora. ¿Por dónde te entran hoy más consultas — WhatsApp, teléfono o web?',
+  back_office: 'Te interesa tu Administrativo: que se encargue solo del papeleo que se repite. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
+  asistente: 'Te interesa tu Analista: preguntarle en español cómo va el negocio y que te conteste al instante. ¿Qué dato te gustaría poder consultar?',
   tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
+  faq: '¿Te ha quedado alguna duda? Pregúntame lo que quieras sobre cómo trabajamos, los plazos, los precios o tus datos.',
   cta_final: 'Para preparar bien la reunión y llegar con los deberes hechos, cuéntame: ¿en qué sector trabajas?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
   founders: '¡Genial! El Programa Fundadores es para los primeros negocios que entran con nosotros: precio fundador, acceso directo y prioridad. Quedan pocas plazas. ¿En qué sector trabajas para decirte cómo encajaría?',
@@ -52,14 +54,14 @@ const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
 
 // Nombre de cara al cliente de cada solución (para la frase de recomendación).
 const PRODUCT_NAMES = {
-  contact_center: 'Atención al Cliente',
-  back_office: 'Operaciones',
-  asistente: 'Inteligencia de Negocio',
+  contact_center: 'tu Recepcionista',
+  back_office: 'tu Administrativo',
+  asistente: 'tu Analista',
 }
 // Frase que el bot "dice" en el instante en que abre el producto en pantalla.
 // Se inyecta desde el cliente para garantizar que aparece SIEMPRE que hay recomendación.
 const recommendPhrase = (productId) =>
-  `Por lo que me cuentas, lo que mejor se ajusta a lo que necesitas es ${PRODUCT_NAMES[productId] || 'esta solución'}. Te lo acabo de abrir en pantalla para que puedas echarle un vistazo.`
+  `Por lo que me cuentas, el empleado de IA que más falta te hace es ${PRODUCT_NAMES[productId] || 'esta solución'}. Te lo acabo de abrir en pantalla para que puedas echarle un vistazo.`
 
 // Persistencia de la conversación durante la sesión (sessionStorage): sobrevive a
 // minimizar, navegar entre rutas y recargar; se borra al cerrar la pestaña.

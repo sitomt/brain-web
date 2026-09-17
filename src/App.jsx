@@ -10,6 +10,7 @@ import Products from './components/Products'
 import Cases from './components/Cases'
 import TrustBar from './components/TrustBar'
 import HowItWorks from './components/HowItWorks'
+import Faq from './components/Faq'
 import CtaFinal from './components/CtaFinal'
 import FoundersOffer from './components/FoundersOffer'
 import ChatWidget from './components/ChatWidget'
@@ -25,6 +26,8 @@ import { FOUNDERS, FOUNDERS_BAR_H } from './lib/founders'
 
 // Lazy-loaded route — keeps the /nosotros page out of the initial bundle.
 const Nosotros = lazy(() => import('./pages/Nosotros'))
+// Vista previa aislada de las alternativas de animación (no se usa en producción).
+const PreviewAnimaciones = lazy(() => import('./pages/PreviewAnimaciones'))
 
 // contextId del bot → índice de PRODUCTS (orden: Atención al Cliente, Operaciones, Inteligencia de Negocio).
 const PRODUCT_INDEX = { contact_center: 0, back_office: 1, asistente: 2 }
@@ -135,6 +138,10 @@ function AppContent() {
                 {FOUNDERS.active && (
                   <FoundersOffer onChatOpen={() => openChat(FOUNDERS.chatContext)} />
                 )}
+                {/* FAQ — resuelve objeciones justo antes del CTA final */}
+                <section id="faq">
+                  <Faq onChatOpen={() => openChat('faq')} />
+                </section>
                 <section id="cta">
                   <CtaFinal onChatOpen={() => openChat('cta_final')} />
                 </section>
@@ -153,6 +160,15 @@ function AppContent() {
                 onOpenLegal={openLegal}
                 onOpenCookies={reopenCookies}
               />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/preview-animaciones"
+          element={
+            <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#08080A' }} />}>
+              <PreviewAnimaciones />
             </Suspense>
           }
         />
