@@ -12,15 +12,10 @@ export const FOUNDERS = {
   active: true,
   spotsTotal: 15,
   spotsLeft: 8, // editar a mano según se vayan cerrando plazas
-  discountLabel: '50%', // ahorro máximo sobre catálogo, solo texto
+  spotsUpdatedAt: '18 sep 2026', // actualizar junto con spotsLeft
   chatContext: 'founders',
-  // mensaje precargado que se envía al chat al pulsar el CTA del modal
-  chatPrefill:
-    'Hola. Me interesa el Programa Fundadores y reservar una de las plazas con precio fundador.',
 }
 
-// Altura de la barra superior — la usa App.jsx para empujar la navegación.
-export const FOUNDERS_BAR_H = 40
 
 // Plazas ya ocupadas — para la barra de progreso del modal.
 export const spotsTaken = () => FOUNDERS.spotsTotal - FOUNDERS.spotsLeft

@@ -2,15 +2,17 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
 import { BRAND, ACCENT } from '../lib/tokens'
 import { openBooking } from '../lib/booking'
-import { EMAIL, PHONE, PHONE_TEL, WHATSAPP_URL } from '../lib/site'
+import { EMAIL, PHONE, PHONE_TEL } from '../lib/site'
+import { CTA_LABEL } from '../lib/cta'
+import CtaButton from './CtaButton'
 
 const GRADIENT = BRAND.gradient
 
 // Section anchors live on the home route.
 const NAV_LINKS = [
-  { label: 'Programa Fundadores', id: 'fundadores' },
   { label: 'Enfoque',             id: 'enfoque' },
   { label: 'Cómo trabajamos',     id: 'proceso' },
+  { label: 'Programa Fundadores', id: 'fundadores' },
   { label: 'Integraciones',       id: 'integraciones' },
   { label: 'Preguntas',           id: 'faq' },
 ]
@@ -92,7 +94,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
               <BrandMark size="1.3rem" />
             </Link>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.95rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.5)', margin: 0 }}>
-              La IA que hace funcionar tu negocio. Diseñada con criterio de empresario, operativa en semanas.
+              La IA que ya usamos en nuestros negocios, puesta a trabajar en el tuyo. Sito Labs, Murcia.
             </p>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, fontFamily: "'DM Sans',sans-serif", fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)' }}>
               <span style={{ width: 6, height: 6, borderRadius: 999, background: ACCENT, boxShadow: `0 0 10px ${ACCENT}`, flexShrink: 0 }} />
@@ -137,27 +139,12 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
               <a href={`tel:${PHONE_TEL}`} style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
                 {PHONE}
               </a>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
-                WhatsApp directo
-              </a>
               <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)' }}>
                 Respondemos en menos de 24 h
               </span>
-              <a
-                href="#agendar"
-                onClick={(e) => { e.preventDefault(); openBooking('footer') }}
-                style={{
-                  marginTop: '0.4rem', display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '0.6rem 1.15rem', borderRadius: 999, textDecoration: 'none',
-                  border: '1px solid rgba(255,255,255,0.16)', background: 'rgba(255,255,255,0.04)',
-                  fontFamily: "'DM Sans',sans-serif", fontSize: '0.85rem', color: 'rgba(255,255,255,0.9)',
-                  transition: 'background 0.25s ease, border-color 0.25s ease',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.16)' }}
-              >
-                Agendar llamada
-              </a>
+              <div style={{ marginTop: '0.4rem' }}>
+                <CtaButton variant="light" size="md" onClick={() => openBooking('footer')}>{CTA_LABEL}</CtaButton>
+              </div>
             </div>
           </div>
         </div>

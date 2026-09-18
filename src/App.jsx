@@ -14,12 +14,11 @@ import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner, { STORAGE_KEY as COOKIE_STORAGE_KEY } from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
-import FoundersBar from './components/FoundersBar'
 import BookingModal from './components/BookingModal'
 import { openBooking } from './lib/booking'
 import ScrollProgress from './components/ScrollProgress'
 import CursorGlow from './components/CursorGlow'
-import { FOUNDERS, FOUNDERS_BAR_H } from './lib/founders'
+import { FOUNDERS } from './lib/founders'
 
 // Lazy-loaded route — keeps the /nosotros page out of the initial bundle.
 const Nosotros = lazy(() => import('./pages/Nosotros'))
@@ -35,9 +34,6 @@ function AppContent() {
   const [legalOpen, setLegalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState('privacidad')
   const [cookieBannerKey, setCookieBannerKey] = useState(0)
-  const [foundersBarOpen, setFoundersBarOpen] = useState(
-    () => FOUNDERS.active && localStorage.getItem('sitolabs_founders_bar_dismissed') !== '1'
-  )
 
   const location = useLocation()
   const isHome = location.pathname === '/'
@@ -48,15 +44,6 @@ function AppContent() {
     localStorage.removeItem(COOKIE_STORAGE_KEY)
     setCookieBannerKey(k => k + 1)
   }
-  const dismissFoundersBar = () => {
-    localStorage.setItem('sitolabs_founders_bar_dismissed', '1')
-    setFoundersBarOpen(false)
-  }
-  // La barra de fundadores (y el topOffset que empuja el navbar) deben ser
-  // idénticos en toda la web. Solo esperamos a que acabe la intro EN HOME;
-  // en el resto de rutas (no hay splash) aparece directamente.
-  const introReady = isHome ? introComplete : true
-  const showFoundersBar = FOUNDERS.active && introReady && foundersBarOpen
 
   return (
     <>
@@ -66,18 +53,10 @@ function AppContent() {
       {/* Scroll progress bar (#04) — hidden during the home intro splash */}
       {(!isHome || introComplete) && <ScrollProgress />}
 
-      {showFoundersBar && (
-        <FoundersBar
-          onOpen={() => document.getElementById('fundadores')?.scrollIntoView({ behavior: 'smooth' })}
-          onDismiss={dismissFoundersBar}
-        />
-      )}
-
       {/* Navigation lives at app level — visible on all routes */}
       <Navigation
         visible={isHome ? introComplete : true}
         onChatOpen={() => openBooking('navbar')}
-        topOffset={showFoundersBar ? FOUNDERS_BAR_H : 0}
       />
 
       <Routes>
@@ -97,17 +76,19 @@ function AppContent() {
                 <section id="hero" style={{ position: 'relative' }}>
                   <Hero introComplete={introComplete} />
                 </section>
-                {/* Programa Fundadores — el eje de la web, justo tras el hero */}
-                {FOUNDERS.active && <FoundersOffer />}
-                {/* Enfoque = somos empresarios, probado en casa */}
+                {/* Prueba: somos empresarios + lo usamos en casa + quién te atiende */}
                 <section id="enfoque">
                   <Enfoque />
                 </section>
+                {/* Mecanismo: qué pasa en la llamada y después */}
                 <HowItWorks />
-                {/* Integraciones = confianza: se conecta con lo que el cliente ya usa */}
+                {/* Oferta: Programa Fundadores */}
+                {FOUNDERS.active && <FoundersOffer />}
+                {/* Confianza técnica: se conecta con lo que ya usas */}
                 <section id="integraciones">
                   <Herramientas />
                 </section>
+                {/* Objeciones: lo que NO hacemos + FAQ */}
                 <section id="faq">
                   <Faq />
                 </section>
@@ -125,7 +106,6 @@ function AppContent() {
           element={
             <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#0A0A0B' }} />}>
               <Nosotros
-                onChatOpen={() => openChat('nosotros')}
                 onOpenLegal={openLegal}
                 onOpenCookies={reopenCookies}
               />

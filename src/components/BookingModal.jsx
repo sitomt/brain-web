@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 import { CAL_URL } from '../lib/booking'
+import { EMAIL, PHONE, WHATSAPP_URL } from '../lib/site'
 import { FOUNDERS } from '../lib/founders'
 import { EASE_PREMIUM } from '../lib/motion'
 import { gradientText } from '../lib/tokens'
@@ -71,7 +72,7 @@ export default function BookingModal() {
                   Elige día y hora. <em style={{ ...gradientText, fontStyle: 'italic' }}>30 min, gratis.</em>
                 </span>
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.85rem', color: 'rgba(26,24,20,0.6)' }}>
-                  Te llega la invitación por email al momento{FOUNDERS.active ? ` · quedan ${FOUNDERS.spotsLeft} plazas fundador` : ''}
+                  Te atiende Ginés Munuera. Te llega la invitación por email al momento. Tus datos solo se usan para esta llamada.{FOUNDERS.active ? ` Quedan ${FOUNDERS.spotsLeft} plazas fundador.` : ''}
                 </span>
               </div>
               <button
@@ -87,6 +88,11 @@ export default function BookingModal() {
               src={src}
               style={{ flex: 1, width: '100%', border: 0, background: '#FAF8F3' }}
             />
+            <div style={{ padding: isMobile ? '0.7rem 1.1rem' : '0.75rem 1.6rem', borderTop: '1px solid rgba(26,24,20,0.08)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(26,24,20,0.6)' }}>
+              ¿No ves el calendario? Escríbenos por{' '}
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#1A1814' }}>WhatsApp al {PHONE}</a>
+              {' '}o a <a href={`mailto:${EMAIL}`} style={{ color: '#1A1814' }}>{EMAIL}</a> y te proponemos hora.
+            </div>
           </motion.div>
         </motion.div>
       )}

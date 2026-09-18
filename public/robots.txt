@@ -35,4 +35,4 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
-Sitemap: https://sitolabs.example/sitemap.xml
+Sitemap: https://sitolabs.com/sitemap.xml

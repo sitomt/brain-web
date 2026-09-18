@@ -58,18 +58,18 @@ export default function CookieBanner({ onOpenLegal }) {
           {/* Gradient top line */}
           <div style={{ height: 2, background: GRADIENT, width: '100%' }} />
 
-          <div style={{ padding: isMobile ? '1.25rem' : '1.5rem 1.75rem' }}>
+          <div style={{ padding: isMobile ? '0.9rem 1rem' : '1.5rem 1.75rem' }}>
             {!managing ? (
               /* ── Default view ── */
               <>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem', marginBottom: isMobile ? '0.75rem' : '1.25rem' }}>
                   <span style={{ fontSize: '1.25rem', lineHeight: 1, marginTop: 2 }}>🍪</span>
                   <div>
                     <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: '0.95rem', color: '#fff', marginBottom: '0.4rem' }}>
                       Usamos cookies
                     </p>
                     <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
-                      Las esenciales son necesarias para el funcionamiento de la web. Las analíticas nos ayudan a mejorar.{' '}
+                      {isMobile ? 'Esenciales para que la web funcione; las analíticas nos ayudan a mejorar. ' : 'Las esenciales son necesarias para el funcionamiento de la web. Las analíticas nos ayudan a mejorar. '}
                       <button
                         onClick={() => onOpenLegal('cookies')}
                         style={{ border: 'none', padding: 0, cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontSize: '0.82rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
@@ -80,15 +80,16 @@ export default function CookieBanner({ onOpenLegal }) {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: isMobile ? 'column-reverse' : 'row', gap: 8, flexWrap: 'wrap', alignItems: 'stretch', justifyContent: isMobile ? 'stretch' : 'flex-end' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', gap: 8, flexWrap: 'wrap', alignItems: 'stretch', justifyContent: 'flex-end' }}>
                   <button
                     onClick={() => setManaging(true)}
                     style={{
-                      width: isMobile ? '100%' : 'auto',
+                      width: 'auto',
+                      display: isMobile ? 'none' : undefined,
                       background: 'none',
                       border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: 999,
-                      padding: isMobile ? '11px 16px' : '8px 16px',
+                      padding: isMobile ? '10px 14px' : '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',
@@ -105,11 +106,12 @@ export default function CookieBanner({ onOpenLegal }) {
                   <button
                     onClick={() => accept('essential')}
                     style={{
-                      width: isMobile ? '100%' : 'auto',
+                      flex: isMobile ? 1 : undefined,
+                      width: 'auto',
                       background: 'none',
                       border: '1px solid rgba(255,255,255,0.18)',
                       borderRadius: 999,
-                      padding: isMobile ? '11px 16px' : '8px 16px',
+                      padding: isMobile ? '10px 14px' : '8px 16px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',
@@ -126,11 +128,12 @@ export default function CookieBanner({ onOpenLegal }) {
                   <button
                     onClick={() => accept('all')}
                     style={{
-                      width: isMobile ? '100%' : 'auto',
+                      flex: isMobile ? 1 : undefined,
+                      width: 'auto',
                       background: GRADIENT,
                       border: 'none',
                       borderRadius: 999,
-                      padding: isMobile ? '12px 20px' : '9px 20px',
+                      padding: isMobile ? '10px 14px' : '9px 20px',
                       cursor: 'pointer',
                       fontFamily: "'Syne Mono',monospace",
                       fontSize: '0.68rem',

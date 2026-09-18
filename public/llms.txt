@@ -23,8 +23,8 @@
 - Playgame Italia — operaciones (Italia).
 
 ## Enlaces
-- Inicio: https://sitolabs.example/
-- Nosotros: https://sitolabs.example/nosotros
+- Inicio: https://sitolabs.com/
+- Nosotros: https://sitolabs.com/nosotros
 - Contacto: hello@sitolabs.com
 
-<!-- NOTA: sustituir "sitolabs.example" por el dominio real al publicar. -->
+<!-- NOTA: sustituir "sitolabs.com" por el dominio real al publicar. -->

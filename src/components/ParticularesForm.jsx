@@ -9,7 +9,6 @@ import { gradientText } from '../lib/tokens'
 // Formulario para particulares (ruta secundaria, sin llamada). Se abre con
 // openParticulares() (lib/booking.js) → evento 'particulares:open'. Envía a /api/particular.
 
-const BUDGETS = ['Aún no lo sé', 'Menos de 500 €', '500 – 1.500 €', 'Más de 1.500 €']
 
 const field = {
   width: '100%', boxSizing: 'border-box', padding: '0.85rem 1rem', borderRadius: 12,
@@ -25,7 +24,7 @@ export default function ParticularesForm() {
   const isMobile = useIsMobile()
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState('idle') // idle | sending | ok | error
-  const [form, setForm] = useState({ name: '', email: '', idea: '', budget: BUDGETS[0], website: '' })
+  const [form, setForm] = useState({ name: '', email: '', idea: '', budget: '', website: '' })
 
   useEffect(() => {
     const onOpen = () => { setStatus('idle'); setOpen(true) }
@@ -114,10 +113,8 @@ export default function ParticularesForm() {
                   <textarea id="pf-idea" required minLength={10} rows={4} value={form.idea} onChange={set('idea')} style={{ ...field, resize: 'vertical' }} placeholder="Ej. un asistente que organice mis apuntes y me pregunte para estudiar" />
                 </div>
                 <div>
-                  <label style={label} htmlFor="pf-budget">Presupuesto aproximado</label>
-                  <select id="pf-budget" value={form.budget} onChange={set('budget')} style={field}>
-                    {BUDGETS.map((b) => <option key={b}>{b}</option>)}
-                  </select>
+                  <label style={label} htmlFor="pf-budget">Presupuesto aproximado (opcional)</label>
+                  <input id="pf-budget" value={form.budget} onChange={set('budget')} style={field} placeholder="Si tienes una idea, dínosla" />
                 </div>
                 {/* Honeypot anti-spam */}
                 <input tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} style={{ position: 'absolute', left: -9999, opacity: 0 }} aria-hidden />

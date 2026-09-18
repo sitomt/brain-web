@@ -148,7 +148,7 @@ const NOSOTROS_SCHEMA = {
       '@id': `${SITE_URL}/nosotros`,
       url: `${SITE_URL}/nosotros`,
       name: 'Nosotros · Sito Labs — Agencia de IA en Murcia',
-      description: 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de Sito Labs, agencia de IA en Murcia.',
+      description: 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de Sito Labs, agencia de IA en Murcia.',
       isPartOf: { '@id': `${SITE_URL}/#organization` },
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -170,7 +170,7 @@ const NOSOTROS_SCHEMA = {
   ],
 }
 
-export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
+export default function Nosotros({ onOpenLegal, onOpenCookies }) {
   const isMobile = useIsMobile()
   const navigate = useNavigate()
   const location = useLocation()
@@ -190,7 +190,7 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
     const prevDesc = descEl?.getAttribute('content') ?? ''
 
     document.title = 'Nosotros · Sito Labs | Agencia de IA en Murcia — Quiénes somos'
-    descEl?.setAttribute('content', 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de Sito Labs, agencia de IA en Murcia. Primera reunión gratuita.')
+    descEl?.setAttribute('content', 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de Sito Labs, agencia de IA en Murcia. Primera llamada gratuita.')
 
     const script = document.createElement('script')
     script.type = 'application/ld+json'
@@ -232,7 +232,7 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
               <br />lo que necesitas.
             </h1>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: '1.75rem 0 0', maxWidth: '46ch' }}>
-              Un grupo de inversores que gestiona negocios reales en varios
+              Un grupo de socios empresarios que gestiona negocios reales en varios
               sectores. Lo que automatizamos para ti, lo probamos antes en lo nuestro.
             </p>
           </motion.div>
@@ -283,7 +283,7 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
             >
               <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.75, margin: 0 }}>
                 Sito Labs no nace de un despacho de programadores. Nace de un grupo de
-                inversores que lleva años levantando y dirigiendo empresas en
+                socios empresarios que lleva años levantando y dirigiendo empresas en
                 sectores <strong style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>muy distintos</strong>.
               </p>
               <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.92rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, margin: 0 }}>
@@ -555,20 +555,17 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
       </section>
 
       {/* ── CTA primario ── */}
-      <CtaFinal onChatOpen={onChatOpen} />
+      <CtaFinal />
 
       {/* ── Volver — CTA secundario, regresa al punto de la home donde estaba ── */}
       <div style={{ background: '#0A0A0C', padding: `0 ${px} 3rem`, display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={handleBack}
           style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10, padding: '0.85rem 1.5rem',
-            borderRadius: 999, border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.04)',
-            color: 'rgba(255,255,255,0.92)', fontFamily: "'DM Sans', sans-serif", fontSize: '0.95rem',
-            letterSpacing: '0.02em', cursor: 'pointer', transition: 'background 0.3s ease, border-color 0.3s ease',
+            display: 'inline-flex', alignItems: 'center', gap: 8, padding: 0, border: 'none', background: 'none',
+            color: 'rgba(255,255,255,0.65)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.9rem',
+            cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.32)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)' }}
         >
           <ArrowLeft size={14} />
           Volver

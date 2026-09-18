@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
+import { CTA_LABEL } from '../lib/cta'
+import { openBooking } from '../lib/booking'
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
 
 // CornerRightUp (lucide) inlined — keeps the project free of an icon dependency.
@@ -29,44 +31,28 @@ const GRADIENT = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
 
 const QUICK_REPLIES = [
-  '¿Cuánto cuesta?',
-  '¿Cuánto tarda en implementarse?',
-  'Hablar con una persona',
+  '¿Qué podríais hacer en mi negocio?',
+  '¿Cuánto tarda?',
+  CTA_LABEL,
 ]
 
-const DEFAULT_GREETING = '¡Hola! Soy el asistente de Sito Labs. ¿En qué puedo ayudarte?'
+const DEFAULT_GREETING = 'Hola, soy el asistente de Sito Labs. ¿Qué parte de tu negocio te quita más tiempo?'
 
 const CONTEXT_GREETINGS = {
   navbar: DEFAULT_GREETING,
-  hero: '¡Hola! Soy el asistente de Sito Labs. ¿Qué parte de tu negocio te gustaría mejorar?',
-  audit: 'Perfecto, te hago la auditoría gratis. Cuéntame a qué se dedica tu negocio y cómo trabajáis por dentro, y te digo las 3 cosas que podrías automatizar ya — y por cuál de tus empleados de IA te conviene empezar.',
-  contact_center: 'Te interesa tu Recepcionista: atender cada conversación al instante, en cualquier canal y a cualquier hora. ¿Por dónde te entran hoy más consultas — WhatsApp, teléfono o web?',
-  back_office: 'Te interesa tu Administrativo: que se encargue solo del papeleo que se repite. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
-  asistente: 'Te interesa tu Analista: preguntarle en español cómo va el negocio y que te conteste al instante. ¿Qué dato te gustaría poder consultar?',
-  tier2_other: 'Cuéntame qué proceso repetitivo te gustaría automatizar y te digo si encaja con lo que hacemos.',
-  faq: '¿Te ha quedado alguna duda? Pregúntame lo que quieras sobre cómo trabajamos, los plazos, los precios o tus datos.',
-  cta_final: 'Para preparar bien la reunión y llegar con los deberes hechos, cuéntame: ¿en qué sector trabajas?',
+  hero: DEFAULT_GREETING,
+  faq: '¿Te ha quedado alguna duda? Pregúntame lo que quieras sobre cómo trabajamos, los plazos o tus datos.',
+  cta_final: 'Para que Ginés llegue preparado a la llamada, cuéntame: ¿a qué se dedica tu negocio?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
-  founders: '¡Genial! El Programa Fundadores es para los primeros negocios que entran con nosotros: precio fundador, acceso directo y prioridad. Quedan pocas plazas. ¿En qué sector trabajas para decirte cómo encajaría?',
+  founders: 'El Programa Fundadores es para las 15 primeras empresas que construyen su IA con nosotros: precio especial, prioridad y trabajo codo a codo. Quedan 8 plazas. ¿En qué sector trabajas?',
 }
 
 const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
 
-// Nombre de cara al cliente de cada solución (para la frase de recomendación).
-const PRODUCT_NAMES = {
-  contact_center: 'tu Recepcionista',
-  back_office: 'tu Administrativo',
-  asistente: 'tu Analista',
-}
-// Frase que el bot "dice" en el instante en que abre el producto en pantalla.
-// Se inyecta desde el cliente para garantizar que aparece SIEMPRE que hay recomendación.
-const recommendPhrase = (productId) =>
-  `Por lo que me cuentas, el empleado de IA que más falta te hace es ${PRODUCT_NAMES[productId] || 'esta solución'}. Te lo acabo de abrir en pantalla para que puedas echarle un vistazo.`
-
 // Persistencia de la conversación durante la sesión (sessionStorage): sobrevive a
 // minimizar, navegar entre rutas y recargar; se borra al cerrar la pestaña.
-const MSG_STORAGE_KEY = 'brain_chat_messages'
-const LEAD_STORAGE_KEY = 'brain_chat_lead'
+const MSG_STORAGE_KEY = 'sitolabs_chat_messages'
+const LEAD_STORAGE_KEY = 'sitolabs_chat_lead'
 const DEFAULT_MESSAGES = [{ from: 'bot', text: DEFAULT_GREETING }]
 
 function loadStored(key, fallback) {
@@ -84,7 +70,7 @@ function loadStored(key, fallback) {
 const hasUserTurn = (msgs) => Array.isArray(msgs) && msgs.some((m) => m.from === 'user')
 
 
-export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecommendProduct }) {
+export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const [messages, setMessages] = useState(() => {
     const stored = loadStored(MSG_STORAGE_KEY, null)
     return Array.isArray(stored) && stored.length ? stored : DEFAULT_MESSAGES
@@ -103,9 +89,6 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
   // Ignora resultados de voz que lleguen DESPUÉS de pulsar enviar (evita que la
   // transcripción reaparezca en la cajita tras mandar el mensaje).
   const ignoreSpeechRef = useRef(false)
-  // Live count for the "personas hablando ahora" indicator.
-  // Starts 2–4, drifts ±1 every 8–15s, clamped to 1–5.
-  const [liveCount, setLiveCount] = useState(() => 2 + Math.floor(Math.random() * 3))
   const wasOpenRef = useRef(false)
   const lastContextRef = useRef(null)
   // Mirror de los mensajes para construir el historial al llamar a la API sin esperar al re-render.
@@ -117,8 +100,6 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
   }, [messages])
   // Datos del lead que la API va capturando; se reenvían en cada petición para no repetir preguntas.
   const leadRef = useRef(loadStored(LEAD_STORAGE_KEY, {}) || {})
-  // Último producto recomendado por el bot, para no re-navegar en bucle.
-  const lastRecommendedRef = useRef(null)
   const langRef = useRef(typeof navigator !== 'undefined' && navigator.language?.startsWith('en') ? 'en' : 'es')
   const endRef = useRef(null)
   const isMobile = useIsMobile()
@@ -127,23 +108,6 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing, showQuickReplies])
-
-  // Drift the live count by ±1 every 8–15s, clamped between 1 and 5
-  useEffect(() => {
-    let timeoutId
-    const tick = () => {
-      setLiveCount(prev => {
-        const delta = Math.random() < 0.5 ? -1 : 1
-        const next = prev + delta
-        if (next < 1) return 1
-        if (next > 5) return 5
-        return next
-      })
-      timeoutId = setTimeout(tick, 8000 + Math.random() * 7000)
-    }
-    timeoutId = setTimeout(tick, 8000 + Math.random() * 7000)
-    return () => clearTimeout(timeoutId)
-  }, [])
 
   // Web Speech API setup — voice → text into the input. Graceful if unsupported.
   useEffect(() => {
@@ -236,22 +200,12 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
         try { sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(data.lead)) } catch { /* noop */ }
       }
       const reply = (data.reply || '').trim()
-      // El bot ha identificado el producto que encaja (una sola vez por producto).
-      const newRecommend = data.recommendedProduct && data.recommendedProduct !== lastRecommendedRef.current
-      if (!reply && !newRecommend) throw new Error('empty')
+      if (!reply && !data.openBooking) throw new Error('empty')
       setTyping(false)
-      // Cuando hay recomendación inyectamos NOSOTROS la frase ("te lo acabo de abrir
-      // en pantalla…") para garantizar que aparece siempre, seguida de la respuesta del modelo.
-      const bubbles = []
-      if (newRecommend) bubbles.push({ from: 'bot', text: recommendPhrase(data.recommendedProduct) })
-      if (reply) bubbles.push({ from: 'bot', text: reply })
-      setMessages((m) => [...m, ...bubbles])
-      if (newRecommend) {
-        lastRecommendedRef.current = data.recommendedProduct
-        onRecommendProduct?.(data.recommendedProduct) // abre/scrollea a la sección del producto
-        // En móvil minimizamos el chat para que vea el producto a pantalla completa
-        // (la conversación queda guardada y puede reabrirla). En escritorio sigue abierto.
-        if (isMobile) setTimeout(() => onClose?.(), 900)
+      if (reply) setMessages((m) => [...m, { from: 'bot', text: reply }])
+      // El bot ha propuesto agendar: abrimos el calendario y minimizamos el chat.
+      if (data.openBooking) {
+        setTimeout(() => { onClose?.(); openBooking('chat') }, 700)
       }
     } catch {
       setTyping(false)
@@ -260,7 +214,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
         { from: 'bot', text: 'Uy, se me ha cruzado un cable un momento. ¿Me lo repites? Y si prefieres, déjame tu email o WhatsApp y te escribimos enseguida.' },
       ])
     }
-  }, [onRecommendProduct, onClose, isMobile])
+  }, [onClose])
 
   // Mensaje precargado desde un CTA (evento chat:send): se trata como si el visitante lo escribiera.
   useEffect(() => {
@@ -301,65 +255,6 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
 
   return (
     <>
-      {/* Live "personas hablando ahora" indicator — discreet, sits to the left of the closed widget */}
-      <AnimatePresence>
-        {!isOpen && !isMobile && (
-          <motion.div
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 12 }}
-            transition={{ duration: 0.5, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: 'fixed',
-              bottom: btnBottom + 8,
-              right: btnRight + 52 + 12,
-              height: 36,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 9,
-              padding: '0 14px',
-              borderRadius: 999,
-              background: 'rgba(26,24,20,0.82)',
-              backdropFilter: 'blur(14px) saturate(140%)',
-              WebkitBackdropFilter: 'blur(14px) saturate(140%)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 4px 18px rgba(0,0,0,0.22)',
-              color: 'rgba(255,255,255,0.85)',
-              fontFamily: "'Syne Mono', monospace",
-              fontSize: '0.7rem',
-              letterSpacing: '0.04em',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-              zIndex: 199,
-            }}
-          >
-            {/* Pulsing live dot */}
-            <span style={{ position: 'relative', display: 'inline-flex', width: 8, height: 8, flexShrink: 0 }}>
-              <motion.span
-                animate={{ scale: [1, 2.6], opacity: [0.55, 0] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '50%',
-                  background: '#22C55E',
-                }}
-              />
-              <span style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '50%',
-                background: '#22C55E',
-                boxShadow: '0 0 6px rgba(34,197,94,0.7)',
-              }} />
-            </span>
-            <span>
-              {liveCount} {liveCount === 1 ? 'persona' : 'personas'} hablando
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Floating button */}
       <motion.button
         onClick={isOpen ? onClose : onOpen}
@@ -384,14 +279,13 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
           boxShadow: '0 4px 24px rgba(0,0,0,0.35)',
         }}
       >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+        <div
           style={{
             position: 'absolute',
-            inset: -2,
+            inset: -1.5,
             borderRadius: '50%',
-            background: 'conic-gradient(#4361EE, #7209B7, #F72585, #FB5607, #4361EE)',
+            background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)',
+            opacity: 0.85,
             zIndex: -1,
           }}
         />
@@ -479,7 +373,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
                   {QUICK_REPLIES.map((qr) => (
                     <button
                       key={qr}
-                      onClick={() => send(qr)}
+                      onClick={() => (qr === CTA_LABEL ? (onClose?.(), openBooking('chat')) : send(qr))}
                       style={{
                         padding: isMobile ? '10px 16px' : '6px 12px',
                         minHeight: isMobile ? 40 : 'auto',

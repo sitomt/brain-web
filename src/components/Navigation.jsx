@@ -5,10 +5,11 @@ import useIsMobile from '../hooks/useIsMobile'
 import { ArrowRight } from './icons/ArrowIcon'
 import { BRAND } from '../lib/tokens'
 import { EASE_PREMIUM } from '../lib/motion'
+import { CTA_LABEL } from '../lib/cta'
 
 const SCROLL_LINKS = [
-  { label: 'Fundadores', target: 'fundadores' },
   { label: 'Cómo trabajamos', target: 'proceso' },
+  { label: 'Fundadores', target: 'fundadores' },
   { label: 'Preguntas', target: 'faq' },
 ]
 
@@ -198,7 +199,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
               }}
             >
               <span style={{ position: 'absolute', inset: 0, borderRadius: 999, background: BRAND.gradient, opacity: btnHovered ? 1 : 0, transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)', zIndex: 0 }} />
-              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>Agendar llamada</span>
+              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>{CTA_LABEL}</span>
               <span style={{ position: 'relative', zIndex: 1, width: 32, height: 32, borderRadius: 999, background: btnHovered ? 'rgba(255,255,255,0.2)' : theme.innerBg, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: btnHovered ? '#fff' : theme.text, flexShrink: 0, transition: 'background 0.3s, color 0.3s' }}>
                 <ArrowRight size={13} />
               </span>
@@ -277,7 +278,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
                 background: BRAND.gradient, color: '#fff', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem',
               }}
             >
-              Agendar llamada
+              {CTA_LABEL}
               <span style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowRight size={15} />
               </span>

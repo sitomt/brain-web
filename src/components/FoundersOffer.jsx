@@ -7,16 +7,18 @@ import { EASE_PREMIUM } from '../lib/motion'
 import { FOUNDERS, spotsTaken } from '../lib/founders'
 
 import { openBooking } from '../lib/booking'
+import { CTA_LABEL } from '../lib/cta'
 
 // Programa Fundadores — el eje de la web. Plazas limitadas porque con estas
 // empresas construimos las soluciones codo a codo: más implicación, precio
 // especial y prioridad. Se apaga con FOUNDERS.active = false.
 
 const VENTAJAS = [
-  { label: 'Precio fundador', line: `Un precio especial que solo tendrán las ${FOUNDERS.spotsTotal} primeras empresas. Cuando se cierre el cupo, no vuelve.` },
-  { label: 'Prioridad', line: 'Vas primero en la cola: en desarrollo, en soporte y en cada mejora nueva.' },
-  { label: 'Codo a codo', line: 'Construimos tu solución contigo, a medida y con mucho más detalle. Hablas directamente con quien la hace.' },
-  { label: 'Visibilidad', line: 'Te presentamos como empresa fundadora: tu negocio aparece en nuestra web, casos y redes.' },
+  { label: 'Precio fundador', line: `Un precio especial que solo tendrán estas ${FOUNDERS.spotsTotal} empresas. Te lo damos cerrado en la llamada.` },
+  { label: 'Prioridad', line: 'Vas primero en desarrollo, en soporte y en cada mejora nueva.' },
+  { label: 'Trato preferente', line: 'Revisamos contigo cómo va y lo ajustamos las veces que haga falta.' },
+  { label: 'Codo a codo', line: 'Hablas directamente con quien lo construye. Sin intermediarios.' },
+  { label: 'Visibilidad', line: 'Si quieres, te presentamos como empresa fundadora en nuestra web y redes.' },
 ]
 
 const reveal = (delay = 0) => ({
@@ -79,7 +81,7 @@ export default function FoundersOffer() {
             margin: '1.1rem 0 0',
           }}
         >
-          Solo {FOUNDERS.spotsTotal} empresas construirán su IA con nosotros desde el inicio.{' '}
+          Las primeras {FOUNDERS.spotsTotal} empresas construyen su IA con nosotros desde el principio.{' '}
           <em style={{ ...gradientText, fontStyle: 'italic' }}>Quedan {FOUNDERS.spotsLeft}.</em>
         </motion.h2>
 
@@ -94,10 +96,9 @@ export default function FoundersOffer() {
             margin: '1.5rem 0 0',
           }}
         >
-          Estamos creando nuestras soluciones junto a un grupo reducido de empresas.
-          Por eso las plazas son limitadas: a cada una le dedicamos tiempo de verdad,
-          trabajamos codo a codo y la tratamos como socia, no como un cliente más.
-          Es la mejor ventaja que vas a tener con nosotros, y solo existe ahora.
+          Acabamos de abrir a otros negocios lo que llevamos tiempo usando en los nuestros.
+          Con estas {FOUNDERS.spotsTotal} empresas trabajamos codo a codo, y eso no se puede hacer con cien.
+          Por eso son pocas plazas, y por eso quien entra ahora lo hace con condiciones que después no volverán.
         </motion.p>
 
         {/* Las tres ventajas */}
@@ -144,15 +145,18 @@ export default function FoundersOffer() {
               style={{ position: 'absolute', inset: 0, width: `${pct}%`, borderRadius: 999, background: BRAND.gradient }}
             />
           </div>
+          <span style={{ display: 'block', marginTop: 8, fontFamily: "'Syne Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.06em', color: 'rgba(26,24,20,0.45)' }}>
+            Actualizado a mano cada vez que se cierra una plaza · {FOUNDERS.spotsUpdatedAt}
+          </span>
         </motion.div>
 
         {/* CTA */}
         <motion.div {...reveal(0.3)} style={{ margin: '2rem 0 0', display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap' }}>
           <CtaButton onClick={handleClaim} variant="solid" arrow="right" size="lg">
-            Reservar mi plaza fundador
+            {CTA_LABEL}
           </CtaButton>
           <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.05em', color: 'rgba(26,24,20,0.5)' }}>
-            Llamada de 30 min · gratis · sin compromiso
+            30 min con Ginés · la plaza se decide después, con el plan delante
           </span>
         </motion.div>
       </div>

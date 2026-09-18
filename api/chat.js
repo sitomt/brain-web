@@ -3,7 +3,7 @@
 // La API key vive SOLO en el entorno (ANTHROPIC_API_KEY): nunca llega al navegador.
 
 import Anthropic from '@anthropic-ai/sdk'
-import { buildSystemPrompt, CAPTURE_LEAD_TOOL, RECOMMEND_PRODUCT_TOOL } from './_prompt.js'
+import { buildSystemPrompt, CAPTURE_LEAD_TOOL, OPEN_BOOKING_TOOL } from './_prompt.js'
 
 const MODEL = 'claude-sonnet-4-6'
 const MAX_TOKENS = 1024
@@ -160,7 +160,7 @@ export default async function handler(req, res) {
   const convo = [...history]
   let lead = { ...knownLead }
   let captured = false
-  let recommendedProduct = null
+  let openBooking = false
 
   // Acumula el texto de TODOS los turnos: el modelo suele escribir su mensaje
   // (p. ej. pedir el siguiente dato) en el MISMO turno en que llama a una
@@ -174,7 +174,7 @@ export default async function handler(req, res) {
         model: MODEL,
         max_tokens: MAX_TOKENS,
         system,
-        tools: [CAPTURE_LEAD_TOOL, RECOMMEND_PRODUCT_TOOL],
+        tools: [CAPTURE_LEAD_TOOL, OPEN_BOOKING_TOOL],
         messages: convo,
       })
 
@@ -193,18 +193,13 @@ export default async function handler(req, res) {
               if (v !== '' && v != null) lead[k] = v
             }
             captured = true
-            // Red de seguridad: si el bot no llamó a recommend_product pero el
-            // interés es una de las tres soluciones con página, abrimos esa.
-            if (!recommendedProduct && ['contact_center', 'back_office', 'asistente'].includes(lead.product_interest)) {
-              recommendedProduct = lead.product_interest
-            }
             const transcript = convo
               .filter((m) => typeof m.content === 'string')
               .map((m) => `${m.role === 'user' ? 'Cliente' : 'Bot'}: ${m.content}`)
               .join('\n')
             await notifyLead(lead, { context, transcript })
-          } else if (tu.name === 'recommend_product') {
-            if (tu.input?.product) recommendedProduct = tu.input.product
+          } else if (tu.name === 'open_booking') {
+            openBooking = true
           }
           results.push({ type: 'tool_result', tool_use_id: tu.id, content: 'ok' })
         }
@@ -213,9 +208,9 @@ export default async function handler(req, res) {
       }
 
       // Respuesta final: une el texto de todos los turnos.
-      return sendJson(res, 200, { reply: replyParts.join('\n\n'), lead, captured, recommendedProduct })
+      return sendJson(res, 200, { reply: replyParts.join('\n\n'), lead, captured, openBooking })
     }
-    return sendJson(res, 200, { reply: replyParts.join('\n\n'), lead, captured, recommendedProduct })
+    return sendJson(res, 200, { reply: replyParts.join('\n\n'), lead, captured, openBooking })
   } catch (err) {
     console.error('[chat] error', err?.status, err?.message)
     return sendJson(res, 502, { error: 'upstream', reply: null })

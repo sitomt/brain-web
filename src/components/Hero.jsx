@@ -12,7 +12,8 @@ import { gradientText } from '../lib/tokens'
 import { display, bodyLg } from '../lib/typography'
 import { openBooking } from '../lib/booking'
 import { FOUNDERS } from '../lib/founders'
-import { WHATSAPP_URL } from '../lib/site'
+import { WHATSAPP_URL, PHONE } from '../lib/site'
+import { CTA_LABEL } from '../lib/cta'
 
 const COMP_W = 420
 const COMP_H = 380
@@ -23,7 +24,13 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
 })
 
-const TRUST = ['Baktun 13', 'Clesol', 'Venta Alegría', 'Foodmatica', 'Playgame Italia']
+const TRUST = [
+  { name: 'Baktun 13', sector: 'gimnasio' },
+  { name: 'Clesol', sector: 'energía solar' },
+  { name: 'Foodmatica', sector: 'bares' },
+  { name: 'Playgame Italia', sector: 'salones de juego' },
+  { name: 'Venta Alegría', sector: 'restaurante' },
+]
 
 export default function Hero({ introComplete = true }) {
   const isMobile = useIsMobile()
@@ -93,50 +100,59 @@ export default function Hero({ introComplete = true }) {
           </motion.h1>
 
           <motion.p {...fadeUp(0.3)} style={{ ...bodyLg, color: '#4A4740' }}>
-            Atención al cliente, reservas, papeleo y ventas en piloto automático.
-            Hecha por empresarios, funcionando en semanas.
+            Atención al cliente, reservas, stock, papeleo y reporting: hecho solo.
+            Creada por empresarios de Murcia que la usan a diario en sus propios negocios.
           </motion.p>
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <CtaButton onClick={() => openBooking('hero')} variant="solid" arrow="right" size="lg" magnetic>
-              Agendar llamada gratis
+              {CTA_LABEL}
             </CtaButton>
-            {FOUNDERS.active && (
+            {FOUNDERS.active && !isMobile && (
               <CtaButton
                 onClick={() => document.getElementById('fundadores')?.scrollIntoView({ behavior: 'smooth' })}
                 variant="ghost"
                 arrow="down"
-                size="lg"
+                size="md"
               >
-                Quedan {FOUNDERS.spotsLeft} plazas fundador
+                Ver plazas fundador
               </CtaButton>
             )}
           </motion.div>
 
           {/* Alternativa humana al calendario — discreta, no compite con el CTA */}
-          <motion.a
-            {...fadeUp(0.48)}
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ marginTop: '-0.6rem', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.9rem', color: 'rgba(26,24,20,0.55)', textDecoration: 'underline', textUnderlineOffset: 3 }}
-          >
-            ¿Prefieres escribir? Háblanos por WhatsApp
-          </motion.a>
+          <motion.div {...fadeUp(0.48)} style={{ marginTop: '-0.6rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: isMobile ? 'center' : 'flex-start' }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.9rem', color: 'rgba(26,24,20,0.6)' }}>
+              30 min con Ginés, sin compromiso. Te decimos qué haría la IA en tu negocio y, si no encaja, también.
+            </span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.88rem', color: 'rgba(26,24,20,0.5)' }}>
+              ¿Prefieres hablar?{' '}
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(26,24,20,0.7)', textUnderlineOffset: 3 }}>{PHONE} · WhatsApp o llamada</a>
+              {FOUNDERS.active && isMobile && (
+                <>
+                  {' · '}
+                  <a href="#fundadores" onClick={(e) => { e.preventDefault(); document.getElementById('fundadores')?.scrollIntoView({ behavior: 'smooth' }) }} style={{ color: 'rgba(26,24,20,0.7)', textUnderlineOffset: 3 }}>Ver plazas fundador</a>
+                </>
+              )}
+            </span>
+          </motion.div>
 
           {/* Trust strip */}
           <motion.div
             {...fadeUp(0.55)}
             style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start', marginTop: '0.5rem' }}
           >
-            <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.45)' }}>
+            <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.55)' }}>
               Negocios que dirigimos y con los que trabajamos
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap', rowGap: '0.5rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              {TRUST.map((name, i) => (
+              {TRUST.map(({ name, sector }, i) => (
                 <span key={name} style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
                   {i > 0 && <span style={{ width: 3, height: 3, borderRadius: 999, background: 'rgba(26,24,20,0.2)' }} />}
-                  <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '0.95rem', color: 'rgba(26,24,20,0.62)' }}>{name}</span>
+                  <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
+                    <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '0.95rem', color: 'rgba(26,24,20,0.7)' }}>{name}</span>
+                    <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.42)' }}>{sector}</span>
+                  </span>
                 </span>
               ))}
             </div>

@@ -10,18 +10,21 @@ import { h2, bodyLg } from '../lib/typography'
 const STEPS = [
   {
     num: '01',
-    title: 'Agenda una llamada de 30 minutos',
-    desc: 'Eliges día y hora en el calendario y te llega la invitación por email. Nos cuentas cómo funciona tu negocio y qué te quita más tiempo. Gratis y sin compromiso.',
+    title: 'Una llamada de 30 minutos con Ginés, gratis',
+    desc: 'Eliges día y hora y te llega la invitación al email. Los primeros diez minutos nos cuentas cómo funciona tu negocio y qué te quita más tiempo. Después te decimos qué haría la IA en tu caso y qué no. Si no lo vemos claro, te lo decimos en esa misma llamada.',
+    note: 'No hace falta preparar nada',
   },
   {
     num: '02',
-    title: 'Te proponemos un plan con precio cerrado',
-    desc: 'Te decimos qué tiene sentido automatizar, cómo lo haríamos y cuánto cuesta. Sin letra pequeña ni costes que aparecen después. Si no podemos ayudarte, te lo decimos.',
+    title: 'Un plan con precio cerrado, por escrito',
+    desc: 'Te enviamos qué haremos, cómo y cuánto cuesta. El precio va cerrado antes de empezar: sin costes que aparecen después. Cada negocio es distinto, por eso no publicamos tarifas.',
+    note: 'Si te encaja, nos dices tú',
   },
   {
     num: '03',
-    title: 'Lo construimos contigo',
-    desc: 'Codo a codo, sobre las herramientas que ya usas. En tres o cuatro semanas lo tienes funcionando en tu negocio, y seguimos mejorándolo contigo.',
+    title: 'Lo construimos contigo, sobre lo que ya usas',
+    desc: 'WhatsApp, Gmail, tu agenda, tu tienda online o tu programa de gestión: no te hacemos cambiar de herramientas. Hablas directamente con quien lo construye. En pocas semanas lo tienes funcionando y lo seguimos afinando contigo.',
+    note: 'La fecha concreta va en el plan',
   },
 ]
 
@@ -74,7 +77,7 @@ export default function HowItWorks() {
             </WipeReveal>
           </h2>
           <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
-            Sin formularios eternos ni letra pequeña. Tú nos cuentas el problema, nosotros nos encargamos del resto.
+            Tú nos cuentas el problema. Nosotros nos encargamos del resto.
           </p>
         </motion.div>
 
@@ -137,6 +140,9 @@ export default function HowItWorks() {
                   <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: 0, maxWidth: '52ch' }}>
                     {step.desc}
                   </p>
+                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: ACCENT, marginTop: 4 }}>
+                    — {step.note}
+                  </span>
                 </div>
               </motion.div>
             ))}

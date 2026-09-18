@@ -2,7 +2,7 @@
 //
 // TODO: crea tu evento en cal.com y pega aquí tu enlace "usuario/evento"
 // (lo que va detrás de https://cal.com/). Es el ÚNICO sitio que hay que tocar.
-export const CAL_LINK = 'sitolabs/llamada'
+export const CAL_LINK = 'sitolabs/30min'
 
 export const CAL_URL = `https://cal.com/${CAL_LINK}`
 

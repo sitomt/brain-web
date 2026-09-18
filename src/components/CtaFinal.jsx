@@ -6,7 +6,8 @@ import GradientMesh from './GradientMesh'
 import useIsMobile from '../hooks/useIsMobile'
 import { EASE_PREMIUM } from '../lib/motion'
 import { openBooking, openParticulares } from '../lib/booking'
-import { WHATSAPP_URL } from '../lib/site'
+import { WHATSAPP_URL, PHONE, EMAIL } from '../lib/site'
+import { CTA_LABEL } from '../lib/cta'
 
 const REVEAL = (delay = 0) => ({
   initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
@@ -42,8 +43,8 @@ export default function CtaFinal() {
           {...REVEAL(0.15)}
           style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 520 }}
         >
-          Analizamos tu operación, te decimos qué tiene sentido automatizar,
-          cómo lo haríamos y cuánto costaría. Con claridad y sin compromiso.
+          Nos cuentas tu negocio, te decimos qué haría la IA en él y cómo lo haríamos.
+          Si encaja, te llega un plan con precio cerrado. Si no encaja, te lo decimos igual.
         </motion.p>
 
         <motion.div
@@ -57,20 +58,22 @@ export default function CtaFinal() {
             size="lg"
             magnetic
           >
-            Agendar llamada gratis
+            {CTA_LABEL}
           </CtaButton>
         </motion.div>
 
         <motion.p
           {...REVEAL(0.32)}
-          style={{ fontFamily: "'DM Sans',sans-serif", fontStyle: 'italic', fontWeight: 300, fontSize: '0.92rem', color: 'rgba(255,255,255,0.55)', margin: '-0.75rem 0 0', lineHeight: 1.5, maxWidth: 460 }}
+          style={{ fontFamily: "'DM Sans',sans-serif", fontStyle: 'italic', fontWeight: 300, fontSize: '0.92rem', color: 'rgba(255,255,255,0.6)', margin: '-0.75rem 0 0', lineHeight: 1.7, maxWidth: 520 }}
         >
-          Eliges día y hora y te llega la invitación por email.
+          Eliges día y hora y te llega la invitación al email. La llamada la hace Ginés.
           <br />
-          ¿Prefieres escribir?{' '}
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textUnderlineOffset: 3 }}>WhatsApp directo</a>
-          {' · '}¿Eres particular?{' '}
-          <button type="button" onClick={openParticulares} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#fff', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Cuéntanos tu idea</button>
+          ¿Prefieres hablar?{' '}
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.85)', textUnderlineOffset: 3 }}>{PHONE} · WhatsApp o llamada</a>
+          {' · '}<a href={`mailto:${EMAIL}`} style={{ color: 'rgba(255,255,255,0.85)', textUnderlineOffset: 3 }}>{EMAIL}</a>
+          <br />
+          ¿Eres particular?{' '}
+          <button type="button" onClick={openParticulares} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'rgba(255,255,255,0.85)', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Cuéntanos tu idea</button>
         </motion.p>
       </div>
     </AuroraBackground>
