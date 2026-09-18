@@ -1,155 +1,97 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import useIsMobile from '../hooks/useIsMobile'
+import { motion } from 'framer-motion'
 import Eyebrow from './Eyebrow'
-import WipeReveal from './WipeReveal'
-import { EASE_PREMIUM } from '../lib/motion'
-import { BRAND, ACCENT, gradientText } from '../lib/tokens'
-import { h2, bodyLg } from '../lib/typography'
+import useIsMobile from '../hooks/useIsMobile'
+import { REVEAL, STAGGER, STAGGER_CHILD } from '../lib/motion'
+import { ACCENT } from '../lib/tokens'
+import { h2, h3, body, label } from '../lib/typography'
+import {
+  WhatsApp, Gmail, GoogleCalendar, GoogleSheets, Notion, Shopify, WooCommerce, HubSpot, Excel, Instagram,
+} from './icons/brands'
 
+// Mecanismo: tres pasos de una frase + cinta de 10 logos (sustituye a la
+// antigua sección Integraciones).
 const STEPS = [
-  {
-    num: '01',
-    title: 'Una llamada de 30 minutos con Ginés, gratis',
-    desc: 'Eliges día y hora y te llega la invitación al email. Los primeros diez minutos nos cuentas cómo funciona tu negocio y qué te quita más tiempo. Después te decimos qué haría la IA en tu caso y qué no. Si no lo vemos claro, te lo decimos en esa misma llamada.',
-    note: 'No hace falta preparar nada',
-  },
-  {
-    num: '02',
-    title: 'Un plan con precio cerrado, por escrito',
-    desc: 'Te enviamos qué haremos, cómo y cuánto cuesta. El precio va cerrado antes de empezar: sin costes que aparecen después. Cada negocio es distinto, por eso no publicamos tarifas.',
-    note: 'Si te encaja, nos dices tú',
-  },
-  {
-    num: '03',
-    title: 'Lo construimos contigo, sobre lo que ya usas',
-    desc: 'WhatsApp, Gmail, tu agenda, tu tienda online o tu programa de gestión: no te hacemos cambiar de herramientas. Hablas directamente con quien lo construye. En pocas semanas lo tienes funcionando y lo seguimos afinando contigo.',
-    note: 'La fecha concreta va en el plan',
-  },
+  { num: '01', title: 'Llamada de 30 min con Ginés', desc: 'Le cuentas tu negocio y te dice qué automatizaría y qué no.', note: 'No hace falta preparar nada' },
+  { num: '02', title: 'Plan con precio cerrado, por escrito', desc: 'Qué haremos, cuándo y cuánto. Sin costes que aparezcan después.', note: 'Decides tú' },
+  { num: '03', title: 'Lo construimos sobre lo que ya usas', desc: 'WhatsApp, Gmail, tu agenda o tu programa de gestión. Funcionando en pocas semanas.', note: 'La fecha concreta va en el plan' },
 ]
 
-const RAIL = 64 // ancho de la columna del número (px)
+const TOOLS = [
+  { name: 'WhatsApp', Icon: WhatsApp }, { name: 'Gmail', Icon: Gmail }, { name: 'Google Calendar', Icon: GoogleCalendar },
+  { name: 'Google Sheets', Icon: GoogleSheets }, { name: 'Excel', Icon: Excel }, { name: 'Notion', Icon: Notion },
+  { name: 'HubSpot', Icon: HubSpot }, { name: 'Shopify', Icon: Shopify }, { name: 'WooCommerce', Icon: WooCommerce }, { name: 'Instagram', Icon: Instagram },
+]
+
+const EDGE_FADE = 'linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent)'
+
+function Logos() {
+  const items = [...TOOLS, ...TOOLS]
+  return (
+    <div style={{ overflow: 'hidden', WebkitMaskImage: EDGE_FADE, maskImage: EDGE_FADE }} aria-label="Herramientas con las que nos integramos">
+      <div className="marquee-track" style={{ display: 'flex', width: 'max-content', animation: 'marqueeLeft 60s linear infinite' }}>
+        {items.map((t, i) => (
+          <span
+            key={i}
+            aria-hidden={i >= TOOLS.length}
+            className="logo-chip"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginRight: 40, color: 'rgba(255,255,255,0.8)', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '0.95rem', whiteSpace: 'nowrap', opacity: 0.55, transition: 'opacity 0.2s' }}
+          >
+            <t.Icon size={22} />
+            {t.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function HowItWorks() {
   const isMobile = useIsMobile()
-  const trackRef = useRef(null)
-
-  // La línea se "dibuja" conforme la sección recorre el viewport.
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ['start 0.8', 'end 0.6'],
-  })
-  const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1])
 
   return (
-    <div id="proceso" style={{ background: '#0A0A0B', padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem', position: 'relative', overflow: 'hidden' }}>
-      {/* Amanecer — luz de marca asomando en el borde inferior, hacia Soluciones */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: isMobile ? 160 : 220,
-          pointerEvents: 'none',
-          background:
-            'linear-gradient(to top, rgba(67,97,238,0.10) 0%, rgba(114,9,183,0.045) 45%, transparent 100%)',
-        }}
-      />
-      <div style={{ maxWidth: 880, margin: '0 auto', position: 'relative' }}>
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: EASE_PREMIUM }}
-          style={{ marginBottom: isMobile ? '3rem' : '4rem', textAlign: isMobile ? 'center' : 'left' }}
-        >
-          <div style={{ marginBottom: '1.25rem', display: 'inline-flex' }}>
-            <Eyebrow variant="pill" tone="light">Proceso</Eyebrow>
-          </div>
-          <h2 style={{ ...h2 }}>
-            <span style={{ color: '#fff' }}>De la primera llamada a funcionando, </span>
-            <WipeReveal delay={0.2}>
-              <em style={{ fontStyle: 'italic', ...gradientText }}>en tres pasos.</em>
-            </WipeReveal>
-          </h2>
-          <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
-            Tú nos cuentas el problema. Nosotros nos encargamos del resto.
-          </p>
+    <section id="proceso" style={{ background: '#0A0A0B', padding: isMobile ? '5rem 0 3rem' : '8rem 0 4rem' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: isMobile ? '0 1.25rem' : '0 2rem' }}>
+        <motion.div {...REVEAL} style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="light">Cómo trabajamos</Eyebrow></div>
+          <h2 style={{ ...h2, color: '#fff' }}>Tres pasos. <em style={{ fontStyle: 'italic' }}>El primero es gratis.</em></h2>
         </motion.div>
 
-        {/* Steps — secuencia vertical con rail animado */}
-        <div ref={trackRef} style={{ position: 'relative' }}>
-          {/* línea base */}
-          {!isMobile && (
-            <div style={{ position: 'absolute', left: RAIL / 2, top: 8, bottom: 40, width: 1, background: 'rgba(255,255,255,0.1)' }} />
-          )}
-          {/* línea de progreso */}
-          {!isMobile && (
+        <motion.div
+          {...STAGGER()}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: isMobile ? 0 : '2.5rem',
+          }}
+        >
+          {STEPS.map((s, i) => (
             <motion.div
+              key={s.num}
+              variants={STAGGER_CHILD}
               style={{
-                position: 'absolute', left: RAIL / 2 - 0.5, top: 8, bottom: 40, width: 2,
-                background: BRAND.gradient, transformOrigin: 'top', scaleY: lineScale, borderRadius: 2,
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '40px 1fr' : '1fr',
+                gap: isMobile ? '1rem' : 0,
+                padding: isMobile ? '1.25rem 0' : '0 0 0 1.5rem',
+                borderTop: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                borderLeft: !isMobile ? '1px solid rgba(255,255,255,0.12)' : 'none',
+                borderBottom: isMobile && i === STEPS.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none',
               }}
-            />
-          )}
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
-            style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '2.5rem' : '3.5rem' }}
-          >
-            {STEPS.map((step) => (
-              <motion.div
-                key={step.num}
-                variants={{
-                  hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-                  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: EASE_PREMIUM } },
-                }}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: isMobile ? 'auto 1fr' : `${RAIL}px 1fr`,
-                  gap: isMobile ? '1rem' : '2rem',
-                  alignItems: 'start',
-                }}
-              >
-                {/* Número badge */}
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <div style={{
-                    width: isMobile ? 44 : 52, height: isMobile ? 44 : 52, borderRadius: 999,
-                    background: '#0A0A0B', border: '1px solid rgba(255,255,255,0.14)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-                  }}>
-                    <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.82rem', color: ACCENT, letterSpacing: '0.05em' }}>
-                      {step.num}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Contenido */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', paddingTop: isMobile ? 6 : 10 }}>
-                  <h3 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: '#fff', lineHeight: 1.1, margin: 0 }}>
-                    {step.title}
-                  </h3>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: 0, maxWidth: '52ch' }}>
-                    {step.desc}
-                  </p>
-                  <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: ACCENT, marginTop: 4 }}>
-                    — {step.note}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
+            >
+              <span style={{ ...label, color: ACCENT, display: 'block', marginBottom: isMobile ? 0 : '1rem', paddingTop: 4 }}>{s.num}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                <h3 style={{ ...h3, color: '#fff' }}>{s.title}</h3>
+                <p style={{ ...body, color: 'rgba(255,255,255,0.65)' }}>{s.desc}</p>
+                <span style={{ ...label, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem' }}>— {s.note}</span>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </div>
+
+      <div style={{ marginTop: isMobile ? '3rem' : '4.5rem', padding: isMobile ? '1.25rem 0' : '1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <Logos />
+      </div>
+    </section>
   )
 }

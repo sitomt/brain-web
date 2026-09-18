@@ -6,182 +6,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#FAF8F3" />
 
-    <!-- SEO: Title + Description -->
-    <title>Sito Labs · Agencia de IA en Murcia | Automatización con Inteligencia Artificial</title>
-    <meta name="description" content="Agencia de Inteligencia Artificial en Murcia. Chatbots, Agentes IA y automatización de procesos para empresas. Resultados en menos de 30 días. Primera consulta gratuita." />
+    <!-- SEO -->
+    <title>Sito Labs · Agencia de IA en Murcia para negocios reales</title>
+    <meta name="description" content="La IA que hace funcionar tu negocio: atención al cliente, reservas, stock, administración y reporting. Creada por empresarios de Murcia que la usan a diario. Primera llamada de 30 min gratis." />
     <meta name="robots" content="index, follow" />
-
-    <!-- SEO: Canonical URL (reemplaza sitolabs.com con el dominio real) -->
+    <meta name="color-scheme" content="light" />
     <link rel="canonical" href="https://sitolabs.com/" />
 
-    <!-- Open Graph (LinkedIn, Facebook, WhatsApp) -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sitolabs.com/" />
-    <meta property="og:title" content="Sito Labs · Agencia de IA en Murcia" />
-    <meta property="og:description" content="Chatbots, Agentes IA y automatización de procesos para empresas. Resultados en menos de 30 días. Primera consulta gratuita." />
+    <meta property="og:title" content="Sito Labs · La IA que hace funcionar tu negocio" />
+    <meta property="og:description" content="Creada por empresarios de Murcia que la usan a diario en sus propios negocios. Primera llamada de 30 min gratis." />
     <meta property="og:image" content="https://sitolabs.com/og-image.png" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="Sito Labs" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Sito Labs · Agencia de IA en Murcia" />
-    <meta name="twitter:description" content="Chatbots, Agentes IA y automatización para empresas. Primera consulta gratuita." />
+    <meta name="twitter:title" content="Sito Labs · La IA que hace funcionar tu negocio" />
+    <meta name="twitter:description" content="Creada por empresarios de Murcia que la usan a diario. Primera llamada de 30 min gratis." />
     <meta name="twitter:image" content="https://sitolabs.com/og-image.png" />
 
-    <!-- Schema JSON-LD: Organización + Negocio Local -->
+    <!-- Schema JSON-LD -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "Organization",
+      "@id": "https://sitolabs.com/#organization",
+      "name": "Sito Labs",
+      "url": "https://sitolabs.com",
+      "logo": "https://sitolabs.com/favicon.svg",
+      "image": "https://sitolabs.com/og-image.png",
+      "description": "Agencia de Inteligencia Artificial en Murcia fundada por empresarios. Automatiza atención al cliente, reservas, stock, administración, CRM y reporting para negocios reales. Primera llamada de 30 minutos gratuita.",
+      "email": "hello@sitolabs.com",
+      "telephone": "+34641310956",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Murcia",
+        "addressRegion": "Región de Murcia",
+        "addressCountry": "ES"
+      },
+      "areaServed": "ES",
+      "founder": {
+        "@id": "https://sitolabs.com/#ginesmunuera"
+      },
+      "knowsAbout": [
+        "Inteligencia artificial para pymes",
+        "Automatización de atención al cliente",
+        "Gestión de reservas y citas",
+        "Control de stock",
+        "CRM y clasificación de leads",
+        "Reporting centralizado"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://sitolabs.com/#ginesmunuera",
+      "name": "Ginés Munuera",
+      "jobTitle": "Fundador",
+      "worksFor": {
+        "@id": "https://sitolabs.com/#organization"
+      },
+      "email": "hello@sitolabs.com"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://sitolabs.com/#website",
+      "url": "https://sitolabs.com",
+      "name": "Sito Labs",
+      "inLanguage": "es-ES",
+      "publisher": {
+        "@id": "https://sitolabs.com/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://sitolabs.com/#faq",
+      "mainEntity": [
         {
-          "@type": ["Organization", "LocalBusiness"],
-          "@id": "https://sitolabs.com/#organization",
-          "name": "Sito Labs",
-          "url": "https://sitolabs.com",
-          "description": "Agencia de Inteligencia Artificial especializada en chatbots, agentes IA y automatización de procesos para empresas.",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Avenida de la Libertad 8",
-            "addressLocality": "Murcia",
-            "addressRegion": "Región de Murcia",
-            "postalCode": "30009",
-            "addressCountry": "ES"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 37.9922,
-            "longitude": -1.1307
-          },
-          "areaServed": "ES",
-          "email": "hello@sitolabs.com",
-          "telephone": "+34 968 25 84 19",
-          "priceRange": "€€",
-          "logo": "https://sitolabs.com/favicon.svg",
-          "image": "https://sitolabs.com/og-image.png",
-          "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            "opens": "09:00",
-            "closes": "18:00"
-          },
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "sales",
-            "email": "hello@sitolabs.com",
-            "telephone": "+34 968 25 84 19",
-            "areaServed": "ES",
-            "availableLanguage": ["es"]
-          },
-          "sameAs": [
-            "https://www.linkedin.com/company/sitolabs",
-            "https://www.instagram.com/sitolabs",
-            "https://www.facebook.com/sitolabs",
-            "https://x.com/sitolabs"
-          ],
-          "founder": {
-            "@type": "Person",
-            "@id": "https://sitolabs.com/#ginesmunuera",
-            "name": "Ginés Munuera",
-            "jobTitle": "Fundador",
-            "sameAs": ["https://www.linkedin.com/in/ginesmunuera"]
-          },
-          "knowsAbout": ["Inteligencia Artificial", "Automatización empresarial", "Chatbots", "Agentes IA", "Contact Center IA"],
-          "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Soluciones de IA para empresas",
-            "itemListElement": [
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Atención al Cliente",
-                  "description": "Atiende cada conversación al instante en WhatsApp, web, email, Instagram y teléfono, conectado a tu CRM y a tu sistema de reservas."
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Operaciones",
-                  "description": "Automatiza las tareas administrativas repetitivas: emails, facturas, informes y recordatorios, sin que nadie tenga que pedirlo."
-                }
-              },
-              {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Inteligencia de Negocio",
-                  "description": "Pregunta a tus datos en lenguaje natural: ventas, costes, stock y reservas conectados, con respuesta en segundos."
-                }
-              }
-            ]
+          "@type": "Question",
+          "name": "¿Funciona de verdad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lo usamos cada día en cinco negocios nuestros: Baktun 13, Clesol, Foodmatica, Playgame Italia y Venta Alegría. En la llamada te enseñamos qué haría en el tuyo antes de pagar nada."
           }
         },
         {
-          "@type": "FAQPage",
-          "@id": "https://sitolabs.com/#faq",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "¿Qué es Sito Labs?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Sito Labs es una agencia de Inteligencia Artificial en Murcia (España), fundada por empresarios. Implementa chatbots de atención al cliente, automatización de operaciones (back office) e inteligencia de negocio para empresas de cualquier sector."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿Cuánto cuesta una solución de IA con Sito Labs?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Atención al Cliente desde 1.200€ más 97€/mes; Operaciones desde 2.000€ más 200€/mes; Inteligencia de Negocio desde 1.500€ más 150€/mes. El trabajo a medida se concreta en la primera reunión."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿En cuánto tiempo está funcionando?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Las soluciones suelen estar en producción en 2 a 3 semanas."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿La primera reunión tiene coste?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "No. La primera reunión es gratuita, dura 30 minutos, sin compromiso y sin permanencia. De ella sale un diagnóstico y un plan con precio."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿Qué pasa con mis datos y el RGPD?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Sito Labs cumple el RGPD, ofrece acuerdo de confidencialidad (NDA) y los datos viven en la infraestructura del propio cliente."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿Para qué tipo de empresas trabaja Sito Labs?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Para negocios de cualquier sector, normalmente equipos de 3 a 50 personas."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿Qué soluciones ofrece Sito Labs?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Atención al Cliente (Contact Center IA), Operaciones (Back Office IA), Inteligencia de Negocio (Asistente IA) y desarrollos a medida."
-              }
-            }
-          ]
+          "@type": "Question",
+          "name": "Ya probé un chatbot y fue un desastre. ¿Qué cambia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Los genéricos contestan frases hechas. El nuestro trabaja con tus datos (agenda, precios, stock) y lo probamos contigo antes de ponerlo delante de clientes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Y si la IA se equivoca o sustituye a mi equipo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Solo responde con tu información; lo delicado lo pasa a una persona. Quita lo repetitivo al equipo, no al equipo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto cuesta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada negocio se presupuesta a medida. Lo tienes cerrado y por escrito antes de empezar. Las empresas fundadoras tienen precio especial."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué pasa con mis datos? ¿Y si no sé de tecnología?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cumplimos el RGPD y firmamos confidencialidad si la pides. Nos lo cuentas como a un socio: lo dejamos funcionando y te enseñamos."
+          }
         }
       ]
     }
+  ]
+}
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />

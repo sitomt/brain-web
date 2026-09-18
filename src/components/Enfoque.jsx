@@ -1,101 +1,50 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import AuroraBackground from './AuroraBackground'
-import SpotlightCard from './SpotlightCard'
 import Eyebrow from './Eyebrow'
-import WipeReveal from './WipeReveal'
 import { ArrowRight } from './icons/ArrowIcon'
-import SectorIcon from './icons/SectorIcon'
 import useIsMobile from '../hooks/useIsMobile'
-import { EASE_PREMIUM, STAGGER, STAGGER_CHILD } from '../lib/motion'
-import { ACCENT, gradientText } from '../lib/tokens'
-import { h2, h3, bodyLg } from '../lib/typography'
+import { REVEAL, STAGGER, STAGGER_CHILD } from '../lib/motion'
+import { h2, h3, body, label } from '../lib/typography'
+import { openBooking } from '../lib/booking'
 
-// "Lo usamos en casa": qué hace la IA HOY en los negocios que dirigimos.
-// Describimos la TAREA, nunca cifras de resultados. Es la prueba del titular.
+// Prueba: somos empresarios + "lo usamos en casa" (ledger, sin tarjetas) + quién te atiende.
 const NEGOCIOS = [
-  {
-    icon: 'fitness',
-    name: 'Baktun 13',
-    label: 'Gimnasio',
-    line: 'Una sola app para todo el trabajo interno del equipo: manuales, limpieza, mantenimiento, tareas del día y documentos.',
-    span: 3,
-  },
-  {
-    icon: 'solar',
-    name: 'Clesol',
-    label: 'Placas solares',
-    line: 'CRM con seguimiento de cada cliente hasta la firma. Los leads que entran se clasifican solos: sabes a quién llamar primero. Atención al cliente automatizada.',
-    span: 3,
-  },
-  {
-    icon: 'hosteleria',
-    name: 'Foodmatica',
-    label: 'Bares',
-    line: 'Stock en tiempo real subiendo los albaranes: ves el dinero que tienes guardado. Facturación, contabilidad y asesoría, automatizadas.',
-    span: 2,
-  },
-  {
-    icon: 'juego',
-    name: 'Playgame Italia',
-    label: 'Salones de juego',
-    line: 'Agentes que recogen datos de muchas plataformas y los juntan en un único reporte de ingresos y costes.',
-    span: 2,
-  },
-  {
-    icon: 'hosteleria',
-    name: 'Venta Alegría',
-    label: 'Restaurante',
-    line: 'Asistente de reservas y consultas, en desarrollo ahora mismo. En la llamada te lo enseñamos tal cual está.',
-    tag: 'En desarrollo',
-    span: 2,
-  },
+  { name: 'Baktun 13', sector: 'Gimnasio', line: 'Toda la operativa del equipo en una sola app.' },
+  { name: 'Clesol', sector: 'Energía solar', line: 'CRM que clasifica leads y dice a quién llamar primero.' },
+  { name: 'Foodmatica', sector: 'Bares', line: 'Stock en tiempo real desde los albaranes; facturación y asesoría solas.' },
+  { name: 'Playgame Italia', sector: 'Salones de juego', line: 'Datos de todas las plataformas en un solo informe.' },
+  { name: 'Venta Alegría', sector: 'Restaurante', line: 'Asistente de reservas, en construcción. Te lo enseñamos tal cual está.' },
 ]
 
-function GrainOverlay({ isMobile }) {
-  return (
-    <div
-      aria-hidden
-      style={{
-        position: 'absolute',
-        inset: isMobile ? '-5rem -1.25rem' : '-7.5rem -2rem',
-        pointerEvents: 'none',
-        opacity: 0.06,
-        mixBlendMode: 'overlay',
-        backgroundImage:
-          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-        backgroundSize: '160px 160px',
-      }}
-    />
-  )
-}
+const HAIR = '1px solid rgba(26,24,20,0.1)'
 
-// Quién te atiende — la persona detrás, en primera persona.
-function GinesCard({ isMobile }) {
+function Gines({ isMobile }) {
   return (
-    <SpotlightCard tone="dark" radius={22} padding={isMobile ? '1.5rem' : '2rem 2.25rem'}>
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '150px 1fr', gap: isMobile ? '1.25rem' : '2rem', alignItems: 'center' }}>
-        <div style={{ width: isMobile ? 110 : 150, aspectRatio: '3/4', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', margin: isMobile ? '0 auto' : 0 }}>
-          <img
-            src="/sito2.jpg"
-            alt="Ginés Munuera, fundador de Sito Labs"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
-          />
-        </div>
-        <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-          <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: ACCENT, display: 'block', marginBottom: '0.7rem' }}>
-            Quién te atiende
-          </span>
-          <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: 'clamp(1.15rem, 2vw, 1.4rem)', color: 'rgba(255,255,255,0.92)', lineHeight: 1.4, margin: 0 }}>
-            «Soy Ginés Munuera. La llamada la hago yo. Dirijo negocios con mis socios y fui quien
-            empezó a meter la IA en ellos. Te diré con sinceridad si en el tuyo tiene sentido.»
-          </p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', margin: '0.85rem 0 0' }}>
-            Ginés Munuera · Fundador de Sito Labs · Murcia
-          </p>
-        </div>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '88px 1fr' : '160px 1fr', gap: isMobile ? '1.1rem' : '2.25rem', alignItems: 'center' }}>
+      <img
+        src="/sito2-400.jpg" srcSet="/sito2-400.jpg 400w, /sito2-800.jpg 800w" sizes="(max-width: 768px) 88px, 160px"
+        alt="Ginés Munuera, fundador de Sito Labs"
+        width={768}
+        height={1061}
+        loading="lazy"
+        decoding="async"
+        style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'center top', borderRadius: 12, display: 'block' }}
+      />
+      <div>
+        <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: isMobile ? '1.15rem' : 'clamp(1.25rem, 1.8vw, 1.5rem)', color: '#1A1814', lineHeight: 1.35, margin: 0 }}>
+          «Soy Ginés Munuera. La llamada la hago yo. Dirijo negocios con mis socios y fui quien
+          metió la IA en ellos. Si en el tuyo no tiene sentido, te lo diré.»
+        </p>
+        <p style={{ ...label, color: 'rgba(26,24,20,0.5)', margin: '0.8rem 0 0' }}>Fundador · Sito Labs · Murcia</p>
+        <button
+          type="button"
+          onClick={() => openBooking('gines')}
+          style={{ marginTop: '0.7rem', background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '0.95rem', color: '#1A1814', textDecoration: 'underline', textUnderlineOffset: 3, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          Hablar con Ginés · 30 min gratis <ArrowRight size={12} />
+        </button>
       </div>
-    </SpotlightCard>
+    </div>
   )
 }
 
@@ -103,142 +52,56 @@ export default function Enfoque() {
   const isMobile = useIsMobile()
 
   return (
-    <AuroraBackground
-      variant="dark"
-      style={{ padding: isMobile ? '5rem 1.25rem' : '7.5rem 2rem', position: 'relative' }}
-    >
-      <GrainOverlay isMobile={isMobile} />
-      <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto' }}>
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: EASE_PREMIUM }}
-          style={{
-            marginBottom: isMobile ? '3rem' : '4rem',
-            textAlign: isMobile ? 'center' : 'left',
-            maxWidth: 760,
-            marginLeft: isMobile ? 'auto' : 0,
-            marginRight: isMobile ? 'auto' : 0,
-          }}
-        >
-          <div style={{ marginBottom: '1.5rem' }}>
-            <Eyebrow variant="pill" tone="light">Probado en nuestros negocios</Eyebrow>
-          </div>
-
-          <h2 style={{ ...h2 }}>
-            <span style={{ color: '#fff', display: 'block' }}>Antes que especialistas en IA, somos empresarios.</span>
-            <WipeReveal display="block" delay={0.2}>
-              <em style={{ fontStyle: 'italic', display: 'block', ...gradientText }}>Y lo primero que automatizamos fue lo nuestro.</em>
-            </WipeReveal>
-          </h2>
-
-          <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.7)', margin: isMobile ? '1.5rem auto 0' : '1.75rem 0 0' }}>
-            Somos un grupo de socios con negocios reales. Cada cosa que te propongamos la hemos
-            probado primero en casa, con nuestro dinero y nuestros clientes. Por eso sabemos qué
-            ahorra tiempo de verdad y qué solo queda bonito en una demo.
+    <section id="enfoque" style={{ background: '#FAF8F3', padding: isMobile ? '5rem 1.25rem' : '8rem 2rem', borderTop: HAIR }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        <motion.div {...REVEAL} style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="dark">Lo usamos en casa</Eyebrow></div>
+          <h2 style={{ ...h2, color: '#1A1814' }}>Antes que especialistas en IA, <em style={{ fontStyle: 'italic' }}>somos empresarios.</em></h2>
+          <p style={{ ...body, color: 'rgba(26,24,20,0.7)', marginTop: '1.25rem' }}>
+            Lo primero que automatizamos fue lo nuestro. Esto es lo que hace hoy la IA en cada negocio.
           </p>
         </motion.div>
 
-        {/* Lead-in */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.7, ease: EASE_PREMIUM }}
-          style={{ marginBottom: isMobile ? '1.75rem' : '2.25rem', textAlign: isMobile ? 'center' : 'left' }}
-        >
-          <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.68rem', color: ACCENT, letterSpacing: '0.14em', textTransform: 'uppercase', display: 'block' }}>
-            — Lo usamos en casa
-          </span>
-        </motion.div>
+        {/* En móvil, Ginés va primero: es la cara de la web */}
+        {isMobile && (
+          <motion.div {...REVEAL} style={{ marginBottom: '2.5rem' }}><Gines isMobile /></motion.div>
+        )}
 
-        {/* Negocios — bento (2 anchas + 3 medianas) */}
-        <motion.div
-          {...STAGGER(0.1, 0.05)}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(6, 1fr)',
-            gap: isMobile ? '1rem' : '1.25rem',
-          }}
-        >
+        {/* Ledger */}
+        <motion.div {...STAGGER()} style={{ borderTop: HAIR }}>
           {NEGOCIOS.map((n) => (
             <motion.div
               key={n.name}
               variants={STAGGER_CHILD}
-              style={{ gridColumn: isMobile ? 'span 1' : `span ${n.span}` }}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : '200px 150px 1fr',
+                gap: isMobile ? '0.25rem' : '1.5rem',
+                alignItems: 'baseline',
+                padding: isMobile ? '1rem 0' : '1.25rem 0',
+                borderBottom: HAIR,
+              }}
             >
-              <SpotlightCard tone="dark" radius={20} padding={isMobile ? '1.75rem 1.5rem' : '2.1rem 2.25rem'}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                    <span
-                      aria-hidden
-                      style={{
-                        width: 46, height: 46, borderRadius: 13,
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(67,97,238,0.12)', border: '1px solid rgba(67,97,238,0.22)', color: ACCENT,
-                      }}
-                    >
-                      <SectorIcon name={n.icon} size={23} />
-                    </span>
-                    {n.tag && (
-                      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.16)', borderRadius: 999, padding: '4px 10px' }}>
-                        {n.tag}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <h3 style={{ ...h3, color: '#fff', fontSize: 'clamp(1.3rem, 2.4vw, 1.6rem)', margin: 0 }}>
-                      {n.name}
-                    </h3>
-                    <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>
-                      {n.label}
-                    </span>
-                  </div>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.94rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.65, margin: 0 }}>
-                    {n.line}
-                  </p>
-                </div>
-              </SpotlightCard>
+              <span style={{ ...h3, color: '#1A1814' }}>{n.name}</span>
+              <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>{n.sector}</span>
+              <span style={{ ...body, color: 'rgba(26,24,20,0.72)', maxWidth: 'none' }}>{n.line}</span>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Quién te atiende */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.7, ease: EASE_PREMIUM }}
-          style={{ marginTop: isMobile ? '1rem' : '1.25rem' }}
-        >
-          <GinesCard isMobile={isMobile} />
-        </motion.div>
+        {!isMobile && (
+          <motion.div {...REVEAL} style={{ marginTop: '3.5rem', maxWidth: 780 }}><Gines /></motion.div>
+        )}
 
-        {/* Enlace a Nosotros — terciario */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.6, ease: EASE_PREMIUM, delay: 0.1 }}
-          style={{ marginTop: isMobile ? '2rem' : '2.5rem', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}
-        >
+        <motion.div {...REVEAL} style={{ marginTop: isMobile ? '2rem' : '2.5rem' }}>
           <Link
             to="/nosotros"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              color: 'rgba(255,255,255,0.7)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.92rem',
-              textDecoration: 'underline', textUnderlineOffset: 3,
-            }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(26,24,20,0.65)', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '0.95rem', textDecoration: 'underline', textUnderlineOffset: 3 }}
           >
-            Nuestra historia, con los errores incluidos
-            <ArrowRight size={12} />
+            Nuestra historia, con los errores incluidos <ArrowRight size={12} />
           </Link>
         </motion.div>
-
       </div>
-    </AuroraBackground>
+    </section>
   )
 }

@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { EASE_SOFT } from '../lib/motion'
 
-// With background-clip:text + transparent fill, the gradient only paints inside
-// the span's box. Italic glyphs overhang that box — the descender of "g"/"j"
-// drops below it and the left side-bearing of a leading italic "g" sits left of
-// it — so those parts get no gradient and render transparent (the "cut" look).
-// Padding enlarges the gradient's painting area to cover the overhang; equal
-// negative margin cancels it so the surrounding line never reflows.
+// Palabra rotatoria del H1. La primera palabra se monta ESTÁTICA y visible
+// desde el primer frame (sin blur ni retardo): el titular nunca depende de la
+// animación. Las siguientes entran con una máscara vertical (solo transform).
+//
+// El degradado con background-clip:text solo pinta dentro de la caja; las
+// itálicas la desbordan. El padding amplía el área pintada y el margen
+// negativo lo compensa para que la línea no se mueva.
 const COVER = {
   paddingTop: '0.06em',
   paddingRight: '0.12em',
@@ -19,67 +20,43 @@ const COVER = {
   marginLeft: '-0.2em',
 }
 
-export default function RotatingWord({
-  words = [],
-  interval = 2400,
-  startDelay = 0,
-  start = true,
-  style = {},
-}) {
+export default function RotatingWord({ words = [], interval = 2600, startDelay = 1200, style = {} }) {
   const reduce = useReducedMotion()
   const [idx, setIdx] = useState(0)
-
-  // The first word (index 0) mounts statically — no entrance animation — so on
-  // page load it's crisp and fully visible for its entire turn. Every word after
-  // that animates normally. Flipped on by the timer the moment the rotation first
-  // advances (state, not a ref, so it's safe to read during render).
   const [hasAdvanced, setHasAdvanced] = useState(false)
 
-  // The timer only begins once `start` is true (e.g. after the intro splash),
-  // so the first word isn't consumed while the hero is still hidden. startDelay
-  // then holds it through the hero's reveal. First turn = startDelay + interval;
-  // every turn after that = interval.
   useEffect(() => {
-    if (reduce || words.length < 2 || !start) return
+    if (reduce || words.length < 2) return
     let intervalId
-    const advance = () => {
-      setHasAdvanced(true)
-      setIdx((i) => (i + 1) % words.length)
-    }
-    const startId = setTimeout(() => {
-      advance()
-      intervalId = setInterval(advance, interval)
-    }, startDelay + interval)
+    const advance = () => { setHasAdvanced(true); setIdx((i) => (i + 1) % words.length) }
+    const startId = setTimeout(() => { advance(); intervalId = setInterval(advance, interval) }, startDelay + interval)
     return () => { clearTimeout(startId); clearInterval(intervalId) }
-  }, [reduce, words.length, interval, startDelay, start])
+  }, [reduce, words.length, interval, startDelay])
 
   const widest = words.reduce((a, b) => (b.length > a.length ? b : a), '')
 
-  if (reduce) {
-    return <span style={{ ...style, ...COVER }}>{words[0]}</span>
-  }
+  if (reduce) return <span style={{ ...style, ...COVER }}>{words[0]}</span>
 
   return (
-    // No overflow clipping anywhere. Words cross-fade with a small em slide.
-    // mode="wait" keeps a single word in the shared grid cell at any moment.
     <span style={{ display: 'inline-grid', verticalAlign: 'baseline' }}>
-      {/* Invisible sizer locks the cell to the widest word so the line never reflows. */}
-      <span style={{ gridArea: '1 / 1', visibility: 'hidden', whiteSpace: 'nowrap', ...style, ...COVER }}>
-        {widest}
+      {/* Texto accesible estático: los lectores de pantalla leen una sola palabra. */}
+      <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>{words[0]}</span>
+      {/* Sizer invisible: fija el ancho a la palabra más larga para que la línea no reflujya. */}
+      <span aria-hidden style={{ gridArea: '1 / 1', visibility: 'hidden', whiteSpace: 'nowrap', ...style, ...COVER }}>{widest}</span>
+      <span aria-hidden style={{ gridArea: '1 / 1', overflow: 'hidden', display: 'block', ...COVER, padding: 0, margin: 0 }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={idx}
+            initial={hasAdvanced ? { opacity: 0, y: '0.55em' } : false}
+            animate={{ opacity: 1, y: '0em' }}
+            exit={{ opacity: 0, y: '-0.55em' }}
+            transition={{ duration: 0.4, ease: EASE_SOFT }}
+            style={{ display: 'inline-block', whiteSpace: 'nowrap', ...style, ...COVER }}
+          >
+            {words[idx]}
+          </motion.span>
+        </AnimatePresence>
       </span>
-
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={idx}
-          initial={hasAdvanced ? { opacity: 0, y: '0.4em', filter: 'blur(5px)' } : false}
-          animate={{ opacity: 1, y: '0em', filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: '-0.4em', filter: 'blur(5px)' }}
-          transition={{ duration: 0.4, ease: EASE_SOFT }}
-          style={{ gridArea: '1 / 1', whiteSpace: 'nowrap', ...style, ...COVER }}
-        >
-          {words[idx]}
-        </motion.span>
-      </AnimatePresence>
     </span>
   )
 }

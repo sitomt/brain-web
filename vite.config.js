@@ -12,9 +12,9 @@ function devApiPlugin(env) {
       for (const k of ['ANTHROPIC_API_KEY', 'RESEND_API_KEY', 'LEAD_FROM_EMAIL', 'LEAD_NOTIFY_EMAIL']) {
         if (env[k] && !process.env[k]) process.env[k] = env[k]
       }
-      server.middlewares.use('/api/chat', async (req, res) => {
+      for (const route of ['chat', 'particular']) server.middlewares.use(`/api/${route}`, async (req, res) => {
         try {
-          const { default: handler } = await server.ssrLoadModule('/api/chat.js')
+          const { default: handler } = await server.ssrLoadModule(`/api/${route}.js`)
           await handler(req, res)
         } catch (err) {
           server.config.logger.error('[dev-api] ' + (err?.stack || err))
@@ -37,7 +37,6 @@ export default defineConfig(({ mode }) => {
         // light. Rolldown (Vite 8) expects manualChunks as a function.
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('remotion')) return 'remotion'
           if (id.includes('framer-motion')) return 'motion'
           if (id.includes('react-dom') || id.includes('react-router') || /\/react\//.test(id)) {
             return 'react'

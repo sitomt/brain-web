@@ -2,6 +2,7 @@
 # Todos los rastreadores son bienvenidos, incluidos los de IA / motores de respuesta.
 User-agent: *
 Allow: /
+Disallow: /api/
 
 # Rastreadores de IA y buscadores de agentes — explícito para NO bloquearlos nunca
 # (bloquearlos = desaparecer de ChatGPT, Claude, Perplexity, Gemini/AI Overviews).

@@ -7,7 +7,6 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { ArrowRight, ArrowDown } from './icons/ArrowIcon'
 import { EASE_PREMIUM } from '../lib/motion'
 
-const GRAD = 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)'
 
 export default function CtaButton({
   onClick,
@@ -57,7 +56,7 @@ export default function CtaButton({
   const iconBoxSize = size === 'lg' ? 36 : 30
 
   const baseBg = isDark
-    ? '#1A1814'
+    ? '#0A0A0B'
     : isLight
     ? 'rgba(255,255,255,0.05)'
     : 'transparent'
@@ -84,6 +83,7 @@ export default function CtaButton({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileTap={{ scale: 0.97 }}
+      whileHover={{ y: -1 }}
       transition={{ duration: 0.3, ease: EASE_PREMIUM }}
       style={{
         position: 'relative',
@@ -103,28 +103,14 @@ export default function CtaButton({
         letterSpacing: '0.01em',
         cursor: 'pointer',
         overflow: 'hidden',
+        boxShadow: isDark ? '0 12px 32px -16px rgba(10,10,11,0.6)' : 'none',
+        transition: 'box-shadow 0.2s ease',
         x: magnetic ? tx : 0,
         y: magnetic ? ty : 0,
         ...style,
       }}
       {...rest}
     >
-      {/* Hover gradient overlay (solid + light variants) */}
-      {(isDark || isLight) && (
-        <span
-          aria-hidden
-          className="cta-grad"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: 999,
-            background: GRAD,
-            opacity: 0,
-            transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)',
-            zIndex: 0,
-          }}
-        />
-      )}
       <span style={{ position: 'relative', zIndex: 1, whiteSpace: 'nowrap' }}>
         {children}
       </span>
@@ -149,9 +135,7 @@ export default function CtaButton({
           <ArrowIcon size={size === 'lg' ? 15 : 13} />
         </motion.span>
       )}
-      <style>{`
-        button:hover > .cta-grad { opacity: 1 !important; }
-      `}</style>
+
     </motion.button>
   )
 }

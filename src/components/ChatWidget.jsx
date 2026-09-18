@@ -36,7 +36,10 @@ const QUICK_REPLIES = [
   CTA_LABEL,
 ]
 
-const DEFAULT_GREETING = 'Hola, soy el asistente de Sito Labs. ¿Qué parte de tu negocio te quita más tiempo?'
+// Arranques del chat embebido en la portada: un toque y ya está hablando.
+const STARTERS = ['Tengo un restaurante', 'Tengo una clínica', 'Tengo una tienda online', 'Otro negocio']
+
+const DEFAULT_GREETING = 'Soy el asistente de Sito Labs, el mismo que instalamos en los negocios de nuestros clientes. ¿A qué se dedica el tuyo?'
 
 const CONTEXT_GREETINGS = {
   navbar: DEFAULT_GREETING,
@@ -44,7 +47,7 @@ const CONTEXT_GREETINGS = {
   faq: '¿Te ha quedado alguna duda? Pregúntame lo que quieras sobre cómo trabajamos, los plazos o tus datos.',
   cta_final: 'Para que Ginés llegue preparado a la llamada, cuéntame: ¿a qué se dedica tu negocio?',
   nosotros: 'Veo que nos has querido conocer. ¿Hay algo concreto sobre cómo trabajamos que quieras preguntarnos?',
-  founders: 'El Programa Fundadores es para las 15 primeras empresas que construyen su IA con nosotros: precio especial, prioridad y trabajo codo a codo. Quedan 8 plazas. ¿En qué sector trabajas?',
+  founders: 'El Programa Fundadores es para las primeras quince empresas que construyen su IA con nosotros. ¿En qué sector trabajas?',
 }
 
 const greetingFor = (ctx) => CONTEXT_GREETINGS[ctx] || DEFAULT_GREETING
@@ -70,7 +73,8 @@ function loadStored(key, fallback) {
 const hasUserTurn = (msgs) => Array.isArray(msgs) && msgs.some((m) => m.from === 'user')
 
 
-export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
+// inline=true: el chat vive dentro de la portada (sin botón flotante, siempre abierto).
+export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = false }) {
   const [messages, setMessages] = useState(() => {
     const stored = loadStored(MSG_STORAGE_KEY, null)
     return Array.isArray(stored) && stored.length ? stored : DEFAULT_MESSAGES
@@ -105,8 +109,11 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   const isMobile = useIsMobile()
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: isMobile ? 48 : 44, maxHeight: 120 })
 
+  // Scroll SOLO dentro de la lista de mensajes (nunca de la página).
+  const listRef = useRef(null)
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const el = listRef.current
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [messages, typing, showQuickReplies])
 
   // Web Speech API setup — voice → text into the input. Graceful if unsupported.
@@ -155,8 +162,10 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
     }
   }
 
+  const open = inline || isOpen
+
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       // Sólo sembramos el saludo de contexto si NO hay conversación en curso
       // (el visitante aún no ha escrito nada). Si ya está hablando, conservamos
       // el historial y sólo actualizamos el contexto para la próxima llamada a la API.
@@ -170,11 +179,11 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       }
       if (context) lastContextRef.current = context
       wasOpenRef.current = true
-      setTimeout(() => textareaRef.current?.focus(), 350)
+      if (!inline) setTimeout(() => textareaRef.current?.focus(), 350)
     } else {
       wasOpenRef.current = false
     }
-  }, [isOpen, context, textareaRef])
+  }, [open, inline, context, textareaRef])
 
   // Llama al endpoint /api/chat (Claude Sonnet) con todo el historial + contexto de sección.
   // Si la API falla, muestra un mensaje honesto (sin fingir que funciona) e invita a dejar contacto.
@@ -205,7 +214,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
       if (reply) setMessages((m) => [...m, { from: 'bot', text: reply }])
       // El bot ha propuesto agendar: abrimos el calendario y minimizamos el chat.
       if (data.openBooking) {
-        setTimeout(() => { onClose?.(); openBooking('chat') }, 700)
+        setTimeout(() => { if (!inline) onClose?.(); openBooking(inline ? 'hero_chat' : 'chat') }, 700)
       }
     } catch {
       setTyping(false)
@@ -214,7 +223,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
         { from: 'bot', text: 'Uy, se me ha cruzado un cable un momento. ¿Me lo repites? Y si prefieres, déjame tu email o WhatsApp y te escribimos enseguida.' },
       ])
     }
-  }, [onClose])
+  }, [onClose, inline])
 
   // Mensaje precargado desde un CTA (evento chat:send): se trata como si el visitante lo escribiera.
   useEffect(() => {
@@ -256,7 +265,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
   return (
     <>
       {/* Floating button */}
-      <motion.button
+      {!inline && <motion.button
         onClick={isOpen ? onClose : onOpen}
         aria-label={isOpen ? 'Cerrar chat' : 'Abrir chat'}
         whileHover={{ scale: 1.08 }}
@@ -301,17 +310,30 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
             </svg>
           )}
         </span>
-      </motion.button>
+      </motion.button>}
 
       {/* Panel */}
       <AnimatePresence>
-        {isOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={inline ? false : { opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            style={{
+            role="dialog"
+            aria-label="Asistente de Sito Labs"
+            style={inline ? {
+              position: 'relative',
+              width: '100%',
+              height: isMobile ? 420 : 460,
+              borderRadius: 20,
+              background: '#fff',
+              boxShadow: '0 1px 2px rgba(26,24,20,0.04), 0 28px 56px -28px rgba(26,24,20,0.22)',
+              border: '1px solid rgba(26,24,20,0.08)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            } : {
               position: 'fixed',
               bottom: isMobile ? 'calc(84px + env(safe-area-inset-bottom))' : 92,
               right: btnRight,
@@ -328,32 +350,32 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
             }}
           >
             {/* Header */}
-            <div style={{ background: '#1A1814', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ background: '#0A0A0B', padding: '0.85rem 1.1rem', display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Syne Mono',monospace", fontSize: '0.7rem', color: '#fff', fontWeight: 700, flexShrink: 0 }}>
                 AI
               </div>
               <div>
                 <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.88rem', color: '#fff' }}>Sito Labs Asistente</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
-                  <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)' }}>En línea ahora</span>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
+                  <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>{inline ? 'Pruébalo: es el mismo que instalamos' : 'En línea'}</span>
                 </div>
               </div>
             </div>
 
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10, background: '#FAFAFA' }}>
+            <div ref={listRef} aria-live="polite" style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10, background: '#FAFAFA' }}>
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: msg.from === 'user' ? 'flex-end' : 'flex-start' }}>
                   <div style={{
                     maxWidth: '80%',
                     padding: '9px 14px',
                     borderRadius: msg.from === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: msg.from === 'user' ? 'linear-gradient(135deg,#4361EE,#7209B7,#F72585,#FB5607)' : '#F5F2EA',
+                    background: msg.from === 'user' ? '#0A0A0B' : '#F5F2EA',
                     color: msg.from === 'user' ? '#fff' : '#1A1814',
                     fontFamily: "'DM Sans',sans-serif",
-                    fontWeight: 300,
-                    fontSize: isMobile ? '0.9rem' : '0.82rem',
+                    fontWeight: 400,
+                    fontSize: isMobile ? '0.92rem' : '0.88rem',
                     lineHeight: 1.5,
                   }}>
                     {msg.text}
@@ -368,12 +390,29 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                   ))}
                 </div>
               )}
+              {inline && !typing && !hasUserTurn(messages) && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {STARTERS.map((st) => (
+                    <button
+                      key={st}
+                      onClick={() => send(st)}
+                      style={{
+                        padding: '8px 14px', minHeight: 36, borderRadius: 999,
+                        border: '1px solid rgba(26,24,20,0.16)', background: '#fff', color: '#1A1814',
+                        fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.85rem', cursor: 'pointer',
+                      }}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+              )}
               {showQuickReplies && !typing && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {QUICK_REPLIES.map((qr) => (
                     <button
                       key={qr}
-                      onClick={() => (qr === CTA_LABEL ? (onClose?.(), openBooking('chat')) : send(qr))}
+                      onClick={() => (qr === CTA_LABEL ? (!inline && onClose?.(), openBooking(inline ? 'hero_chat' : 'chat')) : send(qr))}
                       style={{
                         padding: isMobile ? '10px 16px' : '6px 12px',
                         minHeight: isMobile ? 40 : 'auto',
@@ -421,7 +460,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose }) {
                   </motion.button>
                 )}
                 <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                <textarea
+                <textarea aria-label="Escribe tu mensaje"
                   ref={textareaRef}
                   value={input}
                   rows={1}

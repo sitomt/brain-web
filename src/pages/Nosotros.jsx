@@ -5,7 +5,6 @@ import CtaFinal from '../components/CtaFinal'
 import Footer from '../components/Footer'
 import AuroraBackground from '../components/AuroraBackground'
 import SpotlightCard from '../components/SpotlightCard'
-import WipeReveal from '../components/WipeReveal'
 import { ArrowLeft } from '../components/icons/ArrowIcon'
 import SectorIcon from '../components/icons/SectorIcon'
 import useIsMobile from '../hooks/useIsMobile'
@@ -100,7 +99,7 @@ function SitoPhoto() {
       }}
     >
       <img
-        src="/sito2.jpg"
+        src="/sito2-800.jpg"
         alt="Ginés Munuera, fundador de Sito Labs — agencia de IA en Murcia"
         style={{
           width: '100%',
@@ -435,9 +434,10 @@ export default function Nosotros({ onOpenLegal, onOpenCookies }) {
               >
                 No vendemos tecnología.
               </p>
-              <WipeReveal
-                display="block"
+              <span
+                data-gradient-text
                 style={{
+                  display: 'block',
                   fontFamily: "'Instrument Serif',serif",
                   fontStyle: 'italic',
                   fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
@@ -446,7 +446,7 @@ export default function Nosotros({ onOpenLegal, onOpenCookies }) {
                 }}
               >
                 Resolvemos problemas de negocio.
-              </WipeReveal>
+              </span>
             </div>
 
             {/* Qué significa ese alivio — 3 puntos escaneables */}

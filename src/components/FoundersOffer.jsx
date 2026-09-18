@@ -2,164 +2,60 @@ import { motion } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 import Eyebrow from './Eyebrow'
 import CtaButton from './CtaButton'
-import { BRAND, ACCENT, gradientText } from '../lib/tokens'
-import { EASE_PREMIUM } from '../lib/motion'
-import { FOUNDERS, spotsTaken } from '../lib/founders'
-
+import AuroraBackground from './AuroraBackground'
+import { REVEAL } from '../lib/motion'
+import { h2, body, label } from '../lib/typography'
+import { FOUNDERS } from '../lib/founders'
 import { openBooking } from '../lib/booking'
 import { CTA_LABEL } from '../lib/cta'
 
-// Programa Fundadores — el eje de la web. Plazas limitadas porque con estas
-// empresas construimos las soluciones codo a codo: más implicación, precio
-// especial y prioridad. Se apaga con FOUNDERS.active = false.
-
-const VENTAJAS = [
-  { label: 'Precio fundador', line: `Un precio especial que solo tendrán estas ${FOUNDERS.spotsTotal} empresas. Te lo damos cerrado en la llamada.` },
-  { label: 'Prioridad', line: 'Vas primero en desarrollo, en soporte y en cada mejora nueva.' },
-  { label: 'Trato preferente', line: 'Revisamos contigo cómo va y lo ajustamos las veces que haga falta.' },
-  { label: 'Codo a codo', line: 'Hablas directamente con quien lo construye. Sin intermediarios.' },
-  { label: 'Visibilidad', line: 'Si quieres, te presentamos como empresa fundadora en nuestra web y redes.' },
+// Programa Fundadores: pertenencia, acceso y co-creación. Sin barra, sin contador,
+// sin fecha, sin cifras. El "quedan ocho" es una frase del titular, no un marcador.
+const NUM = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince']
+const cap = (w) => String(w).charAt(0).toUpperCase() + String(w).slice(1)
+const ITEMS = [
+  'Tu nombre, si quieres, en la lista de empresas fundadoras.',
+  'Hablas con quien lo construye. Hoy y cuando algo cambie.',
+  'Lo que pidas tú, lo tendrán los demás después. Y a precio fundador.',
 ]
-
-const reveal = (delay = 0) => ({
-  initial: { opacity: 0, y: 24, filter: 'blur(6px)' },
-  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
-  viewport: { once: true, amount: 0.3 },
-  transition: { duration: 0.7, delay, ease: EASE_PREMIUM },
-})
 
 export default function FoundersOffer() {
   const isMobile = useIsMobile()
   if (!FOUNDERS.active) return null
-
-  const pct = Math.round((spotsTaken() / FOUNDERS.spotsTotal) * 100)
-
-  const handleClaim = () => openBooking('fundadores')
+  const left = NUM[FOUNDERS.spotsLeft] || FOUNDERS.spotsLeft
+  const total = NUM[FOUNDERS.spotsTotal] || FOUNDERS.spotsTotal
 
   return (
-    <section
-      id="fundadores"
-      style={{
-        background: '#FAF8F3',
-        padding: isMobile ? '4.5rem 1.25rem' : '7rem 2rem',
-        position: 'relative',
-        overflow: 'hidden',
-        scrollMarginTop: '6rem',
-      }}
-    >
-      {/* Aurora de marca — toques de color sobre la base crema, en multiply para
-          que tiñan sin ensuciar (azul, púrpura, magenta y naranja). Sutil pero
-          perceptible, en la misma intensidad que las secciones claras del sitio. */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          mixBlendMode: 'multiply',
-          background: [
-            'radial-gradient(760px 760px at 8% -12%, rgba(67,97,238,0.20), transparent 62%)',
-            'radial-gradient(820px 820px at 92% -4%, rgba(114,9,183,0.17), transparent 64%)',
-            'radial-gradient(880px 880px at 82% 112%, rgba(247,37,133,0.16), transparent 62%)',
-            'radial-gradient(680px 680px at 4% 118%, rgba(251,86,7,0.13), transparent 64%)',
-          ].join(','),
-        }}
-      />
-
-      <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}>
-        <motion.div {...reveal(0)}>
-          <Eyebrow variant="pill" tone="dark">Programa Fundadores</Eyebrow>
+    <AuroraBackground variant="dark" id="fundadores" style={{ padding: isMobile ? '5rem 1.25rem' : '8rem 2rem', scrollMarginTop: '5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        <motion.div {...REVEAL} style={{ maxWidth: 720 }}>
+          <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="light">Programa Fundadores</Eyebrow></div>
+          <h2 style={{ ...h2, color: '#fff', maxWidth: '20ch' }}>
+            {cap(total)} empresas. Las primeras. <em style={{ fontStyle: 'italic' }}>Quedan {left}.</em>
+          </h2>
+          <p style={{ ...body, color: 'rgba(255,255,255,0.7)', marginTop: '1.25rem' }}>
+            Con {total} podemos sentarnos contigo y construirlo a tu medida. Con cien, no.
+          </p>
         </motion.div>
 
-        <motion.h2
-          {...reveal(0.05)}
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 'clamp(2.1rem, 4.6vw, 3.4rem)',
-            color: '#1A1814',
-            lineHeight: 1.12,
-            margin: '1.1rem 0 0',
-          }}
-        >
-          Las primeras {FOUNDERS.spotsTotal} empresas construyen su IA con nosotros desde el principio.{' '}
-          <em style={{ ...gradientText, fontStyle: 'italic' }}>Quedan {FOUNDERS.spotsLeft}.</em>
-        </motion.h2>
-
-        <motion.p
-          {...reveal(0.12)}
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 300,
-            fontSize: isMobile ? '1.02rem' : '1.1rem',
-            color: 'rgba(26,24,20,0.72)',
-            lineHeight: 1.65,
-            margin: '1.5rem 0 0',
-          }}
-        >
-          Acabamos de abrir a otros negocios lo que llevamos tiempo usando en los nuestros.
-          Con estas {FOUNDERS.spotsTotal} empresas trabajamos codo a codo, y eso no se puede hacer con cien.
-          Por eso son pocas plazas, y por eso quien entra ahora lo hace con condiciones que después no volverán.
-        </motion.p>
-
-        {/* Las tres ventajas */}
-        <motion.div
-          {...reveal(0.18)}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-            gap: isMobile ? '1.1rem' : '1.75rem',
-            margin: '2.25rem 0 0',
-          }}
-        >
-          {VENTAJAS.map((v) => (
-            <div key={v.label} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 5, height: 5, borderRadius: 999, background: ACCENT, flexShrink: 0 }} />
-                <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.74rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1A1814' }}>
-                  {v.label}
-                </span>
-              </span>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.92rem', color: 'rgba(26,24,20,0.62)', lineHeight: 1.55 }}>
-                {v.line}
-              </span>
-            </div>
+        <motion.ul {...REVEAL} style={{ listStyle: 'none', padding: 0, margin: isMobile ? '2rem 0 0' : '2.5rem 0 0', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '1rem' : '2rem', maxWidth: 1000 }}>
+          {ITEMS.map((t, i) => (
+            <li key={t} style={{ borderTop: '1px solid rgba(255,255,255,0.14)', paddingTop: '1rem' }}>
+              <span style={{ ...label, color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: '0.5rem' }}>0{i + 1}</span>
+              <span style={{ ...body, color: 'rgba(255,255,255,0.85)' }}>{t}</span>
+            </li>
           ))}
-        </motion.div>
+        </motion.ul>
 
-        {/* Contador + barra de progreso */}
-        <motion.div {...reveal(0.24)} style={{ margin: '2.5rem 0 0', maxWidth: 420 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 9, gap: 12 }}>
-            <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.74rem', letterSpacing: '0.1em', color: 'rgba(26,24,20,0.6)' }}>
-              Quedan {FOUNDERS.spotsLeft} de {FOUNDERS.spotsTotal} plazas
-            </span>
-            <span style={{ ...gradientText, fontFamily: "'Syne Mono', monospace", fontSize: '0.74rem', letterSpacing: '0.1em' }}>
-              {spotsTaken()} ya dentro
-            </span>
-          </div>
-          <div style={{ position: 'relative', height: 6, borderRadius: 999, background: 'rgba(26,24,20,0.08)', overflow: 'hidden' }}>
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: `${pct}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: EASE_PREMIUM, delay: 0.2 }}
-              style={{ position: 'absolute', inset: 0, width: `${pct}%`, borderRadius: 999, background: BRAND.gradient }}
-            />
-          </div>
-          <span style={{ display: 'block', marginTop: 8, fontFamily: "'Syne Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.06em', color: 'rgba(26,24,20,0.45)' }}>
-            Actualizado a mano cada vez que se cierra una plaza · {FOUNDERS.spotsUpdatedAt}
-          </span>
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div {...reveal(0.3)} style={{ margin: '2rem 0 0', display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap' }}>
-          <CtaButton onClick={handleClaim} variant="solid" arrow="right" size="lg">
+        <motion.div {...REVEAL} style={{ margin: isMobile ? '2.25rem 0 0' : '3rem 0 0', display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+          <CtaButton onClick={() => openBooking('fundadores')} variant="light" arrow="right" size="lg" style={isMobile ? { width: '100%', justifyContent: 'space-between' } : undefined}>
             {CTA_LABEL}
           </CtaButton>
-          <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.05em', color: 'rgba(26,24,20,0.5)' }}>
-            30 min con Ginés · la plaza se decide después, con el plan delante
+          <span style={{ ...label, color: 'rgba(255,255,255,0.5)', textTransform: 'none', letterSpacing: '0.04em' }}>
+            La plaza no se decide en la llamada. Se decide después, con el plan delante.
           </span>
         </motion.div>
       </div>
-    </section>
+    </AuroraBackground>
   )
 }

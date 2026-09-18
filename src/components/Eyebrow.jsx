@@ -22,8 +22,8 @@ export default function Eyebrow({
           border: `1px solid ${isLight ? 'rgba(255,255,255,0.12)' : 'rgba(26,24,20,0.12)'}`,
           background: isLight ? 'rgba(255,255,255,0.04)' : 'rgba(26,24,20,0.03)',
           fontFamily: "'Syne Mono', monospace",
-          fontSize: '0.74rem',
-          letterSpacing: '0.2em',
+          fontSize: '0.75rem',
+          letterSpacing: '0.16em',
           textTransform: 'uppercase',
           color: isLight ? 'rgba(255,255,255,0.65)' : 'rgba(26,24,20,0.6)',
           whiteSpace: 'nowrap',
@@ -35,7 +35,7 @@ export default function Eyebrow({
             width: 4,
             height: 4,
             borderRadius: 999,
-            background: 'linear-gradient(135deg,#4361EE,#F72585)',
+            background: '#4361EE',
             flexShrink: 0,
           }}
         />
@@ -49,7 +49,7 @@ export default function Eyebrow({
     <span
       style={{
         fontFamily: "'Syne Mono', monospace",
-        fontSize: '0.72rem',
+        fontSize: '0.75rem',
         color: isLight ? 'rgba(255,255,255,0.4)' : 'rgba(26,24,20,0.4)',
         letterSpacing: '0.18em',
         textTransform: 'uppercase',

@@ -23,7 +23,7 @@ button, a, [role="button"], input, textarea, select {
 
 body {
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   background: #FAF8F3;
   color: #1A1814;
   overflow-x: hidden;
@@ -72,25 +72,10 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: rgba(26,24,20,0.32); background-clip: content-box; }
 html { scrollbar-width: thin; scrollbar-color: rgba(26,24,20,0.22) transparent; }
 
-/* Pulse for live indicator dots */
-@keyframes brainPulse {
-  0%   { transform: scale(1);   opacity: 0.5; }
-  70%  { transform: scale(2.4); opacity: 0;   }
-  100% { transform: scale(2.4); opacity: 0;   }
-}
-
 /* Marquee de logos (sección Integraciones en móvil). La pista lleva la fila
    duplicada; trasladar -50% = una copia exacta → bucle continuo sin saltos. */
 @keyframes marqueeLeft  { from { transform: translateX(0); }      to { transform: translateX(-50%); } }
 @keyframes marqueeRight { from { transform: translateX(-50%); }   to { transform: translateX(0); } }
-
-/* Aurora blob float — used by IntroAnimation */
-@keyframes floatBlob {
-  0%,  100% { transform: translate(0, 0) scale(1); }
-  25%        { transform: translate(20px, -15px) scale(1.02); }
-  50%        { transform: translate(-15px, 20px) scale(0.98); }
-  75%        { transform: translate(10px, 10px) scale(1.01); }
-}
 
 /* Responsive two-column grids */
 @media (max-width: 768px) {
@@ -116,3 +101,15 @@ html { scrollbar-width: thin; scrollbar-color: rgba(26,24,20,0.22) transparent; 
     scroll-behavior: auto !important;
   }
 }
+
+/* Secciones bajo el pliegue: no se maquetan hasta que se acercan al viewport. */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 800px; }
+
+/* Texto en degradado en modo alto contraste (Windows). */
+@media (forced-colors: active) {
+  .gradient-text, [data-gradient-text] { -webkit-text-fill-color: CanvasText !important; background: none !important; }
+}
+
+/* Enlace "saltar al contenido" */
+.skip-link { position: absolute; left: -9999px; top: 8px; z-index: 10000; background: #0A0A0B; color: #fff; padding: 10px 16px; border-radius: 999px; }
+.skip-link:focus { left: 16px; }
