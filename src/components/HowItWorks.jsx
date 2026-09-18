@@ -49,9 +49,9 @@ export default function HowItWorks() {
   const isMobile = useIsMobile()
 
   return (
-    <section id="proceso" style={{ background: '#0A0A0B', padding: isMobile ? '5rem 0 3rem' : '8rem 0 4rem' }}>
+    <section id="proceso" style={{ background: '#0A0A0B', padding: isMobile ? '3.5rem 0 2rem' : '8rem 0 4rem' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: isMobile ? '0 1.25rem' : '0 2rem' }}>
-        <motion.div {...REVEAL} style={{ marginBottom: isMobile ? '2.5rem' : '3.5rem' }}>
+        <motion.div {...REVEAL} style={{ marginBottom: isMobile ? '1.5rem' : '3.5rem' }}>
           <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="light">Cómo trabajamos</Eyebrow></div>
           <h2 style={{ ...h2, color: '#fff' }}>Tres pasos. <em style={{ fontStyle: 'italic' }}>El primero es gratis.</em></h2>
         </motion.div>
@@ -70,15 +70,15 @@ export default function HowItWorks() {
               variants={STAGGER_CHILD}
               style={{
                 display: 'grid',
-                gridTemplateColumns: isMobile ? '40px 1fr' : '1fr',
-                gap: isMobile ? '1rem' : 0,
-                padding: isMobile ? '1.25rem 0' : '0 0 0 1.5rem',
+                gridTemplateColumns: '1fr',
+                gap: 0,
+                padding: isMobile ? '1.1rem 0' : '0 0 0 1.5rem',
                 borderTop: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
                 borderLeft: !isMobile ? '1px solid rgba(255,255,255,0.12)' : 'none',
                 borderBottom: isMobile && i === STEPS.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none',
               }}
             >
-              <span style={{ ...label, color: ACCENT, display: 'block', marginBottom: isMobile ? 0 : '1rem', paddingTop: 4 }}>{s.num}</span>
+              <span style={{ ...label, color: ACCENT, display: 'block', marginBottom: isMobile ? '0.5rem' : '1rem', paddingTop: 4 }}>{s.num}</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <h3 style={{ ...h3, color: '#fff' }}>{s.title}</h3>
                 <p style={{ ...body, color: 'rgba(255,255,255,0.65)' }}>{s.desc}</p>
@@ -89,7 +89,7 @@ export default function HowItWorks() {
         </motion.div>
       </div>
 
-      <div style={{ marginTop: isMobile ? '3rem' : '4.5rem', padding: isMobile ? '1.25rem 0' : '1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ marginTop: isMobile ? '2rem' : '4.5rem', padding: isMobile ? '1rem 0' : '1.5rem 0', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <Logos />
       </div>
     </section>

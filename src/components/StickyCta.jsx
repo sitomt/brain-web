@@ -14,6 +14,13 @@ export default function StickyCta() {
   const isMobile = useIsMobile()
   const [heroGone, setHeroGone] = useState(false)
   const [finalVisible, setFinalVisible] = useState(false)
+  // No competir con el banner de cookies por el borde inferior.
+  const [cookiesDone, setCookiesDone] = useState(() => { try { return !!localStorage.getItem('brain_cookie_consent_v2') } catch { return true } })
+  useEffect(() => {
+    const on = () => setCookiesDone(true)
+    window.addEventListener('cookies:done', on)
+    return () => window.removeEventListener('cookies:done', on)
+  }, [])
 
   useEffect(() => {
     if (!isMobile) return
@@ -27,7 +34,7 @@ export default function StickyCta() {
     return () => { o1.disconnect(); o2?.disconnect() }
   }, [isMobile])
 
-  const show = isMobile && heroGone && !finalVisible
+  const show = isMobile && heroGone && !finalVisible && cookiesDone
 
   return (
     <AnimatePresence>

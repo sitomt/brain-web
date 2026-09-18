@@ -34,7 +34,7 @@ function Item({ item, isOpen, onToggle, isMobile }) {
         aria-expanded={isOpen}
         style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.25rem', padding: isMobile ? '1.1rem 0' : '1.35rem 0', textAlign: 'left', color: '#1A1814' }}
       >
-        <span style={{ ...h3 }}>{item.q}</span>
+        <span style={{ ...h3, fontSize: isMobile ? '1.2rem' : h3.fontSize }}>{item.q}</span>
         <span aria-hidden style={{ flexShrink: 0, width: 32, height: 32, borderRadius: 999, border: '1px solid rgba(26,24,20,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A1814', background: isOpen ? 'rgba(26,24,20,0.05)' : 'transparent' }}>
           <Icon size={14} weight="regular" />
         </span>
@@ -63,8 +63,8 @@ export default function Faq() {
   const [openIdx, setOpenIdx] = useState(0)
 
   return (
-    <section id="faq" style={{ background: '#FAF8F3', padding: isMobile ? '5rem 1.25rem' : '8rem 2rem' }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '4fr 8fr', gap: isMobile ? '2rem' : '4rem', alignItems: 'start' }}>
+    <section id="faq" style={{ background: '#FAF8F3', padding: isMobile ? '3.5rem 1.25rem 3rem' : '8rem 2rem' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '4fr 8fr', gap: isMobile ? '1.25rem' : '4rem', alignItems: 'start' }}>
         <motion.div {...REVEAL} style={{ position: isMobile ? 'static' : 'sticky', top: 120 }}>
           <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="dark">Sin letra pequeña</Eyebrow></div>
           <h2 style={{ ...h2, color: '#1A1814' }}>Lo que querrías <em style={{ fontStyle: 'italic' }}>preguntarnos.</em></h2>

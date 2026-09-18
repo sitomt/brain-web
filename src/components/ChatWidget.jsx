@@ -113,7 +113,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
   const listRef = useRef(null)
   useEffect(() => {
     const el = listRef.current
-    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    if (el && hasUserTurn(messages)) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [messages, typing, showQuickReplies])
 
   // Web Speech API setup — voice → text into the input. Graceful if unsupported.
@@ -325,7 +325,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
             style={inline ? {
               position: 'relative',
               width: '100%',
-              height: isMobile ? 420 : 460,
+              height: isMobile ? 400 : 460,
               borderRadius: 20,
               background: '#fff',
               boxShadow: '0 1px 2px rgba(26,24,20,0.04), 0 28px 56px -28px rgba(26,24,20,0.22)',
@@ -441,7 +441,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
                 (adapted from 21st.dev AIInputWithLoading to the project's inline styles) */}
             <div style={{ padding: '0.75rem 0.75rem 0.55rem', borderTop: '1px solid #F0EDE6', background: '#fff' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {speechSupported && (
+                {speechSupported && !(inline && isMobile) && (
                   <motion.button
                     onClick={toggleListening}
                     aria-label={isListening ? 'Detener dictado' : 'Hablar'}
@@ -539,7 +539,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
                   }}>
                     Escuchando…
                   </span>
-                ) : typing ? 'La IA está escribiendo…' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea'}
+                ) : typing ? 'La IA está escribiendo…' : (inline && isMobile ? 'Escribe o toca una opción' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea')}
               </p>
             </div>
           </motion.div>

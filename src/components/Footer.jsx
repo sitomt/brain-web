@@ -25,23 +25,23 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: '#0A0A0B', borderTop: '1px solid rgba(255,255,255,0.08)', padding: isMobile ? '2rem 1.25rem 2.5rem' : '2.25rem 2rem' }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: isMobile ? '1.25rem' : '2rem', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+    <footer style={{ background: '#0A0A0B', borderTop: '1px solid rgba(255,255,255,0.08)', padding: isMobile ? '1.75rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom))' : '2.25rem 2rem' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: isMobile ? '0.75rem' : '2rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.9rem' : '1.25rem', flexWrap: 'wrap' }}>
           <Link to="/" aria-label="Sito Labs — inicio" style={{ textDecoration: 'none' }}><BrandMark size="1.25rem" /></Link>
           <span style={{ ...linkBase, color: 'rgba(255,255,255,0.45)' }}>Murcia · España</span>
           <a href={`mailto:${EMAIL}`} style={linkBase}>{EMAIL}</a>
         </div>
-        <nav aria-label="Legal" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+        <nav aria-label="Legal" style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.9rem' : '1.25rem', flexWrap: 'wrap', fontSize: isMobile ? '0.85rem' : undefined }}>
           <button onClick={() => onOpenLegal('aviso')} style={linkBase}>Aviso legal</button>
           <button onClick={() => onOpenLegal('privacidad')} style={linkBase}>Privacidad</button>
           <button onClick={() => onOpenLegal('cookies')} style={linkBase}>Cookies</button>
-          <button onClick={onOpenCookies} style={linkBase}>Gestionar cookies</button>
+          {!isMobile && <button onClick={onOpenCookies} style={linkBase}>Gestionar cookies</button>}
           <Link to="/nosotros" style={{ ...linkBase, color: 'rgba(255,255,255,0.85)' }}>Nuestra historia →</Link>
         </nav>
       </div>
       <div style={{ maxWidth: 1180, margin: '1rem auto 0', fontFamily: "'Syne Mono',monospace", fontSize: '0.75rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.35)' }}>
-        © {year} Sito Labs · Agencia de Inteligencia Artificial
+        © {year} Sito Labs{isMobile ? '' : ' · Agencia de Inteligencia Artificial'}
       </div>
     </footer>
   )

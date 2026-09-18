@@ -26,7 +26,7 @@ export default function FoundersOffer() {
   const total = NUM[FOUNDERS.spotsTotal] || FOUNDERS.spotsTotal
 
   return (
-    <AuroraBackground variant="dark" id="fundadores" style={{ padding: isMobile ? '5rem 1.25rem' : '8rem 2rem', scrollMarginTop: '5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+    <AuroraBackground variant="dark" id="fundadores" style={{ padding: isMobile ? '3.5rem 1.25rem 3rem' : '8rem 2rem', scrollMarginTop: '5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <motion.div {...REVEAL} style={{ maxWidth: 720 }}>
           <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="light">Programa Fundadores</Eyebrow></div>
@@ -38,16 +38,16 @@ export default function FoundersOffer() {
           </p>
         </motion.div>
 
-        <motion.ul {...REVEAL} style={{ listStyle: 'none', padding: 0, margin: isMobile ? '2rem 0 0' : '2.5rem 0 0', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '1rem' : '2rem', maxWidth: 1000 }}>
+        <motion.ul {...REVEAL} style={{ listStyle: 'none', padding: 0, margin: isMobile ? '1.5rem 0 0' : '2.5rem 0 0', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '0.75rem' : '2rem', maxWidth: 1000 }}>
           {ITEMS.map((t, i) => (
-            <li key={t} style={{ borderTop: '1px solid rgba(255,255,255,0.14)', paddingTop: '1rem' }}>
-              <span style={{ ...label, color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: '0.5rem' }}>0{i + 1}</span>
+            <li key={t} style={{ borderTop: '1px solid rgba(255,255,255,0.14)', paddingTop: isMobile ? '0.75rem' : '1rem', display: isMobile ? 'flex' : 'block', gap: 12 }}>
+              <span style={{ ...label, color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: isMobile ? 0 : '0.5rem', paddingTop: isMobile ? 5 : 0, flexShrink: 0 }}>0{i + 1}</span>
               <span style={{ ...body, color: 'rgba(255,255,255,0.85)' }}>{t}</span>
             </li>
           ))}
         </motion.ul>
 
-        <motion.div {...REVEAL} style={{ margin: isMobile ? '2.25rem 0 0' : '3rem 0 0', display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+        <motion.div {...REVEAL} style={{ margin: isMobile ? '1.75rem 0 0' : '3rem 0 0', display: 'flex', alignItems: 'center', gap: isMobile ? '0.75rem' : '1.25rem', flexWrap: 'wrap' }}>
           <CtaButton onClick={() => openBooking('fundadores')} variant="light" arrow="right" size="lg" style={isMobile ? { width: '100%', justifyContent: 'space-between' } : undefined}>
             {CTA_LABEL}
           </CtaButton>

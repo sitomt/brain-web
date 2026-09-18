@@ -29,6 +29,7 @@ export default function CookieBanner({ onOpenLegal }) {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(consent))
     setVisible(false)
+    window.dispatchEvent(new CustomEvent('cookies:done'))
   }
 
   return (
@@ -41,10 +42,12 @@ export default function CookieBanner({ onOpenLegal }) {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'fixed',
-            bottom: isMobile ? 16 : 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 'min(680px, calc(100vw - 24px))',
+            bottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom))' : 24,
+            left: isMobile ? 10 : 0,
+            right: isMobile ? 10 : 0,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: isMobile ? 'auto' : 'min(680px, calc(100vw - 24px))',
             zIndex: 9000,
             background: 'rgba(13,13,16,0.92)',
             backdropFilter: 'blur(24px)',

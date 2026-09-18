@@ -27,7 +27,7 @@ export default function Hero() {
         minHeight: isMobile ? 'auto' : '100dvh',
         display: 'flex',
         alignItems: 'center',
-        padding: isMobile ? '6rem 1.25rem 3.5rem' : '8rem 2rem 5rem',
+        padding: isMobile ? '5.5rem 1.25rem 2.5rem' : '8rem 2rem 5rem',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -45,20 +45,20 @@ export default function Hero() {
           maxWidth: 1180, margin: '0 auto', width: '100%',
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 0.9fr',
-          gap: isMobile ? '2rem' : '4rem',
+          gap: isMobile ? '1.75rem' : '4rem',
           alignItems: 'start',
           position: 'relative',
         }}
       >
         {/* Columna izquierda: todo alineado a la izquierda, también en móvil */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem', alignItems: 'flex-start', paddingTop: isMobile ? 0 : '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1.1rem' : '1.4rem', alignItems: 'flex-start', paddingTop: isMobile ? 0 : '1rem' }}>
           {/* Sin fade en el H1: es el LCP y no debe esperar a ninguna animación */}
-          <h1 style={{ ...display, color: '#1A1814', maxWidth: '12ch' }}>
+          <h1 style={{ ...display, fontSize: isMobile ? '2.6rem' : display.fontSize, color: '#1A1814', maxWidth: '12ch' }}>
             La IA que hace funcionar tu{' '}
             <RotatingWord words={WORDS} style={{ fontStyle: 'italic', ...gradientText, verticalAlign: 'baseline' }} />
           </h1>
 
-          <p style={{ ...bodyLg, color: '#4A4740' }}>
+          <p style={{ ...bodyLg, fontSize: isMobile ? '1.05rem' : bodyLg.fontSize, color: '#4A4740' }}>
             Contesta clientes, controla stock, sigue leads y hace el reporting.
             La usamos a diario en nuestros propios negocios.
           </p>
@@ -79,15 +79,22 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          <motion.div {...fadeUp(0.2)} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.35rem 0.8rem', marginTop: '0.4rem' }}>
-            <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>Lo usamos en</span>
-            {TRUST.map((name, i) => (
-              <span key={name} style={{ display: 'inline-flex', alignItems: 'baseline', gap: '0.8rem' }}>
-                {i > 0 && <span aria-hidden style={{ width: 3, height: 3, borderRadius: 999, background: 'rgba(26,24,20,0.25)', alignSelf: 'center' }} />}
-                <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1rem', color: 'rgba(26,24,20,0.72)' }}>{name}</span>
-              </span>
-            ))}
-          </motion.div>
+          {isMobile ? (
+            <motion.p {...fadeUp(0.2)} style={{ margin: '0.2rem 0 0', fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1.05rem', lineHeight: 1.45, color: 'rgba(26,24,20,0.7)' }}>
+              <span style={{ ...label, fontStyle: 'normal', color: 'rgba(26,24,20,0.5)', marginRight: 8 }}>Lo usamos en</span>
+              {TRUST.slice(0, -1).join(', ')} y {TRUST[TRUST.length - 1]}.
+            </motion.p>
+          ) : (
+            <motion.div {...fadeUp(0.2)} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.35rem 0.8rem', marginTop: '0.4rem' }}>
+              <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>Lo usamos en</span>
+              {TRUST.map((name, i) => (
+                <span key={name} style={{ display: 'inline-flex', alignItems: 'baseline', gap: '0.8rem' }}>
+                  {i > 0 && <span aria-hidden style={{ width: 3, height: 3, borderRadius: 999, background: 'rgba(26,24,20,0.25)', alignSelf: 'center' }} />}
+                  <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1rem', color: 'rgba(26,24,20,0.72)' }}>{name}</span>
+                </span>
+              ))}
+            </motion.div>
+          )}
         </div>
 
         {/* Columna derecha: el chat real */}

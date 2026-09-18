@@ -15,10 +15,10 @@ export default function CtaFinal() {
   const isMobile = useIsMobile()
 
   return (
-    <AuroraBackground intense id="cta" style={{ padding: isMobile ? '5rem 1.25rem' : '8rem 2rem' }}>
-      <motion.div {...REVEAL} style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+    <AuroraBackground intense id="cta" style={{ padding: isMobile ? '4rem 1.25rem 3.5rem' : '8rem 2rem' }}>
+      <motion.div {...REVEAL} style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMobile ? '1.1rem' : '1.5rem' }}>
         <Eyebrow variant="pill" tone="light">Primera llamada sin coste</Eyebrow>
-        <h2 style={{ ...display, color: '#fff' }}>
+        <h2 style={{ ...display, fontSize: isMobile ? '2.5rem' : display.fontSize, color: '#fff' }}>
           Treinta minutos.<br />
           <em data-gradient-text style={{ fontStyle: 'italic', ...gradientText }}>Y un plan concreto.</em>
         </h2>
@@ -26,7 +26,7 @@ export default function CtaFinal() {
           Nos cuentas tu negocio. Te decimos qué haría la IA y, si encaja, te llega un plan con precio cerrado.
         </p>
         <div id="cta-final-button" style={{ marginTop: '0.5rem', width: isMobile ? '100%' : 'auto' }}>
-          <CtaButton onClick={() => openBooking('cta_final')} variant="light" arrow="right" size="lg" magnetic={!isMobile} style={isMobile ? { width: '100%', justifyContent: 'space-between' } : undefined}>
+          <CtaButton onClick={() => openBooking('cta_final')} variant="light" arrow="right" size="lg" magnetic={!isMobile} style={isMobile ? { width: '100%', justifyContent: 'space-between', background: '#FAF8F3', color: '#1A1814', border: 'none' } : undefined}>
             {CTA_LABEL}
           </CtaButton>
         </div>
