@@ -10,18 +10,18 @@ import { h2, bodyLg } from '../lib/typography'
 const STEPS = [
   {
     num: '01',
-    title: 'Habla con nuestra IA',
-    desc: 'Antes de reservar nada, prueba la tecnología que pondríamos en tu negocio. Cuéntale tu caso al asistente: te guía, resuelve tus dudas y te enseña en vivo lo que la IA puede hacer por ti. Sin coste y sin compromiso.',
+    title: 'Agenda una llamada de 30 minutos',
+    desc: 'Eliges día y hora en el calendario y te llega la invitación por email. Nos cuentas cómo funciona tu negocio y qué te quita más tiempo. Gratis y sin compromiso.',
   },
   {
     num: '02',
-    title: 'Nos conocemos en 30 minutos',
-    desc: 'Media hora, cara a cara. Nos cuentas cómo funciona tu empresa por dentro, entramos a fondo en tus procesos y empezamos a perfilar la solución. Si hace falta, nos vemos otra vez — sin prisa por venderte nada.',
+    title: 'Te proponemos un plan con precio cerrado',
+    desc: 'Te decimos qué tiene sentido automatizar, cómo lo haríamos y cuánto cuesta. Sin letra pequeña ni costes que aparecen después. Si no podemos ayudarte, te lo decimos.',
   },
   {
     num: '03',
-    title: 'Presupuesto exacto y manos a la obra',
-    desc: 'Te damos un presupuesto cerrado, sin letra pequeña ni costes que aparecen después. Si te encaja, nos ponemos en marcha: en tres o cuatro semanas lo tienes funcionando en tu negocio.',
+    title: 'Lo construimos contigo',
+    desc: 'Codo a codo, sobre las herramientas que ya usas. En tres o cuatro semanas lo tienes funcionando en tu negocio, y seguimos mejorándolo contigo.',
   },
 ]
 
@@ -68,13 +68,13 @@ export default function HowItWorks() {
             <Eyebrow variant="pill" tone="light">Proceso</Eyebrow>
           </div>
           <h2 style={{ ...h2 }}>
-            <span style={{ color: '#fff' }}>De la idea a producción, </span>
+            <span style={{ color: '#fff' }}>De la primera llamada a funcionando, </span>
             <WipeReveal delay={0.2}>
               <em style={{ fontStyle: 'italic', ...gradientText }}>en tres pasos.</em>
             </WipeReveal>
           </h2>
           <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
-            Sin formularios eternos ni letra pequeña. Empiezas hablando con la IA y nosotros nos encargamos del resto.
+            Sin formularios eternos ni letra pequeña. Tú nos cuentas el problema, nosotros nos encargamos del resto.
           </p>
         </motion.div>
 

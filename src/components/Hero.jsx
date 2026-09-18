@@ -10,6 +10,9 @@ import HeroChatDemo from '../remotion/HeroChatDemo'
 import { EASE_PREMIUM } from '../lib/motion'
 import { gradientText } from '../lib/tokens'
 import { display, bodyLg } from '../lib/typography'
+import { openBooking } from '../lib/booking'
+import { FOUNDERS } from '../lib/founders'
+import { WHATSAPP_URL } from '../lib/site'
 
 const COMP_W = 420
 const COMP_H = 380
@@ -22,7 +25,7 @@ const fadeUp = (delay = 0) => ({
 
 const TRUST = ['Baktun 13', 'Clesol', 'Venta Alegría', 'Foodmatica', 'Playgame Italia']
 
-export default function Hero({ onChatOpen, introComplete = true }) {
+export default function Hero({ introComplete = true }) {
   const isMobile = useIsMobile()
   const reduce = useReducedMotion()
   const sectionRef = useRef(null)
@@ -75,7 +78,7 @@ export default function Hero({ onChatOpen, introComplete = true }) {
         {/* Left column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}>
           <motion.div {...fadeUp(0.1)}>
-            <Eyebrow variant="pill" tone="dark">Agencia de IA · Murcia</Eyebrow>
+            <Eyebrow variant="pill" tone="dark">Sito Labs · Agencia de IA · Murcia</Eyebrow>
           </motion.div>
 
           {/* H1 — resultado, con sector rotatorio en gradiente */}
@@ -90,22 +93,36 @@ export default function Hero({ onChatOpen, introComplete = true }) {
           </motion.h1>
 
           <motion.p {...fadeUp(0.3)} style={{ ...bodyLg, color: '#4A4740' }}>
-            Diseñada con criterio de empresario. Operativa en semanas.
+            Atención al cliente, reservas, papeleo y ventas en piloto automático.
+            Hecha por empresarios, funcionando en semanas.
           </motion.p>
 
           <motion.div {...fadeUp(0.4)} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-            <CtaButton onClick={onChatOpen} variant="solid" arrow="right" size="lg" magnetic>
-              Habla con nuestra IA
+            <CtaButton onClick={() => openBooking('hero')} variant="solid" arrow="right" size="lg" magnetic>
+              Agendar llamada gratis
             </CtaButton>
-            <CtaButton
-              onClick={() => document.getElementById('soluciones')?.scrollIntoView({ behavior: 'smooth' })}
-              variant="ghost"
-              arrow="down"
-              size="lg"
-            >
-              Ver soluciones
-            </CtaButton>
+            {FOUNDERS.active && (
+              <CtaButton
+                onClick={() => document.getElementById('fundadores')?.scrollIntoView({ behavior: 'smooth' })}
+                variant="ghost"
+                arrow="down"
+                size="lg"
+              >
+                Quedan {FOUNDERS.spotsLeft} plazas fundador
+              </CtaButton>
+            )}
           </motion.div>
+
+          {/* Alternativa humana al calendario — discreta, no compite con el CTA */}
+          <motion.a
+            {...fadeUp(0.48)}
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ marginTop: '-0.6rem', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.9rem', color: 'rgba(26,24,20,0.55)', textDecoration: 'underline', textUnderlineOffset: 3 }}
+          >
+            ¿Prefieres escribir? Háblanos por WhatsApp
+          </motion.a>
 
           {/* Trust strip */}
           <motion.div
@@ -113,7 +130,7 @@ export default function Hero({ onChatOpen, introComplete = true }) {
             style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start', marginTop: '0.5rem' }}
           >
             <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.45)' }}>
-              Ya operan con nosotros
+              Negocios que dirigimos y con los que trabajamos
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap', rowGap: '0.5rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
               {TRUST.map((name, i) => (

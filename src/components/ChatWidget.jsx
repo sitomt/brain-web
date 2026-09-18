@@ -34,11 +34,11 @@ const QUICK_REPLIES = [
   'Hablar con una persona',
 ]
 
-const DEFAULT_GREETING = '¡Hola! Soy el asistente de BrAIn. ¿En qué puedo ayudarte?'
+const DEFAULT_GREETING = '¡Hola! Soy el asistente de Sito Labs. ¿En qué puedo ayudarte?'
 
 const CONTEXT_GREETINGS = {
   navbar: DEFAULT_GREETING,
-  hero: '¡Hola! Soy el asistente de BrAIn. ¿Qué parte de tu negocio te gustaría mejorar?',
+  hero: '¡Hola! Soy el asistente de Sito Labs. ¿Qué parte de tu negocio te gustaría mejorar?',
   audit: 'Perfecto, te hago la auditoría gratis. Cuéntame a qué se dedica tu negocio y cómo trabajáis por dentro, y te digo las 3 cosas que podrías automatizar ya — y por cuál de tus empleados de IA te conviene empezar.',
   contact_center: 'Te interesa tu Recepcionista: atender cada conversación al instante, en cualquier canal y a cualquier hora. ¿Por dónde te entran hoy más consultas — WhatsApp, teléfono o web?',
   back_office: 'Te interesa tu Administrativo: que se encargue solo del papeleo que se repite. ¿Cuál os roba más tiempo cada semana — emails, facturas, informes?',
@@ -439,7 +439,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, onRecomme
                 AI
               </div>
               <div>
-                <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.88rem', color: '#fff' }}>BrAIn Asistente</div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.88rem', color: '#fff' }}>Sito Labs Asistente</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
                   <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)' }}>En línea ahora</span>

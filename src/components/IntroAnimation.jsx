@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /* ──────────────────────────────────────────────────────────────────────────
-   BrAIn — Aperture Morph intro
+   Sito Labs — Aperture Morph intro
    Frame-driven animation (Remotion-style: interpolate / spring / cubic-bezier)
    Total: 150 frames @ 60fps = 2.5s. Then a 0.5s exit fade.
    Sequence:

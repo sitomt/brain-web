@@ -5,6 +5,8 @@ import Eyebrow from './Eyebrow'
 import GradientMesh from './GradientMesh'
 import useIsMobile from '../hooks/useIsMobile'
 import { EASE_PREMIUM } from '../lib/motion'
+import { openBooking, openParticulares } from '../lib/booking'
+import { WHATSAPP_URL } from '../lib/site'
 
 const REVEAL = (delay = 0) => ({
   initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
@@ -13,19 +15,10 @@ const REVEAL = (delay = 0) => ({
   transition: { duration: 0.8, delay, ease: EASE_PREMIUM },
 })
 
-export default function CtaFinal({ onChatOpen }) {
+export default function CtaFinal() {
   const isMobile = useIsMobile()
 
-  const handleReserva = () => {
-    onChatOpen()
-    setTimeout(() => {
-      window.dispatchEvent(
-        new CustomEvent('chat:send', {
-          detail: { message: 'Hola. Quiero agendar un diagnóstico gratuito.' },
-        })
-      )
-    }, 400)
-  }
+  const handleReserva = () => openBooking('cta_final')
 
   return (
     <AuroraBackground intense fadeSides style={{ padding: isMobile ? '5rem 1.5rem' : '8rem 2rem', position: 'relative' }}>
@@ -64,7 +57,7 @@ export default function CtaFinal({ onChatOpen }) {
             size="lg"
             magnetic
           >
-            Reservar mi diagnóstico
+            Agendar llamada gratis
           </CtaButton>
         </motion.div>
 
@@ -72,7 +65,12 @@ export default function CtaFinal({ onChatOpen }) {
           {...REVEAL(0.32)}
           style={{ fontFamily: "'DM Sans',sans-serif", fontStyle: 'italic', fontWeight: 300, fontSize: '0.92rem', color: 'rgba(255,255,255,0.55)', margin: '-0.75rem 0 0', lineHeight: 1.5, maxWidth: 460 }}
         >
-          Te respondemos en el mismo chat, al momento.
+          Eliges día y hora y te llega la invitación por email.
+          <br />
+          ¿Prefieres escribir?{' '}
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textUnderlineOffset: 3 }}>WhatsApp directo</a>
+          {' · '}¿Eres particular?{' '}
+          <button type="button" onClick={openParticulares} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#fff', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Cuéntanos tu idea</button>
         </motion.p>
       </div>
     </AuroraBackground>

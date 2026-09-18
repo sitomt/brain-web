@@ -62,7 +62,7 @@ function Header({ clock, subtitle, frame }) {
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
-          {subtitle || 'BrAIn Asistente'}
+          {subtitle || 'Sito Labs Asistente'}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <div

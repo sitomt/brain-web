@@ -1,17 +1,18 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
 import { BRAND, ACCENT } from '../lib/tokens'
+import { openBooking } from '../lib/booking'
+import { EMAIL, PHONE, PHONE_TEL, WHATSAPP_URL } from '../lib/site'
 
 const GRADIENT = BRAND.gradient
-const EMAIL = 'ginesmunuera@gmail.com'
 
 // Section anchors live on the home route.
 const NAV_LINKS = [
-  { label: 'Enfoque',       id: 'enfoque' },
-  { label: 'Proceso',       id: 'proceso' },
-  { label: 'Soluciones',    id: 'soluciones' },
-  { label: 'Integraciones', id: 'integraciones' },
-  { label: 'Clientes',      id: 'clientes' },
+  { label: 'Programa Fundadores', id: 'fundadores' },
+  { label: 'Enfoque',             id: 'enfoque' },
+  { label: 'Cómo trabajamos',     id: 'proceso' },
+  { label: 'Integraciones',       id: 'integraciones' },
+  { label: 'Preguntas',           id: 'faq' },
 ]
 
 const toTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -33,9 +34,9 @@ const colTitle = {
 function BrandMark({ size = '1.15rem' }) {
   return (
     <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.85)' }}>br</span>
-      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>[AI]</span>
-      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.85)' }}>n.</span>
+      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.85)' }}>sito</span>
+      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>labs</span>
+      <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: size, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.85)' }}>.</span>
     </span>
   )
 }
@@ -87,7 +88,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
         >
           {/* Brand block */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxWidth: 360 }}>
-            <Link to="/" onClick={toTop} style={{ textDecoration: 'none', width: 'fit-content' }} aria-label="BrAIn — inicio">
+            <Link to="/" onClick={toTop} style={{ textDecoration: 'none', width: 'fit-content' }} aria-label="Sito Labs — inicio">
               <BrandMark size="1.3rem" />
             </Link>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.95rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.5)', margin: 0 }}>
@@ -133,11 +134,18 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
               <a href={`mailto:${EMAIL}`} style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
                 {EMAIL}
               </a>
+              <a href={`tel:${PHONE_TEL}`} style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                {PHONE}
+              </a>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={linkBase} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                WhatsApp directo
+              </a>
               <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)' }}>
                 Respondemos en menos de 24 h
               </span>
               <a
-                href={`mailto:${EMAIL}?subject=${encodeURIComponent('Quiero automatizar mi negocio')}`}
+                href="#agendar"
+                onClick={(e) => { e.preventDefault(); openBooking('footer') }}
                 style={{
                   marginTop: '0.4rem', display: 'inline-flex', alignItems: 'center', gap: 8,
                   padding: '0.6rem 1.15rem', borderRadius: 999, textDecoration: 'none',
@@ -148,7 +156,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.16)' }}
               >
-                Reserva tu reunión
+                Agendar llamada
               </a>
             </div>
           </div>
@@ -169,7 +177,7 @@ export default function Footer({ onOpenLegal, onOpenCookies }) {
           }}
         >
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '0.78rem', color: 'rgba(255,255,255,0.32)' }}>
-            © {year} BrAIn · Agencia de Inteligencia Artificial. Todos los derechos reservados.
+            © {year} Sito Labs · Agencia de Inteligencia Artificial. Todos los derechos reservados.
           </span>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '1.25rem' : '1.5rem' }}>

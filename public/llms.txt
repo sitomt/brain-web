@@ -1,6 +1,6 @@
-# BrAIn — Agencia de IA en Murcia
+# Sito Labs — Agencia de IA en Murcia
 
-> BrAIn es una agencia de Inteligencia Artificial en Murcia (España), fundada por empresarios. Implementa IA que da resultados de negocio: atención al cliente automatizada, automatización de operaciones e inteligencia de negocio. Primera reunión gratuita; soluciones en producción en 2-3 semanas; datos del cliente en su propia infraestructura (RGPD, NDA disponible).
+> Sito Labs es una agencia de Inteligencia Artificial en Murcia (España), fundada por empresarios. Implementa IA que da resultados de negocio: atención al cliente automatizada, automatización de operaciones e inteligencia de negocio. Primera reunión gratuita; soluciones en producción en 2-3 semanas; datos del cliente en su propia infraestructura (RGPD, NDA disponible).
 
 ## Qué hacemos
 - **Atención al Cliente (Contact Center IA)**: responde al instante en WhatsApp, web, email, Instagram y teléfono, conectado a tu CRM y a tu sistema de reservas. Desde 1.200€ + 97€/mes.
@@ -23,8 +23,8 @@
 - Playgame Italia — operaciones (Italia).
 
 ## Enlaces
-- Inicio: https://agenciabrain.example/
-- Nosotros: https://agenciabrain.example/nosotros
-- Contacto: ginesmunuera@gmail.com
+- Inicio: https://sitolabs.example/
+- Nosotros: https://sitolabs.example/nosotros
+- Contacto: hello@sitolabs.com
 
-<!-- NOTA: sustituir "agenciabrain.example" por el dominio real al publicar. -->
+<!-- NOTA: sustituir "sitolabs.example" por el dominio real al publicar. -->

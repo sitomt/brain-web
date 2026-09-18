@@ -101,7 +101,7 @@ function SitoPhoto() {
     >
       <img
         src="/sito2.jpg"
-        alt="Ginés Munuera, fundador de BrAIn — agencia de IA en Murcia"
+        alt="Ginés Munuera, fundador de Sito Labs — agencia de IA en Murcia"
         style={{
           width: '100%',
           height: '100%',
@@ -133,7 +133,7 @@ function SitoPhoto() {
           Ginés Munuera
         </p>
         <p style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', margin: 0 }}>
-          Fundador · BrAIn
+          Fundador · Sito Labs
         </p>
       </div>
     </div>
@@ -147,8 +147,8 @@ const NOSOTROS_SCHEMA = {
       '@type': 'AboutPage',
       '@id': `${SITE_URL}/nosotros`,
       url: `${SITE_URL}/nosotros`,
-      name: 'Nosotros · BrAIn — Agencia de IA en Murcia',
-      description: 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de BrAIn, agencia de IA en Murcia.',
+      name: 'Nosotros · Sito Labs — Agencia de IA en Murcia',
+      description: 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de Sito Labs, agencia de IA en Murcia.',
       isPartOf: { '@id': `${SITE_URL}/#organization` },
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -189,8 +189,8 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
     const descEl = document.querySelector('meta[name="description"]')
     const prevDesc = descEl?.getAttribute('content') ?? ''
 
-    document.title = 'Nosotros · BrAIn | Agencia de IA en Murcia — Quiénes somos'
-    descEl?.setAttribute('content', 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de BrAIn, agencia de IA en Murcia. Primera reunión gratuita.')
+    document.title = 'Nosotros · Sito Labs | Agencia de IA en Murcia — Quiénes somos'
+    descEl?.setAttribute('content', 'Somos un grupo de inversores que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de Sito Labs, agencia de IA en Murcia. Primera reunión gratuita.')
 
     const script = document.createElement('script')
     script.type = 'application/ld+json'
@@ -282,7 +282,7 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
               }}
             >
               <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.75, margin: 0 }}>
-                BrAIn no nace de un despacho de programadores. Nace de un grupo de
+                Sito Labs no nace de un despacho de programadores. Nace de un grupo de
                 inversores que lleva años levantando y dirigiendo empresas en
                 sectores <strong style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>muy distintos</strong>.
               </p>
@@ -381,9 +381,9 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
 
           <Divider />
 
-          {/* ── 03 · Por qué existe BrAIn — el giro, voz de Ginés ── */}
+          {/* ── 03 · Por qué existe Sito Labs — el giro, voz de Ginés ── */}
           <motion.div {...fade(0)} style={{ padding: isMobile ? '3.5rem 0' : '4rem 0' }}>
-            <Label num="03">Por qué existe BrAIn</Label>
+            <Label num="03">Por qué existe Sito Labs</Label>
 
             <div
               style={{
@@ -408,7 +408,7 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
             </div>
 
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, margin: 0 }}>
-              Eso es BrAIn:{' '}
+              Eso es Sito Labs:{' '}
               <strong style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>
                 soluciones que ya funcionan en negocios de verdad
               </strong>, no demos de laboratorio.
@@ -479,10 +479,10 @@ export default function Nosotros({ onChatOpen, onOpenLegal, onOpenCookies }) {
               <motion.div {...fade(0)} style={{ padding: isMobile ? '3.5rem 0' : '4rem 0' }}>
                 <Label>Por qué llegas en buen momento</Label>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: '1rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.75, margin: '0 0 1rem' }}>
-                  Estás conociendo BrAIn pronto. Los primeros {FOUNDERS.spotsTotal} negocios
+                  Estás conociendo Sito Labs pronto. Los primeros {FOUNDERS.spotsTotal} negocios
                   que entran con nosotros lo hacen como clientes fundadores: con un{' '}
                   <strong style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>
-                    descuento de hasta el {FOUNDERS.discountLabel}
+                    precio especial
                   </strong>{' '}
                   por confiar antes que nadie y por construir, juntos, los casos que
                   enseñaremos mañana.

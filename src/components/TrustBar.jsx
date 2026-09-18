@@ -65,7 +65,7 @@ export default function TrustBar() {
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: 999, background: ACCENT, flexShrink: 0, boxShadow: `0 0 10px ${ACCENT}` }} />
-            BrAIn en cifras
+            Sito Labs en cifras
           </span>
           <span
             style={{

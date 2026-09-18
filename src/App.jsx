@@ -1,14 +1,11 @@
 import { useState, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import IntroAnimation from './components/IntroAnimation'
 import Navigation from './components/Navigation'
 import Hero from './components/Hero'
 import Enfoque from './components/Enfoque'
 import Herramientas from './components/Herramientas'
-import Products from './components/Products'
-import Cases from './components/Cases'
-import TrustBar from './components/TrustBar'
+import ParticularesForm from './components/ParticularesForm'
 import HowItWorks from './components/HowItWorks'
 import Faq from './components/Faq'
 import CtaFinal from './components/CtaFinal'
@@ -17,9 +14,9 @@ import ChatWidget from './components/ChatWidget'
 import Footer from './components/Footer'
 import CookieBanner, { STORAGE_KEY as COOKIE_STORAGE_KEY } from './components/CookieBanner'
 import LegalModal from './components/LegalModal'
-import ExitIntentModal from './components/ExitIntentModal'
 import FoundersBar from './components/FoundersBar'
-import FoundersModal from './components/FoundersModal'
+import BookingModal from './components/BookingModal'
+import { openBooking } from './lib/booking'
 import ScrollProgress from './components/ScrollProgress'
 import CursorGlow from './components/CursorGlow'
 import { FOUNDERS, FOUNDERS_BAR_H } from './lib/founders'
@@ -29,43 +26,30 @@ const Nosotros = lazy(() => import('./pages/Nosotros'))
 // Vista previa aislada de las alternativas de animación (no se usa en producción).
 const PreviewAnimaciones = lazy(() => import('./pages/PreviewAnimaciones'))
 
-// contextId del bot → índice de PRODUCTS (orden: Atención al Cliente, Operaciones, Inteligencia de Negocio).
-const PRODUCT_INDEX = { contact_center: 0, back_office: 1, asistente: 2 }
 
 function AppContent() {
-  const [introComplete, setIntroComplete] = useState(false)
+  // Sin splash de intro: la web entra directa (más rápida y más simple).
+  const introComplete = true
   const [chatOpen, setChatOpen] = useState(false)
   const [chatContext, setChatContext] = useState(null)
   const [legalOpen, setLegalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState('privacidad')
   const [cookieBannerKey, setCookieBannerKey] = useState(0)
   const [foundersBarOpen, setFoundersBarOpen] = useState(
-    () => FOUNDERS.active && localStorage.getItem('brain_founders_bar_dismissed') !== '1'
+    () => FOUNDERS.active && localStorage.getItem('sitolabs_founders_bar_dismissed') !== '1'
   )
-  const [foundersModalOpen, setFoundersModalOpen] = useState(false)
 
   const location = useLocation()
-  const navigate = useNavigate()
   const isHome = location.pathname === '/'
 
   const openChat = (context = null) => { setChatContext(context); setChatOpen(true) }
-  // El bot ha identificado el producto que encaja: llevamos al visitante a esa
-  // sección (reutiliza el resaltado + scroll de Products vía evento de ventana).
-  // Si no estamos en home, navegamos primero y damos tiempo a que monte Products.
-  const recommendProduct = (productId) => {
-    const idx = PRODUCT_INDEX[productId]
-    if (idx == null) return
-    const fire = () => window.dispatchEvent(new CustomEvent('chat:recommend-product', { detail: { idx } }))
-    if (isHome) fire()
-    else { navigate('/'); setTimeout(fire, 600) }
-  }
   const openLegal = (tab) => { setLegalTab(tab); setLegalOpen(true) }
   const reopenCookies = () => {
     localStorage.removeItem(COOKIE_STORAGE_KEY)
     setCookieBannerKey(k => k + 1)
   }
   const dismissFoundersBar = () => {
-    localStorage.setItem('brain_founders_bar_dismissed', '1')
+    localStorage.setItem('sitolabs_founders_bar_dismissed', '1')
     setFoundersBarOpen(false)
   }
   // La barra de fundadores (y el topOffset que empuja el navbar) deben ser
@@ -82,14 +66,9 @@ function AppContent() {
       {/* Scroll progress bar (#04) — hidden during the home intro splash */}
       {(!isHome || introComplete) && <ScrollProgress />}
 
-      {/* Intro splash only on home, only once */}
-      {isHome && !introComplete && (
-        <IntroAnimation onComplete={() => setIntroComplete(true)} />
-      )}
-
       {showFoundersBar && (
         <FoundersBar
-          onOpen={() => setFoundersModalOpen(true)}
+          onOpen={() => document.getElementById('fundadores')?.scrollIntoView({ behavior: 'smooth' })}
           onDismiss={dismissFoundersBar}
         />
       )}
@@ -97,7 +76,7 @@ function AppContent() {
       {/* Navigation lives at app level — visible on all routes */}
       <Navigation
         visible={isHome ? introComplete : true}
-        onChatOpen={() => openChat('navbar')}
+        onChatOpen={() => openBooking('navbar')}
         topOffset={showFoundersBar ? FOUNDERS_BAR_H : 0}
       />
 
@@ -116,34 +95,24 @@ function AppContent() {
             >
               <main>
                 <section id="hero" style={{ position: 'relative' }}>
-                  <Hero onChatOpen={() => openChat('hero')} introComplete={introComplete} />
+                  <Hero introComplete={introComplete} />
                 </section>
-                <TrustBar />
-                {/* Enfoque = quiénes somos + historia (empresarios, probado en casa, fundadores) */}
+                {/* Programa Fundadores — el eje de la web, justo tras el hero */}
+                {FOUNDERS.active && <FoundersOffer />}
+                {/* Enfoque = somos empresarios, probado en casa */}
                 <section id="enfoque">
                   <Enfoque />
                 </section>
                 <HowItWorks />
-                {/* Products = panel claro elevado flotando sobre fondo oscuro continuo */}
-                <section id="soluciones">
-                  <Products onChatOpen={openChat} onFoundersOpen={() => setFoundersModalOpen(true)} />
-                </section>
+                {/* Integraciones = confianza: se conecta con lo que el cliente ya usa */}
                 <section id="integraciones">
                   <Herramientas />
                 </section>
-                <section id="clientes">
-                  <Cases />
-                </section>
-                {/* Oferta fundador — la llamada a la acción, cerca de la conversión */}
-                {FOUNDERS.active && (
-                  <FoundersOffer onChatOpen={() => openChat(FOUNDERS.chatContext)} />
-                )}
-                {/* FAQ — resuelve objeciones justo antes del CTA final */}
                 <section id="faq">
-                  <Faq onChatOpen={() => openChat('faq')} />
+                  <Faq />
                 </section>
                 <section id="cta">
-                  <CtaFinal onChatOpen={() => openChat('cta_final')} />
+                  <CtaFinal />
                 </section>
               </main>
               <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
@@ -179,18 +148,10 @@ function AppContent() {
         context={chatContext}
         onOpen={() => openChat(null)}
         onClose={() => setChatOpen(false)}
-        onRecommendProduct={recommendProduct}
       />
 
-      {isHome && introComplete && (
-        <ExitIntentModal onChatOpen={() => openChat('exit_intent')} />
-      )}
-
-      <FoundersModal
-        open={foundersModalOpen}
-        onClose={() => setFoundersModalOpen(false)}
-        onChatOpen={() => openChat(FOUNDERS.chatContext)}
-      />
+      <BookingModal />
+      <ParticularesForm />
 
       <CookieBanner key={cookieBannerKey} onOpenLegal={openLegal} />
 

@@ -1,4 +1,4 @@
-// Endpoint del chatbot de BrAIn — Claude Sonnet 4.6 con captura de lead.
+// Endpoint del chatbot de Sito Labs — Claude Sonnet 4.6 con captura de lead.
 // Compatible con Vercel (export default handler) y con el middleware de Vite en dev.
 // La API key vive SOLO en el entorno (ANTHROPIC_API_KEY): nunca llega al navegador.
 
@@ -84,7 +84,7 @@ function sendJson(res, status, payload) {
 async function notifyLead(lead, { context, transcript }) {
   const to = process.env.LEAD_NOTIFY_EMAIL || 'ginesmunuera@gmail.com'
   const apiKey = process.env.RESEND_API_KEY
-  const from = process.env.LEAD_FROM_EMAIL // p.ej. "BrAIn <leads@tudominio.com>"
+  const from = process.env.LEAD_FROM_EMAIL // p.ej. "Sito Labs <leads@tudominio.com>"
 
   const lines = [
     `Nombre: ${lead.name || '—'}`,
@@ -111,7 +111,7 @@ async function notifyLead(lead, { context, transcript }) {
       body: JSON.stringify({
         from,
         to: [to],
-        subject: `🟢 Nuevo lead BrAIn — ${lead.name || lead.company || lead.email || 'sin nombre'}`,
+        subject: `🟢 Nuevo lead Sito Labs — ${lead.name || lead.company || lead.email || 'sin nombre'}`,
         text: body,
       }),
     })

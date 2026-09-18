@@ -15,7 +15,7 @@ const CONTENT = {
     sections: [
       {
         heading: 'Responsable del tratamiento',
-        body: 'BrAIn Agencia de Inteligencia Artificial · ginesmunuera@gmail.com · España. El tratamiento de tus datos se rige por el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).',
+        body: 'Sito Labs Agencia de Inteligencia Artificial · hello@sitolabs.com · España. El tratamiento de tus datos se rige por el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).',
       },
       {
         heading: 'Datos que recogemos',
@@ -31,7 +31,7 @@ const CONTENT = {
       },
       {
         heading: 'Tus derechos',
-        body: 'Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, portabilidad y limitación escribiendo a ginesmunuera@gmail.com. Si consideras que el tratamiento no es conforme, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).',
+        body: 'Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, portabilidad y limitación escribiendo a hello@sitolabs.com. Si consideras que el tratamiento no es conforme, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).',
       },
     ],
   },
@@ -65,19 +65,19 @@ const CONTENT = {
     sections: [
       {
         heading: 'Titular del sitio web',
-        body: 'BrAIn — Agencia de Inteligencia Artificial. Correo de contacto: ginesmunuera@gmail.com. País de establecimiento: España.',
+        body: 'Sito Labs — Agencia de Inteligencia Artificial. Correo de contacto: hello@sitolabs.com. País de establecimiento: España.',
       },
       {
         heading: 'Objeto y condiciones de uso',
-        body: 'Este sitio web tiene carácter meramente informativo. El acceso y uso implica la aceptación de las presentes condiciones. BrAIn se reserva el derecho a modificar el contenido del sitio sin previo aviso.',
+        body: 'Este sitio web tiene carácter meramente informativo. El acceso y uso implica la aceptación de las presentes condiciones. Sito Labs se reserva el derecho a modificar el contenido del sitio sin previo aviso.',
       },
       {
         heading: 'Propiedad intelectual',
-        body: 'Todos los contenidos de este sitio (textos, imágenes, animaciones, código) son propiedad de BrAIn o de sus licenciantes y están protegidos por las leyes de propiedad intelectual e industrial. Queda prohibida su reproducción total o parcial sin autorización expresa.',
+        body: 'Todos los contenidos de este sitio (textos, imágenes, animaciones, código) son propiedad de Sito Labs o de sus licenciantes y están protegidos por las leyes de propiedad intelectual e industrial. Queda prohibida su reproducción total o parcial sin autorización expresa.',
       },
       {
         heading: 'Limitación de responsabilidad',
-        body: 'BrAIn no se responsabiliza de los daños derivados del uso del sitio, de la imposibilidad de acceso, ni de los contenidos de terceros enlazados. La información publicada es orientativa y no constituye asesoramiento profesional.',
+        body: 'Sito Labs no se responsabiliza de los daños derivados del uso del sitio, de la imposibilidad de acceso, ni de los contenidos de terceros enlazados. La información publicada es orientativa y no constituye asesoramiento profesional.',
       },
       {
         heading: 'Legislación aplicable',

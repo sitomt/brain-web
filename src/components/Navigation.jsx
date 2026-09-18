@@ -7,13 +7,13 @@ import { BRAND } from '../lib/tokens'
 import { EASE_PREMIUM } from '../lib/motion'
 
 const SCROLL_LINKS = [
-  { label: 'Enfoque', target: 'enfoque' },
-  { label: 'Soluciones', target: 'soluciones' },
-  { label: 'Clientes', target: 'clientes' },
+  { label: 'Fundadores', target: 'fundadores' },
+  { label: 'Cómo trabajamos', target: 'proceso' },
+  { label: 'Preguntas', target: 'faq' },
 ]
 
 // Sections are either light (cream) or dark — the floating pill adapts contrast.
-const DARK_SECTIONS = new Set(['enfoque', 'proceso', 'integraciones', 'clientes', 'cta'])
+const DARK_SECTIONS = new Set(['enfoque', 'proceso', 'integraciones', 'faq', 'cta'])
 
 const LIGHT_THEME = {
   pillBg: 'rgba(250,248,243,0.72)',
@@ -31,9 +31,9 @@ const DARK_THEME = {
 function Logo({ color }) {
   return (
     <span style={{ display: 'flex', alignItems: 'baseline', gap: 0, transition: 'color 0.08s' }}>
-      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', color }}>br</span>
-      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', background: BRAND.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>[AI]</span>
-      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', color }}>n.</span>
+      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', color }}>sito</span>
+      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', background: BRAND.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>labs</span>
+      <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em', color }}>.</span>
     </span>
   )
 }
@@ -146,7 +146,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
         }}
       >
         {/* Logo */}
-        <a href="/" onClick={goHome} style={{ textDecoration: 'none' }} aria-label="BrAIn — inicio">
+        <a href="/" onClick={goHome} style={{ textDecoration: 'none' }} aria-label="Sito Labs — inicio">
           <Logo color={theme.text} />
         </a>
 
@@ -198,7 +198,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
               }}
             >
               <span style={{ position: 'absolute', inset: 0, borderRadius: 999, background: BRAND.gradient, opacity: btnHovered ? 1 : 0, transition: 'opacity 0.35s cubic-bezier(0.32,0.72,0,1)', zIndex: 0 }} />
-              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>Habla con nuestra IA</span>
+              <span style={{ position: 'relative', zIndex: 1, color: btnHovered ? '#fff' : theme.text, transition: 'color 0.3s' }}>Agendar llamada</span>
               <span style={{ position: 'relative', zIndex: 1, width: 32, height: 32, borderRadius: 999, background: btnHovered ? 'rgba(255,255,255,0.2)' : theme.innerBg, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: btnHovered ? '#fff' : theme.text, flexShrink: 0, transition: 'background 0.3s, color 0.3s' }}>
                 <ArrowRight size={13} />
               </span>
@@ -277,7 +277,7 @@ export default function Navigation({ visible, onChatOpen, topOffset = 0 }) {
                 background: BRAND.gradient, color: '#fff', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '1rem',
               }}
             >
-              Habla con nuestra IA
+              Agendar llamada
               <span style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(255,255,255,0.2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowRight size={15} />
               </span>

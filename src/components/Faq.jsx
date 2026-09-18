@@ -8,6 +8,9 @@ import CtaButton from './CtaButton'
 import { EASE_PREMIUM } from '../lib/motion'
 import { gradientText } from '../lib/tokens'
 import { h2, bodyLg } from '../lib/typography'
+import { openBooking, openParticulares } from '../lib/booking'
+
+const inlineLink = { background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#fff', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }
 
 // Preguntas frecuentes — resuelven las objeciones del comprador en el momento
 // de decidir (justo antes del CTA final). Tono "sin letra pequeña": directo,
@@ -15,7 +18,7 @@ import { h2, bodyLg } from '../lib/typography'
 const FAQS = [
   {
     q: '¿Esto funciona de verdad o es otra moda de la IA?',
-    a: 'Lo probamos primero en nuestra propia empresa y en negocios reales (un gimnasio, un restaurante, una empresa de servicios). Y antes de que pagues nada, hablas con nuestra IA y ves en vivo lo que haría en el tuyo.',
+    a: 'Lo probamos primero en los negocios que dirigimos (salones de juego, hostelería, gimnasios, placas solares). Y antes de que pagues nada, en la llamada te enseñamos qué haría en el tuyo.',
   },
   {
     q: '¿La IA va a sustituir a mi equipo?',
@@ -31,7 +34,7 @@ const FAQS = [
   },
   {
     q: '¿Y si mi caso no encaja en lo que ofrecéis?',
-    a: 'Construimos a medida. Cuéntanoslo en la auditoría gratuita y te decimos con sinceridad si podemos ayudarte; y si no es lo nuestro, también te lo decimos.',
+    a: 'Construimos a medida. Cuéntanoslo en la llamada gratuita y te decimos con sinceridad si podemos ayudarte; y si no es lo nuestro, también te lo decimos.',
   },
   {
     q: '¿Hay permanencia o letra pequeña?',
@@ -39,11 +42,25 @@ const FAQS = [
   },
   {
     q: '¿Cuánto cuesta?',
-    a: 'Cada empleado de IA tiene un precio de construcción y una cuota mensual (desde 97€/mes — menos que cualquier nómina). En la auditoría gratuita te damos el presupuesto exacto para tu caso.',
+    a: 'Cada empleado de IA tiene un precio de construcción y una cuota mensual (desde 97€/mes — menos que cualquier nómina). Las empresas fundadoras tienen precio especial. En la llamada gratuita te damos el presupuesto exacto para tu caso.',
+  },
+  {
+    q: '¿Qué es una plaza fundador?',
+    a: 'Estamos construyendo nuestras soluciones junto a un grupo reducido de empresas. Las fundadoras tienen precio especial, prioridad y trabajamos con ellas codo a codo. Por eso son pocas plazas: cuando se llenen, se cierran.',
+  },
+  {
+    q: '¿Soy particular, podéis ayudarme?',
+    a: (
+      <>
+        Sí. Trabajamos sobre todo con empresas, pero también creamos soluciones de IA a medida para proyectos personales.{' '}
+        <button type="button" onClick={openParticulares} style={inlineLink}>Cuéntanos tu idea en este formulario</button>{' '}
+        y te respondemos por email.
+      </>
+    ),
   },
   {
     q: '¿Tengo que saber de tecnología?',
-    a: 'Para nada. Hablas con la IA en español, como hablarías con un empleado. De toda la parte técnica nos encargamos nosotros.',
+    a: 'Para nada. Nos lo cuentas como se lo contarías a un socio y de toda la parte técnica nos encargamos nosotros.',
   },
 ]
 
@@ -134,7 +151,7 @@ function FaqItem({ item, isOpen, onToggle, isMobile }) {
   )
 }
 
-export default function Faq({ onChatOpen }) {
+export default function Faq() {
   const isMobile = useIsMobile()
   // Una sola pregunta abierta a la vez (-1 = ninguna; la primera abierta por defecto).
   const [openIdx, setOpenIdx] = useState(0)
@@ -161,7 +178,7 @@ export default function Faq({ onChatOpen }) {
             </WipeReveal>
           </h2>
           <p style={{ ...bodyLg, color: 'rgba(255,255,255,0.62)', margin: isMobile ? '1.25rem auto 0' : '1.25rem 0 0' }}>
-            Sin letra pequeña. Si te queda alguna duda fuera de esta lista, pregúntasela a nuestra IA.
+            Sin letra pequeña. Si te queda alguna duda fuera de esta lista, resolvámosla en una llamada.
           </p>
         </motion.div>
 
@@ -210,8 +227,8 @@ export default function Faq({ onChatOpen }) {
           >
             ¿Otra duda?
           </span>
-          <CtaButton variant="light" onClick={() => onChatOpen?.()}>
-            Habla con nuestra IA
+          <CtaButton variant="light" onClick={() => openBooking('faq')}>
+            Agendar llamada
           </CtaButton>
         </motion.div>
 

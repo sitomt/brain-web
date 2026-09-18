@@ -1,4 +1,4 @@
-# BrAIn — robots.txt
+# Sito Labs — robots.txt
 # Todos los rastreadores son bienvenidos, incluidos los de IA / motores de respuesta.
 User-agent: *
 Allow: /
@@ -35,4 +35,4 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
-Sitemap: https://agenciabrain.example/sitemap.xml
+Sitemap: https://sitolabs.example/sitemap.xml

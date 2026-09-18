@@ -6,15 +6,17 @@ import { BRAND, ACCENT, gradientText } from '../lib/tokens'
 import { EASE_PREMIUM } from '../lib/motion'
 import { FOUNDERS, spotsTaken } from '../lib/founders'
 
-// Banda de OFERTA del Programa Fundadores — la mitad transaccional (precio,
-// plazas, CTA). La HISTORIA vive arriba, en Enfoque; aquí, cerca de la
-// conversión, va la llamada a la acción. Banda crema entre dos secciones
-// oscuras (Clientes y CtaFinal). Se apaga con FOUNDERS.active = false.
+import { openBooking } from '../lib/booking'
+
+// Programa Fundadores — el eje de la web. Plazas limitadas porque con estas
+// empresas construimos las soluciones codo a codo: más implicación, precio
+// especial y prioridad. Se apaga con FOUNDERS.active = false.
 
 const VENTAJAS = [
-  { label: 'Precio fundador', line: `El más bajo que existirá. Cuando se cierren las ${FOUNDERS.spotsTotal} plazas, sube y no vuelve.` },
-  { label: 'Trato directo', line: 'Hablas con el equipo que construye, no con un comercial. Acceso directo, siempre.' },
-  { label: 'Prioridad', line: 'Eres de los primeros: vas por delante en tiempo, en cola y en atención.' },
+  { label: 'Precio fundador', line: `Un precio especial que solo tendrán las ${FOUNDERS.spotsTotal} primeras empresas. Cuando se cierre el cupo, no vuelve.` },
+  { label: 'Prioridad', line: 'Vas primero en la cola: en desarrollo, en soporte y en cada mejora nueva.' },
+  { label: 'Codo a codo', line: 'Construimos tu solución contigo, a medida y con mucho más detalle. Hablas directamente con quien la hace.' },
+  { label: 'Visibilidad', line: 'Te presentamos como empresa fundadora: tu negocio aparece en nuestra web, casos y redes.' },
 ]
 
 const reveal = (delay = 0) => ({
@@ -24,20 +26,13 @@ const reveal = (delay = 0) => ({
   transition: { duration: 0.7, delay, ease: EASE_PREMIUM },
 })
 
-export default function FoundersOffer({ onChatOpen }) {
+export default function FoundersOffer() {
   const isMobile = useIsMobile()
   if (!FOUNDERS.active) return null
 
   const pct = Math.round((spotsTaken() / FOUNDERS.spotsTotal) * 100)
 
-  const handleClaim = () => {
-    onChatOpen()
-    setTimeout(() => {
-      window.dispatchEvent(
-        new CustomEvent('chat:send', { detail: { message: FOUNDERS.chatPrefill } })
-      )
-    }, 450)
-  }
+  const handleClaim = () => openBooking('fundadores')
 
   return (
     <section
@@ -69,7 +64,7 @@ export default function FoundersOffer({ onChatOpen }) {
         }}
       />
 
-      <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative' }}>
         <motion.div {...reveal(0)}>
           <Eyebrow variant="pill" tone="dark">Programa Fundadores</Eyebrow>
         </motion.div>
@@ -78,14 +73,14 @@ export default function FoundersOffer({ onChatOpen }) {
           {...reveal(0.05)}
           style={{
             fontFamily: "'Instrument Serif', serif",
-            fontSize: 'clamp(1.9rem, 4vw, 2.9rem)',
+            fontSize: 'clamp(2.1rem, 4.6vw, 3.4rem)',
             color: '#1A1814',
             lineHeight: 1.12,
             margin: '1.1rem 0 0',
           }}
         >
-          Acompáñanos desde el principio.{' '}
-          <em style={{ ...gradientText, fontStyle: 'italic' }}>Entra como fundador.</em>
+          Solo {FOUNDERS.spotsTotal} empresas construirán su IA con nosotros desde el inicio.{' '}
+          <em style={{ ...gradientText, fontStyle: 'italic' }}>Quedan {FOUNDERS.spotsLeft}.</em>
         </motion.h2>
 
         <motion.p
@@ -99,8 +94,10 @@ export default function FoundersOffer({ onChatOpen }) {
             margin: '1.5rem 0 0',
           }}
         >
-          Quedan pocas plazas de las {FOUNDERS.spotsTotal} primeras. Por ser de los
-          primeros te tratamos como tal — y cuando se cierren, el precio sube y no vuelve.
+          Estamos creando nuestras soluciones junto a un grupo reducido de empresas.
+          Por eso las plazas son limitadas: a cada una le dedicamos tiempo de verdad,
+          trabajamos codo a codo y la tratamos como socia, no como un cliente más.
+          Es la mejor ventaja que vas a tener con nosotros, y solo existe ahora.
         </motion.p>
 
         {/* Las tres ventajas */}
@@ -108,7 +105,7 @@ export default function FoundersOffer({ onChatOpen }) {
           {...reveal(0.18)}
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
             gap: isMobile ? '1.1rem' : '1.75rem',
             margin: '2.25rem 0 0',
           }}
@@ -135,7 +132,7 @@ export default function FoundersOffer({ onChatOpen }) {
               Quedan {FOUNDERS.spotsLeft} de {FOUNDERS.spotsTotal} plazas
             </span>
             <span style={{ ...gradientText, fontFamily: "'Syne Mono', monospace", fontSize: '0.74rem', letterSpacing: '0.1em' }}>
-              {FOUNDERS.discountLabel} dto.
+              {spotsTaken()} ya dentro
             </span>
           </div>
           <div style={{ position: 'relative', height: 6, borderRadius: 999, background: 'rgba(26,24,20,0.08)', overflow: 'hidden' }}>
@@ -152,10 +149,10 @@ export default function FoundersOffer({ onChatOpen }) {
         {/* CTA */}
         <motion.div {...reveal(0.3)} style={{ margin: '2rem 0 0', display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap' }}>
           <CtaButton onClick={handleClaim} variant="solid" arrow="right" size="lg">
-            Quiero mi plaza fundador
+            Reservar mi plaza fundador
           </CtaButton>
           <span style={{ fontFamily: "'Syne Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.05em', color: 'rgba(26,24,20,0.5)' }}>
-            Sin permanencia · el precio solo sube desde aquí
+            Llamada de 30 min · gratis · sin compromiso
           </span>
         </motion.div>
       </div>
