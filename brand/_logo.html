@@ -1,0 +1,42 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Sito Labs · «La firma»</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1814;--cream:#FAF8F3;--mag:#F72585;--spec:linear-gradient(90deg,#4361EE,#7209B7,#F72585,#FB5607)}
+*{box-sizing:border-box}body{margin:0;background:#666;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+.stage{display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.light{background:var(--cream);color:var(--ink)}.dark{background:var(--ink);color:var(--cream)}.none{background:transparent}
+/* MARCA "s." */
+.sig{font-family:'Instrument Serif',serif;font-style:italic;line-height:1;display:flex;align-items:baseline;white-space:nowrap}
+.sig b{font-weight:400}.sig i{display:block;border-radius:50%;background:var(--mag)}
+.tile{border-radius:22%;display:flex;align-items:center;justify-content:center;flex:none}
+.tile.cream{background:var(--cream);color:var(--ink)}.tile.ink{background:var(--ink);color:var(--cream)}.tile.mag{background:var(--mag);color:var(--cream)}.tile.mag .sig i{background:var(--cream)}
+/* WORDMARK */
+.word{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.01em;line-height:1;white-space:nowrap}
+.word .dot{color:var(--mag)}
+.tag{font-weight:500;text-transform:uppercase;letter-spacing:.2em;line-height:1;opacity:.6}
+.spec{background:var(--spec)}
+/* ICONOS 2048 */
+.icon{width:2048px;height:2048px}.icon .tile{width:2048px;height:2048px;border-radius:0}
+.icon .sig{font-size:1900px;gap:70px;transform:translate(-2%,-6%)}.icon .sig i{width:250px;height:250px;margin-bottom:30px}
+/* LOGOS 4800x2000 */
+.logo{width:4800px;height:2000px;flex-direction:column;gap:120px}
+.logo .lock{display:flex;align-items:center;gap:140px}
+.logo .tile{width:560px;height:560px}.logo .sig{font-size:520px;gap:20px;transform:translate(-2%,-6%)}.logo .sig i{width:68px;height:68px;margin-bottom:8px}
+.logo .word{font-size:520px}
+.logo .tag{font-size:54px}
+.logo .spec{position:absolute;left:0;right:0;bottom:0;height:28px}
+/* WORDMARK 4000x800 */
+.wm{width:4000px;height:800px}.wm .word{font-size:600px}
+/* MARCA SUELTA transparente 2048 */
+.mk{width:2048px;height:2048px}.mk .sig{font-size:1900px;gap:70px;transform:translate(-2%,-6%)}.mk .sig i{width:250px;height:250px;margin-bottom:30px}
+</style></head><body>
+<div id="icon" class="stage icon"><div class="tile cream"><div class="sig"><b>s</b><i></i></div></div></div>
+<div id="icon-ink" class="stage icon"><div class="tile ink"><div class="sig"><b>s</b><i></i></div></div></div>
+<div id="icon-mag" class="stage icon"><div class="tile mag"><div class="sig"><b>s</b><i></i></div></div></div>
+<div id="mark" class="stage none mk" style="color:var(--ink)"><div class="sig"><b>s</b><i></i></div></div>
+<div id="mark-white" class="stage none mk" style="color:var(--cream)"><div class="sig"><b>s</b><i></i></div></div>
+<div id="light" class="stage light logo"><div class="lock"><div class="tile ink"><div class="sig"><b>s</b><i></i></div></div><div class="word">sitolabs<span class="dot">.</span></div></div><div class="tag">Agencia de IA · Murcia</div><div class="spec"></div></div>
+<div id="dark" class="stage dark logo"><div class="lock"><div class="tile cream"><div class="sig"><b>s</b><i></i></div></div><div class="word">sitolabs<span class="dot">.</span></div></div><div class="tag">Agencia de IA · Murcia</div><div class="spec"></div></div>
+<div id="wordmark" class="stage none wm" style="color:var(--ink)"><div class="word">sitolabs<span class="dot">.</span></div></div>
+<div id="wordmark-white" class="stage none wm" style="color:var(--cream)"><div class="word">sitolabs<span class="dot">.</span></div></div>
+</body></html>
