@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useIsMobile from '../hooks/useIsMobile'
 import CtaButton from './CtaButton'
-import { BRAND } from '../lib/tokens'
+import BrandLockup from './Brand'
 import { EASE } from '../lib/motion'
 import { openBooking } from '../lib/booking'
 import { CTA_LABEL } from '../lib/cta'
@@ -20,15 +20,6 @@ const DARK_SECTIONS = ['proceso', 'fundadores', 'cta']
 const LIGHT_THEME = { pillBg: 'rgba(250,248,243,0.75)', text: '#1A1814', hairline: 'rgba(26,24,20,0.10)' }
 const DARK_THEME = { pillBg: 'rgba(18,18,20,0.6)', text: '#ffffff', hairline: 'rgba(255,255,255,0.12)' }
 
-function Logo({ color }) {
-  return (
-    <span style={{ display: 'flex', alignItems: 'baseline', fontFamily: "'Syne Mono', monospace", fontSize: '1.05rem', letterSpacing: '0.04em' }}>
-      <span style={{ color, transition: 'color 0.3s' }}>sito</span>
-      <span data-gradient-text style={{ background: BRAND.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>labs</span>
-      <span style={{ color, transition: 'color 0.3s' }}>.</span>
-    </span>
-  )
-}
 
 export default function Navigation() {
   const [isDark, setIsDark] = useState(false)
@@ -104,7 +95,7 @@ export default function Navigation() {
         }}
       >
         <a href="/" onClick={goHome} style={{ textDecoration: 'none' }} aria-label="Sito Labs — inicio">
-          <Logo color={theme.text} />
+          <BrandLockup icon={isMobile ? 26 : 28} size={isMobile ? '1.3rem' : '1.45rem'} color={theme.text} />
         </a>
 
         <div style={{ display: 'flex', gap: isMobile ? '0.5rem' : '2rem', alignItems: 'center' }}>

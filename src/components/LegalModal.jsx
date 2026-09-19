@@ -15,7 +15,7 @@ const CONTENT = {
     sections: [
       {
         heading: 'Responsable del tratamiento',
-        body: 'Sito Labs Agencia de Inteligencia Artificial · hello@sitolabs.com · España. El tratamiento de tus datos se rige por el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).',
+        body: 'Sito Labs (agencia de inteligencia artificial · inteligencia operativa) · hello@sitolabs.com · España. El tratamiento de tus datos se rige por el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).',
       },
       {
         heading: 'Datos que recogemos',
@@ -65,7 +65,7 @@ const CONTENT = {
     sections: [
       {
         heading: 'Titular del sitio web',
-        body: 'Sito Labs — Agencia de Inteligencia Artificial. Correo de contacto: hello@sitolabs.com. País de establecimiento: España.',
+        body: 'Sito Labs — Agencia de Inteligencia Artificial · Inteligencia operativa. Correo de contacto: hello@sitolabs.com. País de establecimiento: España.',
       },
       {
         heading: 'Objeto y condiciones de uso',

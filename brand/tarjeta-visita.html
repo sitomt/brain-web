@@ -23,7 +23,11 @@ body.print .guide{display:none}
 /* ANVERSO — oscuro, solo marca + eslogan */
 .front{background:var(--ink);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.3mm}
 .front .tile{background:var(--cream);color:var(--ink)}
-.front .tag{font-size:2.6mm}
+.front{gap:2mm}
+.front .tag{font-size:2.6mm;text-align:center;line-height:1;opacity:1;color:rgba(250,248,243,.62)}
+.front .tag .cities{display:flex;align-items:center;justify-content:center;gap:2.2mm;margin-top:1.7mm;font-size:2.3mm;letter-spacing:.3em;color:rgba(250,248,243,.85)}
+.front .tag .cities i{display:block;width:6mm;height:.18mm;background:rgba(250,248,243,.3)}
+.front .tag .cities b{color:var(--mag);font-weight:600;margin:0 -.6mm}
 .front .slogan{position:absolute;left:0;right:0;bottom:5mm;text-align:center;font-family:'Instrument Serif',serif;font-style:italic;font-size:4.2mm;color:rgba(250,248,243,.7);letter-spacing:.005em}
 /* REVERSO — crema, datos + QR. Sin logo (ya está en el anverso) */
 .back{background:var(--cream);color:var(--ink)}
@@ -43,8 +47,8 @@ body.print .guide{display:none}
 </style></head><body>
 <section class="card front" id="front"><div class="guide"></div>
   <div class="lock"><div class="tile"><div class="sig"><b>s</b><i></i></div></div><div class="word">sitolabs<span class="dot">.</span></div></div>
-  <div class="tag">Agencia de IA · Murcia</div>
-  <div class="slogan">Automatizamos lo que te quita tiempo.</div>
+  <div class="tag">Inteligencia operativa<span class="cities"><i></i>Murcia<b>·</b>Roma<i></i></span></div>
+  <div class="slogan">Menos fricción. Más negocio.</div>
   <div class="spec"></div>
 </section>
 <section class="card back" id="back"><div class="guide"></div>

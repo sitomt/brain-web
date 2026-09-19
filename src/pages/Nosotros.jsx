@@ -100,7 +100,7 @@ function SitoPhoto() {
     >
       <img
         src="/sito2-800.jpg"
-        alt="Ginés Munuera, fundador de Sito Labs — agencia de IA en Murcia"
+        alt="Ginés Munuera, fundador de Sito Labs — agencia de IA en Murcia, inteligencia operativa"
         style={{
           width: '100%',
           height: '100%',
@@ -132,7 +132,7 @@ function SitoPhoto() {
           Ginés Munuera
         </p>
         <p style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', margin: 0 }}>
-          Fundador · Sito Labs
+          Fundador · Sito Labs · Murcia · Roma
         </p>
       </div>
     </div>
@@ -146,8 +146,8 @@ const NOSOTROS_SCHEMA = {
       '@type': 'AboutPage',
       '@id': `${SITE_URL}/nosotros`,
       url: `${SITE_URL}/nosotros`,
-      name: 'Nosotros · Sito Labs — Agencia de IA en Murcia',
-      description: 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de Sito Labs, agencia de IA en Murcia.',
+      name: 'Nosotros · Sito Labs — Agencia de IA en Murcia · Inteligencia operativa',
+      description: 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia y al equipo detrás de Sito Labs, agencia de IA en Murcia con clientes en Murcia y Roma.',
       isPartOf: { '@id': `${SITE_URL}/#organization` },
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -164,7 +164,8 @@ const NOSOTROS_SCHEMA = {
       jobTitle: 'Fundador',
       worksFor: { '@id': `${SITE_URL}/#organization` },
       address: { '@type': 'PostalAddress', addressLocality: 'Murcia', addressCountry: 'ES' },
-      knowsAbout: ['Inteligencia Artificial', 'Automatización empresarial', 'Chatbots', 'Agentes IA'],
+      knowsAbout: ['Inteligencia operativa', 'Inteligencia Artificial', 'Automatización empresarial', 'Chatbots', 'Agentes IA'],
+      areaServed: ['ES', 'IT'],
     },
   ],
 }
@@ -189,7 +190,7 @@ export default function Nosotros({ onOpenLegal, onOpenCookies }) {
     const prevDesc = descEl?.getAttribute('content') ?? ''
 
     document.title = 'Nosotros · Sito Labs | Agencia de IA en Murcia — Quiénes somos'
-    descEl?.setAttribute('content', 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de Sito Labs, agencia de IA en Murcia. Primera llamada gratuita.')
+    descEl?.setAttribute('content', 'Somos un grupo de socios empresarios que automatiza sus propios negocios antes de ayudar a otros. Conoce la historia de Sito Labs, agencia de IA en Murcia con clientes en Murcia y Roma. Primera llamada gratuita.')
 
     const script = document.createElement('script')
     script.type = 'application/ld+json'

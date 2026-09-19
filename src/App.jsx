@@ -9,9 +9,9 @@ import FoundersOffer from './components/FoundersOffer'
 import Faq from './components/Faq'
 import CtaFinal from './components/CtaFinal'
 import Footer from './components/Footer'
-import StickyCta from './components/StickyCta'
 import CookieBanner, { STORAGE_KEY as COOKIE_STORAGE_KEY } from './components/CookieBanner'
 import { FOUNDERS } from './lib/founders'
+import useIsMobile from './hooks/useIsMobile'
 
 // Todo lo que no se ve al cargar entra en diferido.
 const Nosotros = lazy(() => import('./pages/Nosotros'))
@@ -28,6 +28,7 @@ function AppContent() {
 
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isMobile = useIsMobile()
 
   const openLegal = (tab) => { setLegalTab(tab); setLegalOpen(true) }
   const reopenCookies = () => {
@@ -54,7 +55,6 @@ function AppContent() {
                 <CtaFinal />
               </main>
               <Footer onOpenLegal={openLegal} onOpenCookies={reopenCookies} />
-              <StickyCta />
             </>
           }
         />
@@ -71,10 +71,10 @@ function AppContent() {
         />
       </Routes>
 
-      {/* En la home el chat vive en la portada; el flotante solo en /nosotros */}
-      {!isHome && (
+      {/* En escritorio el chat de la home vive en la portada; en móvil y en /nosotros, burbuja flotante */}
+      {(!isHome || isMobile) && (
         <Suspense fallback={null}>
-          <ChatWidget isOpen={chatOpen} context="nosotros" onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} />
+          <ChatWidget isOpen={chatOpen} context={isHome ? 'hero' : 'nosotros'} onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} />
         </Suspense>
       )}
 

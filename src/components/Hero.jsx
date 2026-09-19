@@ -27,7 +27,7 @@ export default function Hero() {
         minHeight: isMobile ? 'auto' : '100dvh',
         display: 'flex',
         alignItems: 'center',
-        padding: isMobile ? '5.5rem 1.25rem 2.5rem' : '8rem 2rem 5rem',
+        padding: isMobile ? '5.25rem 1.25rem 2.25rem' : '8rem 2rem 5rem',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -51,9 +51,9 @@ export default function Hero() {
         }}
       >
         {/* Columna izquierda: todo alineado a la izquierda, también en móvil */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1.1rem' : '1.4rem', alignItems: 'flex-start', paddingTop: isMobile ? 0 : '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.4rem', alignItems: 'flex-start', paddingTop: isMobile ? 0 : '1rem' }}>
           {/* Sin fade en el H1: es el LCP y no debe esperar a ninguna animación */}
-          <h1 style={{ ...display, fontSize: isMobile ? '2.6rem' : display.fontSize, color: '#1A1814', maxWidth: '12ch' }}>
+          <h1 style={{ ...display, fontSize: isMobile ? '2.5rem' : display.fontSize, color: '#1A1814', maxWidth: '12ch' }}>
             La IA que hace funcionar tu{' '}
             <RotatingWord words={WORDS} style={{ fontStyle: 'italic', ...gradientText, verticalAlign: 'baseline' }} />
           </h1>
@@ -63,24 +63,23 @@ export default function Hero() {
             La usamos a diario en nuestros propios negocios.
           </p>
 
-          <motion.div {...fadeUp(0.1)} ref={ctaRef} data-hero-cta style={{ width: isMobile ? '100%' : 'auto', display: 'flex', flexDirection: 'column', gap: '0.7rem', alignItems: 'flex-start' }}>
+          <motion.div {...fadeUp(0.1)} ref={ctaRef} style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', alignItems: 'flex-start' }}>
             <CtaButton
               onClick={() => openBooking('hero')}
               variant="solid"
               arrow="right"
               size="lg"
               magnetic={!isMobile}
-              style={isMobile ? { width: '100%', justifyContent: 'space-between' } : undefined}
             >
               {CTA_LABEL}
             </CtaButton>
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '0.95rem', color: 'rgba(26,24,20,0.62)', lineHeight: 1.5 }}>
-              30 min con Ginés. Te dice qué haría la IA en tu negocio, y si no encaja, también.
+              {isMobile ? '30 min con Ginés. Si no encaja, también te lo dice.' : '30 min con Ginés. Te dice qué haría la IA en tu negocio, y si no encaja, también.'}
             </span>
           </motion.div>
 
           {isMobile ? (
-            <motion.p {...fadeUp(0.2)} style={{ margin: '0.2rem 0 0', fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1.05rem', lineHeight: 1.45, color: 'rgba(26,24,20,0.7)' }}>
+            <motion.p {...fadeUp(0.2)} style={{ margin: '0.2rem 0 0', fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '0.98rem', lineHeight: 1.45, color: 'rgba(26,24,20,0.65)' }}>
               <span style={{ ...label, fontStyle: 'normal', color: 'rgba(26,24,20,0.5)', marginRight: 8 }}>Lo usamos en</span>
               {TRUST.slice(0, -1).join(', ')} y {TRUST[TRUST.length - 1]}.
             </motion.p>
@@ -97,10 +96,12 @@ export default function Hero() {
           )}
         </div>
 
-        {/* Columna derecha: el chat real */}
-        <motion.div {...fadeUp(0.25)} style={{ width: '100%', maxWidth: isMobile ? '100%' : 440, justifySelf: isMobile ? 'stretch' : 'end' }}>
-          <ChatWidget inline context="hero" />
-        </motion.div>
+        {/* Columna derecha: el chat real. En móvil vive en la burbuja flotante (App.jsx). */}
+        {!isMobile && (
+          <motion.div {...fadeUp(0.25)} style={{ width: '100%', maxWidth: 440, justifySelf: 'end' }}>
+            <ChatWidget inline context="hero" />
+          </motion.div>
+        )}
       </div>
     </section>
   )

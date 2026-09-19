@@ -1,3 +1,6 @@
+> ⚠️ OBSOLETO (2026-09-19): este documento es la v2 de junio y ya no se corresponde con el prompt real.
+> La única fuente de verdad es `api/_prompt.js` (prompt + herramientas) y `api/_infoEmail.js` (correos al visitante).
+
 # SYSTEM PROMPT — CHATBOT WEB DE BrAIn  ·  v2
 
 > Reescrito y alineado 1:1 con el código real de la web (Products.jsx, CtaFinal.jsx,

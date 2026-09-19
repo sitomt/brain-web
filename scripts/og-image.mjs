@@ -25,7 +25,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
            background:radial-gradient(circle at center, rgba(67,97,238,0.22), transparent 62%); }
   .bar { position:absolute; top:0; left:0; right:0; height:6px; background:${GRADIENT}; }
   .wrap { position:relative; height:100%; display:flex; flex-direction:column;
-          justify-content:center; padding:0 84px; }
+          justify-content:center; padding:0 84px 70px; }
   .eyebrow { font-family:'Syne Mono',monospace; font-size:22px; letter-spacing:0.22em;
              text-transform:uppercase; color:rgba(255,255,255,0.55); margin-bottom:30px;
              display:flex; align-items:center; gap:14px; }
@@ -35,11 +35,16 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
        color:#fff; letter-spacing:-0.01em; margin-bottom:26px; }
   h1 em { font-style:italic; background:${GRADIENT}; -webkit-background-clip:text;
           background-clip:text; -webkit-text-fill-color:transparent; }
-  p { font-family:'DM Sans',sans-serif; font-weight:300; font-size:32px;
-      color:rgba(255,255,255,0.72); max-width:760px; line-height:1.45; }
+  p { font-family:'DM Sans',sans-serif; font-weight:300; font-size:30px;
+      color:rgba(255,255,255,0.72); max-width:820px; line-height:1.4; }
   .foot { position:absolute; bottom:54px; left:84px; right:84px; display:flex;
           align-items:center; justify-content:space-between; }
-  .brand { font-family:'Instrument Serif',serif; font-size:40px; color:#fff; }
+  .brand { font-family:'Instrument Serif',serif; font-size:44px; color:#fff; display:flex; align-items:center; gap:14px; }
+  .brand .m { color:#F72585; }
+  .brand .w { letter-spacing:-0.01em; }
+  .tile { width:52px; height:52px; border-radius:11px; background:#FAF8F3; color:#1A1814; display:flex; align-items:center; justify-content:center; font-style:italic; font-size:48px; line-height:1; }
+  .tile .s { transform:translate(-2%,-6%); }
+  .tile .d { width:6px; height:6px; border-radius:50%; background:#F72585; align-self:flex-end; margin:0 0 9px 1px; }
   .brand b { font-weight:400; background:${GRADIENT}; -webkit-background-clip:text;
              background-clip:text; -webkit-text-fill-color:transparent; }
   .pill { font-family:'Syne Mono',monospace; font-size:20px; letter-spacing:0.06em;
@@ -49,12 +54,12 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
 <body>
   <div class="aura"></div><div class="aura2"></div><div class="bar"></div>
   <div class="wrap">
-    <div class="eyebrow"><span class="dot"></span>Agencia de IA · Murcia</div>
+    <div class="eyebrow"><span class="dot"></span>Inteligencia operativa · Murcia · Roma</div>
     <h1>La IA que hace<br>funcionar tu <em>negocio</em></h1>
-    <p>Atención al cliente, operaciones e inteligencia de negocio, con criterio de empresario.</p>
+    <p>Menos fricción. Más negocio. Atención al cliente, operaciones y control, con criterio de empresario.</p>
   </div>
   <div class="foot">
-    <div class="brand">br<b>[AI]</b>n</div>
+    <div class="brand"><span class="tile"><span class="s">s</span><span class="d"></span></span><span class="w">sito<b>labs</b><span class="m">.</span></span></div>
     <div class="pill">Primera reunión gratuita</div>
   </div>
 </body></html>`

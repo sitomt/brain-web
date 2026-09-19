@@ -4,7 +4,8 @@ import Eyebrow from './Eyebrow'
 import { ArrowRight } from './icons/ArrowIcon'
 import useIsMobile from '../hooks/useIsMobile'
 import { REVEAL, STAGGER, STAGGER_CHILD } from '../lib/motion'
-import { h2, h3, body, label } from '../lib/typography'
+import { h2, h3, body, bodySm, label } from '../lib/typography'
+import { SURFACE, RADIUS, SHADOW } from '../lib/tokens'
 import { openBooking } from '../lib/booking'
 
 // Prueba: somos empresarios + "lo usamos en casa" (ledger, sin tarjetas) + quién te atiende.
@@ -21,7 +22,7 @@ const HAIR = '1px solid rgba(26,24,20,0.1)'
 function Gines({ isMobile }) {
   if (isMobile) {
     return (
-      <div style={{ borderTop: HAIR, borderBottom: HAIR, padding: '1.5rem 0' }}>
+      <div style={{ background: SURFACE.creamCard, borderRadius: RADIUS.cardInner, boxShadow: SHADOW.cardLight, border: HAIR, padding: '1.25rem 1.2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', marginBottom: '1rem' }}>
           <img
             src="/sito2-400.jpg"
@@ -31,10 +32,10 @@ function Gines({ isMobile }) {
           />
           <div>
             <span style={{ ...h3, fontSize: '1.2rem', color: '#1A1814', display: 'block' }}>Ginés Munuera</span>
-            <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>Fundador · Murcia</span>
+            <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>Fundador · Murcia · Roma</span>
           </div>
         </div>
-        <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1.2rem', color: '#1A1814', lineHeight: 1.35, margin: 0 }}>
+        <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '1.15rem', color: '#1A1814', lineHeight: 1.38, margin: 0 }}>
           «La llamada la hago yo. Dirijo negocios con mis socios y fui quien metió la IA en ellos. Si en el tuyo no tiene sentido, te lo diré.»
         </p>
         <button
@@ -63,7 +64,7 @@ function Gines({ isMobile }) {
           «Soy Ginés Munuera. La llamada la hago yo. Dirijo negocios con mis socios y fui quien
           metió la IA en ellos. Si en el tuyo no tiene sentido, te lo diré.»
         </p>
-        <p style={{ ...label, color: 'rgba(26,24,20,0.5)', margin: '0.8rem 0 0' }}>Fundador · Sito Labs · Murcia</p>
+        <p style={{ ...label, color: 'rgba(26,24,20,0.5)', margin: '0.8rem 0 0' }}>Fundador · Sito Labs · Murcia · Roma</p>
         <button
           type="button"
           onClick={() => openBooking('gines')}
@@ -80,12 +81,12 @@ export default function Enfoque() {
   const isMobile = useIsMobile()
 
   return (
-    <section id="enfoque" style={{ background: '#FAF8F3', padding: isMobile ? '3.5rem 1.25rem 3rem' : '8rem 2rem', borderTop: HAIR }}>
+    <section id="enfoque" style={{ background: '#FAF8F3', padding: isMobile ? '3rem 1.25rem 2.75rem' : '8rem 2rem', borderTop: HAIR }}>
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <motion.div {...REVEAL} style={{ marginBottom: isMobile ? '1.75rem' : '3.5rem' }}>
           <div style={{ marginBottom: '1.25rem' }}><Eyebrow variant="pill" tone="dark">Lo usamos en casa</Eyebrow></div>
-          <h2 style={{ ...h2, color: '#1A1814' }}>Antes que especialistas en IA, <em style={{ fontStyle: 'italic' }}>somos empresarios.</em></h2>
-          <p style={{ ...body, color: 'rgba(26,24,20,0.7)', marginTop: '1.25rem' }}>
+          <h2 style={{ ...h2, fontSize: isMobile ? '1.85rem' : h2.fontSize, color: '#1A1814' }}>Antes que especialistas en IA, <em style={{ fontStyle: 'italic' }}>somos empresarios.</em></h2>
+          <p style={{ ...(isMobile ? bodySm : body), color: 'rgba(26,24,20,0.7)', marginTop: isMobile ? '0.9rem' : '1.25rem' }}>
             Lo primero que automatizamos fue lo nuestro. Esto es lo que hace hoy la IA en cada negocio.
           </p>
         </motion.div>
@@ -112,7 +113,7 @@ export default function Enfoque() {
             >
               {isMobile ? (
                 <span style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-                  <span style={{ ...h3, fontSize: '1.25rem', color: '#1A1814' }}>{n.name}</span>
+                  <span style={{ ...h3, fontSize: '1.15rem', color: '#1A1814' }}>{n.name}</span>
                   <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>{n.sector}</span>
                 </span>
               ) : (
@@ -121,7 +122,7 @@ export default function Enfoque() {
                   <span style={{ ...label, color: 'rgba(26,24,20,0.5)' }}>{n.sector}</span>
                 </>
               )}
-              <span style={{ ...body, fontSize: isMobile ? '0.98rem' : body.fontSize, color: 'rgba(26,24,20,0.72)', maxWidth: 'none' }}>{n.line}</span>
+              <span style={{ ...(isMobile ? bodySm : body), color: isMobile ? 'rgba(26,24,20,0.65)' : 'rgba(26,24,20,0.72)', maxWidth: 'none' }}>{n.line}</span>
             </motion.div>
           ))}
         </motion.div>

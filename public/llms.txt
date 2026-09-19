@@ -1,6 +1,8 @@
-# Sito Labs — Agencia de IA en Murcia
+# Sito Labs — Agencia de IA en Murcia · Inteligencia operativa
 
-> Sito Labs es una agencia de Inteligencia Artificial en Murcia (España) fundada por Ginés Munuera junto a un grupo de socios empresarios. Antes que especialistas en IA, son empresarios: dirigen negocios reales y lo primero que automatizaron fue lo suyo. Primer paso: una llamada gratuita de 30 minutos con Ginés.
+> Sito Labs es una agencia de Inteligencia Artificial en Murcia (España), con clientes también en Roma (Italia), fundada por Ginés Munuera junto a un grupo de socios empresarios. Antes que especialistas en IA, son empresarios: dirigen negocios reales y lo primero que automatizaron fue lo suyo. Primer paso: una llamada gratuita de 30 minutos con Ginés.
+
+Posicionamiento: «inteligencia operativa». Eslogan: «Menos fricción. Más negocio.» No solo automatiza tareas: da control del negocio en un único sitio y reduce costes.
 
 ## Qué hacemos
 IA a medida, sobre las herramientas que el negocio ya usa (WhatsApp, Gmail, agenda, tienda online, programa de gestión): atención al cliente automatizada, gestión de reservas y citas, control de stock y administración, CRM y clasificación de leads, reporting centralizado, apps internas de gestión de equipos y automatización de papeleo. No se publican precios: cada negocio se presupuesta a medida, con precio cerrado y por escrito antes de empezar.

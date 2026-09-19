@@ -48,7 +48,7 @@ export default function FoundersOffer() {
         </motion.ul>
 
         <motion.div {...REVEAL} style={{ margin: isMobile ? '1.75rem 0 0' : '3rem 0 0', display: 'flex', alignItems: 'center', gap: isMobile ? '0.75rem' : '1.25rem', flexWrap: 'wrap' }}>
-          <CtaButton onClick={() => openBooking('fundadores')} variant="light" arrow="right" size="lg" style={isMobile ? { width: '100%', justifyContent: 'space-between' } : undefined}>
+          <CtaButton onClick={() => openBooking('fundadores')} variant="light" arrow="right" size="lg">
             {CTA_LABEL}
           </CtaButton>
           <span style={{ ...label, color: 'rgba(255,255,255,0.5)', textTransform: 'none', letterSpacing: '0.04em' }}>

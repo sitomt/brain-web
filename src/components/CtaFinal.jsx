@@ -25,8 +25,8 @@ export default function CtaFinal() {
         <p style={{ ...body, color: 'rgba(255,255,255,0.7)', maxWidth: '46ch' }}>
           Nos cuentas tu negocio. Te decimos qué haría la IA y, si encaja, te llega un plan con precio cerrado.
         </p>
-        <div id="cta-final-button" style={{ marginTop: '0.5rem', width: isMobile ? '100%' : 'auto' }}>
-          <CtaButton onClick={() => openBooking('cta_final')} variant="light" arrow="right" size="lg" magnetic={!isMobile} style={isMobile ? { width: '100%', justifyContent: 'space-between', background: '#FAF8F3', color: '#1A1814', border: 'none' } : undefined}>
+        <div id="cta-final-button" style={{ marginTop: '0.5rem' }}>
+          <CtaButton onClick={() => openBooking('cta_final')} variant="light" arrow="right" size="lg" magnetic={!isMobile} style={isMobile ? { background: '#FAF8F3', color: '#1A1814', border: 'none' } : undefined}>
             {CTA_LABEL}
           </CtaButton>
         </div>
