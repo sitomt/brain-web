@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../hooks/useIsMobile'
 import { CTA_LABEL } from '../lib/cta'
 import { STORAGE_KEY as COOKIE_STORAGE_KEY } from './CookieBanner'
+import useDockRect from '../hooks/useDockRect'
+import { EASE_PREMIUM } from '../lib/motion'
 import { openBooking } from '../lib/booking'
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
 
@@ -80,7 +82,14 @@ const hasUserTurn = (msgs) => Array.isArray(msgs) && msgs.some((m) => m.from ===
 
 
 // inline=true: el chat vive dentro de la portada (sin botón flotante, siempre abierto).
-export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = false }) {
+// mode="travel" (home escritorio): una sola instancia fija que se acopla al hueco de la
+// portada, se comprime en burbuja al hacer scroll y se expande en panel al pulsarla.
+const BUBBLE = 52
+const PANEL_W = 340, PANEL_H = 520
+const TRAVEL = { duration: 0.55, ease: EASE_PREMIUM }
+
+export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = false, mode }) {
+  const travel = mode === 'travel'
   const [messages, setMessages] = useState(() => {
     const stored = loadStored(MSG_STORAGE_KEY, null)
     return Array.isArray(stored) && stored.length ? stored : DEFAULT_MESSAGES
@@ -181,7 +190,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
     }
   }
 
-  const open = inline || isOpen
+  const open = inline || isOpen || travel
 
   useEffect(() => {
     if (open) {
@@ -281,6 +290,32 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
     respond([...messagesRef.current, userMsg])
   }
 
+  const btnRight = isMobile ? 16 : 28
+  const btnBottom = (isMobile ? 20 : 28) + (cookiesDone ? 0 : (isMobile ? 190 : 0))
+  const active = hasUserTurn(messages)
+
+  // ---- Modo travel: docked (en la portada) · bubble · panel
+  const { rect: dockRect, ratio: dockRatio } = useDockRect('[data-chat-dock]', travel)
+  const [userOpen, setUserOpen] = useState(false)
+  const dock = !travel ? null : dockRatio >= 0.25 ? 'docked' : userOpen ? 'panel' : 'bubble'
+  // La transición larga solo se usa cuando cambia el estado (docked/bubble/panel);
+  // mientras está acoplado, el shell sigue al hueco en scroll sin animar.
+  const [animating, setAnimating] = useState(false)
+  const [prevDock, setPrevDock] = useState(dock)
+  const dockChanged = prevDock !== dock
+  // Estado derivado durante el render (patrón oficial de React): así la primera
+  // pintura tras el cambio ya lleva la transición larga y no salta al destino.
+  if (dockChanged) { setPrevDock(dock); setAnimating(true) }
+  const travelTransition = (dockChanged || animating) ? TRAVEL : { duration: 0 }
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1280
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 800
+  const shell = !travel ? null
+    : dock === 'bubble' ? { top: vh - btnBottom - BUBBLE, left: vw - btnRight - BUBBLE, width: BUBBLE, height: BUBBLE, borderRadius: BUBBLE / 2, backgroundColor: '#1A1814' }
+    : dock === 'panel' ? { top: vh - 92 - PANEL_H, left: vw - btnRight - PANEL_W, width: PANEL_W, height: PANEL_H, borderRadius: 20, backgroundColor: '#ffffff' }
+    : dockRect ? { top: dockRect.top, left: dockRect.left, width: dockRect.width, height: dockRect.height, borderRadius: 20, backgroundColor: '#ffffff' } : null
+  const inlineUI = inline || dock === 'docked'
+  const close = travel ? () => setUserOpen(false) : onClose
+
   // Vuelve a empezar: nueva conversación con el saludo del contexto actual. El lead conocido se conserva.
   const restart = () => {
     setClosed(false)
@@ -291,7 +326,7 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
   }
 
   const onChip = (label) => {
-    if (isBookingChip(label)) { if (!inline) onClose?.(); openBooking(inline ? 'hero_chat' : 'chat'); return }
+    if (isBookingChip(label)) { if (!inlineUI) close?.(); openBooking(inlineUI ? 'hero_chat' : 'chat'); return }
     if (label === RESTART_LABEL) { restart(); return }
     send(label)
   }
@@ -301,16 +336,14 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
     ? CLOSED_SUGGESTIONS
     : hasUserTurn(messages)
       ? suggestions
-      : inline ? STARTERS : INITIAL_SUGGESTIONS
+      : inlineUI ? STARTERS : INITIAL_SUGGESTIONS
 
-  const btnRight = isMobile ? 16 : 28
-  const btnBottom = (isMobile ? 20 : 28) + (cookiesDone ? 0 : (isMobile ? 190 : 0))
-  const active = hasUserTurn(messages)
+
 
   return (
     <>
       {/* Floating button */}
-      {!inline && <motion.button
+      {!inline && !travel && <motion.button
         onClick={isOpen ? onClose : onOpen}
         aria-label={isOpen ? 'Cerrar chat' : 'Abrir chat'}
         whileHover={{ scale: 1.08 }}
@@ -363,15 +396,30 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
 
       {/* Panel */}
       <AnimatePresence>
-        {open && (
+        {open && (!travel || shell) && (
           <motion.div
-            initial={inline ? false : { opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            initial={(inline || travel) ? false : { opacity: 0, y: 20, scale: 0.95 }}
+            animate={travel ? shell : { opacity: 1, y: 0, scale: 1 }}
+            exit={travel ? undefined : { opacity: 0, y: 20, scale: 0.95 }}
+            transition={travel ? travelTransition : { duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            onAnimationComplete={travel ? () => setAnimating(false) : undefined}
             role="dialog"
             aria-label="Asistente de Sito Labs"
-            style={inline ? {
+            style={travel ? {
+              position: 'fixed',
+              // Acoplado, va por debajo de la barra de navegación (zIndex 100) para no taparla al hacer scroll;
+              // en burbuja/panel flota por encima de todo.
+              zIndex: dock === 'docked' ? 90 : 200,
+              display: 'flex',
+              flexDirection: 'column',
+              // En burbuja (ya en reposo) se deja visible para que el punto magenta asome por el borde.
+              overflow: dock === 'bubble' && !animating ? 'visible' : 'hidden',
+              border: dock === 'bubble' ? '1px solid transparent' : '1px solid rgba(26,24,20,0.08)',
+              boxShadow: dock === 'docked'
+                ? '0 1px 2px rgba(26,24,20,0.04), 0 28px 56px -28px rgba(26,24,20,0.22)'
+                : dock === 'bubble' ? '0 4px 24px rgba(0,0,0,0.35)' : '0 20px 60px rgba(0,0,0,0.18)',
+              transition: 'box-shadow 0.4s ease, border-color 0.4s ease',
+            } : inline ? {
               position: 'relative',
               width: '100%',
               height: isMobile ? 400 : 460,
@@ -399,6 +447,18 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
               overflow: 'hidden',
             }}
           >
+            {/* Capa chat (en travel se desvanece al comprimirse en burbuja) */}
+            <motion.div
+              animate={travel ? { opacity: dock === 'bubble' ? 0 : 1 } : undefined}
+              transition={travel ? { duration: dock === 'bubble' ? 0.18 : 0.3, delay: dock === 'bubble' ? 0 : 0.2 } : undefined}
+              style={{
+                display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0,
+                pointerEvents: dock === 'bubble' ? 'none' : 'auto', overflow: 'hidden',
+                // En travel la capa conserva el tamaño de tarjeta/panel mientras el shell
+                // se comprime: el contenido se recorta en vez de re-fluir en cada frame.
+                ...(travel ? { flex: 'none', width: dock === 'panel' ? PANEL_W : (dockRect?.width ?? 440), height: dock === 'panel' ? PANEL_H : (dockRect?.height ?? 460) } : {}),
+              }}
+            >
             {/* Header */}
             <div style={{ background: '#0A0A0B', padding: '0.85rem 1.1rem', display: 'flex', alignItems: 'center', gap: 12 }}>
               <BrandIcon size={36} tone="cream" />
@@ -406,12 +466,12 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
                 <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: '0.88rem', color: '#fff' }}>Sito Labs Asistente</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
-                  <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>{inline ? 'Pruébalo: es el mismo que instalamos' : 'En línea'}</span>
+                  <span style={{ fontFamily: "'Syne Mono',monospace", fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>{inlineUI ? 'Pruébalo: es el mismo que instalamos' : 'En línea'}</span>
                 </div>
               </div>
-              {!inline && (
+              {!inlineUI && (
                 <button
-                  type="button" onClick={onClose} aria-label="Minimizar chat"
+                  type="button" onClick={close} aria-label="Minimizar chat"
                   style={{ marginLeft: 'auto', width: 34, height: 34, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', background: 'rgba(255,255,255,0.06)', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
@@ -582,6 +642,32 @@ export default function ChatWidget({ isOpen, context, onOpen, onClose, inline = 
                 ) : typing ? 'La IA está escribiendo…' : (inline && isMobile ? 'Escribe o toca una opción' : 'Pulsa Enter para enviar · Mayús+Enter salto de línea')}
               </p>
             </div>
+            </motion.div>
+
+            {/* Capa burbuja (solo travel): anillo degradado + icono + punto de conversación activa */}
+            {travel && (
+              <motion.button
+                type="button"
+                onClick={() => setUserOpen(true)}
+                aria-label="Abrir chat"
+                tabIndex={dock === 'bubble' ? 0 : -1}
+                initial={false}
+                animate={{ opacity: dock === 'bubble' ? 1 : 0, scale: dock === 'bubble' ? [0.9, 1.08, 1] : 1 }}
+                transition={{ opacity: { duration: 0.2, delay: dock === 'bubble' ? 0.3 : 0 }, scale: { duration: 0.35, delay: 0.3, ease: EASE_PREMIUM } }}
+                whileHover={dock === 'bubble' ? { scale: 1.08 } : undefined}
+                whileTap={dock === 'bubble' ? { scale: 0.94 } : undefined}
+                style={{ position: 'absolute', inset: 0, border: 'none', padding: 0, background: 'transparent', cursor: 'pointer', pointerEvents: dock === 'bubble' ? 'auto' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <span aria-hidden style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: GRADIENT, opacity: 0.85 }} />
+                <span aria-hidden style={{ position: 'absolute', inset: 2, borderRadius: '50%', background: '#1A1814' }} />
+                {active && (
+                  <span aria-hidden style={{ position: 'absolute', top: 1, right: 1, width: 12, height: 12, borderRadius: '50%', background: '#F72585', border: '2px solid #FAF8F3', zIndex: 2 }} />
+                )}
+                <svg style={{ position: 'relative', zIndex: 1 }} width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z" />
+                </svg>
+              </motion.button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

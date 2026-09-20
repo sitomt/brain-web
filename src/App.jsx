@@ -71,12 +71,13 @@ function AppContent() {
         />
       </Routes>
 
-      {/* En escritorio el chat de la home vive en la portada; en móvil y en /nosotros, burbuja flotante */}
-      {(!isHome || isMobile) && (
-        <Suspense fallback={null}>
-          <ChatWidget isOpen={chatOpen} context={isHome ? 'hero' : 'nosotros'} onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} />
-        </Suspense>
-      )}
+      {/* Home escritorio: un solo chat que viaja portada ⇄ burbuja ⇄ panel.
+          Móvil y /nosotros: burbuja flotante clásica. */}
+      <Suspense fallback={null}>
+        {isHome && !isMobile
+          ? <ChatWidget mode="travel" context="hero" />
+          : <ChatWidget isOpen={chatOpen} context={isHome ? 'hero' : 'nosotros'} onOpen={() => setChatOpen(true)} onClose={() => setChatOpen(false)} />}
+      </Suspense>
 
       <Suspense fallback={null}>
         <BookingModal />
